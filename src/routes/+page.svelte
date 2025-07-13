@@ -1,21 +1,39 @@
 <script>
-import Scrolly from '$lib/components/scrolly/Scrolly.svelte';
-import Slide from '$lib/components/scrolly/Slide.svelte';
-import Hero from '$lib/components/Hero.svelte';
-import Footer from '$lib/components/Footer.svelte';
-import copy from '$lib/data/copy.json';
+	import Scrolly from '$lib/components/scrolly/Scrolly.svelte';
+	import Slide from '$lib/components/scrolly/Slide.svelte';
+	import Hero from '$lib/components/Hero.svelte';
+	import Footer from '$lib/components/Footer.svelte';
+	import DebugPanel from '$lib/components/DebugPanel.svelte';
+	import copy from '$lib/data/copy.json';
 
-console.log(copy);
+	const { meta, content } = copy;
 
-function scrollToScrolly() {
-	window.scrollTo({top: window.innerHeight, behavior: 'smooth'});
-}
+	// Scroll tracking state
+	let currentSlide = $state(0);
+	let scrollProgress = $state(0);
+	let scrollDirection = $state('none');
+
+	function scrollToScrolly() {
+		window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+	}
+
+	function handleScrollUpdate(metrics) {
+		currentSlide = metrics.currentSlide;
+		scrollProgress = metrics.scrollProgress;
+		scrollDirection = metrics.scrollDirection;
+		
+		// Log the scroll metrics
+		console.log('Scroll Metrics:', {
+			currentSlide: metrics.currentSlide,
+			scrollProgress: metrics.scrollProgress.toFixed(3),
+			scrollDirection: metrics.scrollDirection
+		});
+	}
 </script>
 
 <svelte:head>
-	<title>{copy.meta.title}</title>
+	<title>{meta.title}</title>
 </svelte:head>
-
 
 <!-- Header: Hamburger + Logos -->
 <header class="main-header">
@@ -31,38 +49,22 @@ function scrollToScrolly() {
 </header>
 
 <Hero
-	videoSrc={copy.content.hero.video || '/videos/web-bg.mp4'}
-	poster={copy.content.hero.poster || '/videos/placeholder.jpg'}
-	heroText={copy.content.hero.text}
+	videoSrc={content.hero.video || '/videos/web-bg.mp4'}
+	poster={content.hero.poster || '/videos/placeholder.jpg'}
+	heroText={content.hero.text}
 	onScrollClick={scrollToScrolly}
 />
 
+<!-- Debug Panel -->
+<DebugPanel {currentSlide} {scrollProgress} {scrollDirection} />
+
 <!-- Scrolly Slides -->
-<Scrolly slideCount={5}>
-	<Slide className="slide-1">
-		<div class="slide-col slide-col-text" style="text-align:left;max-width:400px;margin-right:2rem;">
-			<p class="slide-lead">Our country is increasingly polarized.</p>
-			<p class="slide-body">
-				In times of deep division, it is important to remember the values and principles that bind
-				us together—those things we all share as Americans.
-			</p>
-		</div>
-		<div class="slide-col slide-col-img">
-			<div class="chart-placeholder">
-				<strong>Political Polarization of the American Public, 1994-2014</strong>
-				<div class="chart-img">[Chart Placeholder]</div>
-				<small>Source: Pew Research Center</small>
-			</div>
-		</div>
-	</Slide>
-	{#each Array(4) as _, i}
-		<Slide>
-			<h2>Slide {i + 2}</h2>
-			<p>
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, nisi eu
-				consectetur.
-			</p>
-		</Slide>
+<Scrolly 
+	slideCount={content.scrolly.slides.length}
+	onScrollUpdate={handleScrollUpdate}
+>
+	{#each content.scrolly.slides as slide, index}
+		<Slide content={slide} className="slide-{index}" {index} />
 	{/each}
 </Scrolly>
 
@@ -127,57 +129,6 @@ body {
 			&.logo-beacon {
 				font-family: serif;
 				letter-spacing: 0.08em;
-			}
-		}
-	}
-}
-
-/* Slide-specific styles for two-column layout */
-.slide-1 {
-	display: flex;
-	gap: $spacing-xl;
-	max-width: 1200px;
-	margin: 0 auto;
-	width: 100%;
-	@media (max-width: 900px) {
-		flex-direction: column;
-		gap: $spacing-lg;
-	}
-	.slide-col {
-		flex: 1;
-		&.slide-col-text {
-			padding-right: $spacing-xl;
-			@media (max-width: 900px) {
-				padding-right: 0;
-			}
-			.slide-lead {
-				font-size: 1.2rem;
-				font-weight: 500;
-				margin-bottom: $spacing-lg;
-			}
-			.slide-body {
-				font-size: 1.1rem;
-				color: $text-light;
-			}
-		}
-		&.slide-col-img {
-			.chart-placeholder {
-				background: #fff;
-				border-radius: $border-radius-md;
-				box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-				padding: $spacing-lg;
-				text-align: center;
-				.chart-img {
-					height: 180px;
-					background: linear-gradient(90deg, #b6e36c 0%, #e3e3e3 100%);
-					border-radius: $border-radius-sm;
-					margin: $spacing-md 0;
-					display: flex;
-					align-items: flex-end;
-					justify-content: center;
-					color: #333;
-					font-size: 1.2rem;
-				}
 			}
 		}
 	}

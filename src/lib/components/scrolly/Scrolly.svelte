@@ -1,11 +1,30 @@
 <script>
 	import Background from './Background.svelte';
-	export let slideCount = 5;
-	let currentSlide = 0;
+	import { onMount } from 'svelte';
+	
+	let currentSlide = $state(0);
+	let scrollProgress = $state(0); // 0 to 1 within current slide
+	let scrollDirection = $state('none'); // 'up', 'down', or 'none'
 	let isScrolling = false;
+	let lastScrollTop = 0;
 	let slides = [];
 
-	import { onMount } from 'svelte';
+	/**
+	 * @typedef {Object} ScrollMetrics
+	 * @property {number} currentSlide - Current slide index (0-based)
+	 * @property {number} scrollProgress - Progress within current slide (0-1)
+	 * @property {string} scrollDirection - Direction of scroll ('up', 'down', 'none')
+	 */
+
+	/**
+	 * @typedef {Object} Props
+	 * @property {number} [slideCount]
+	 * @property {import('svelte').Snippet} [children]
+	 * @property {function(ScrollMetrics): void} [onScrollUpdate] - Callback for scroll metrics
+	 */
+
+	/** @type {Props} */
+	let { slideCount, children, onScrollUpdate } = $props();
 
 	onMount(() => {
 		handleScroll();
@@ -15,11 +34,37 @@
 
 	function handleScroll() {
 		if (isScrolling) return;
+		
 		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 		const windowHeight = window.innerHeight;
+		
+		// Determine scroll direction
+		if (scrollTop > lastScrollTop) {
+			scrollDirection = 'down';
+		} else if (scrollTop < lastScrollTop) {
+			scrollDirection = 'up';
+		}
+		lastScrollTop = scrollTop;
+		
+		// Calculate current slide
 		const newSlide = Math.floor(scrollTop / windowHeight);
-		if (newSlide !== currentSlide && newSlide >= 0 && newSlide < slideCount) {
+		if (newSlide >= 0 && newSlide < slideCount) {
 			currentSlide = newSlide;
+		}
+		
+		// Calculate scroll progress within current slide
+		const slideStart = currentSlide * windowHeight;
+		const slideEnd = (currentSlide + 1) * windowHeight;
+		const currentProgress = (scrollTop - slideStart) / (slideEnd - slideStart);
+		scrollProgress = Math.max(0, Math.min(1, currentProgress));
+		
+		// Call parent callback with updated metrics
+		if (onScrollUpdate) {
+			onScrollUpdate({
+				currentSlide,
+				scrollProgress,
+				scrollDirection
+			});
 		}
 	}
 
@@ -38,7 +83,7 @@
 <div class="scrolly-wrapper">
 	<Background />
 	<div class="scrolly-container">
-		<slot />
+		{@render children?.()}
 	</div>
 </div>
 
@@ -46,58 +91,58 @@
 	{#each Array(slideCount) as _, index}
 		<button
 			class="nav-dot {currentSlide === index ? 'active' : ''}"
-			on:click={() => scrollToSlide(index)}
+			onclick={() => scrollToSlide(index)}
 			aria-label={`Go to slide ${index + 1}`}
 		></button>
 	{/each}
 </div>
 
 <style lang="scss">
-.scrolly-wrapper {
-	position: relative;
-	min-height: calc(100vh * var(--slide-count, 5));
-}
+	.scrolly-wrapper {
+		position: relative;
+		min-height: calc(100vh * var(--slide-count, 5));
+	}
 
-.scrolly-bg {
-	position: sticky;
-	top: 0;
-	width: 100%;
-	height: 100vh;
-	background: yellow;
-	z-index: 0;
-}
+	.scrolly-bg {
+		position: sticky;
+		top: 0;
+		width: 100%;
+		height: 100vh;
+		background: yellow;
+		z-index: 0;
+	}
 
-.scrolly-container {
-	position: relative;
-	z-index: 1;
-}
+	.scrolly-container {
+		position: relative;
+		z-index: 1;
+	}
 
-.slide-nav {
-	position: fixed;
-	right: $spacing-lg;
-	top: 50%;
-	transform: translateY(-50%);
-	z-index: 1001;
-	display: flex;
-	flex-direction: column;
-	gap: $spacing-sm;
-	.nav-dot {
-		width: 12px;
-		height: 12px;
-		border-radius: 50%;
-		background: rgba(0, 0, 0, 0.3);
-		border: none;
-		cursor: pointer;
-		transition: all 0.3s ease;
-		margin: 2px 0;
-		&:hover {
-			background: #b6e36c;
-			transform: scale(1.2);
-		}
-		&.active {
-			background: #b6e36c;
-			transform: scale(1.3);
+	.slide-nav {
+		position: fixed;
+		right: $spacing-lg;
+		top: 50%;
+		transform: translateY(-50%);
+		z-index: 1001;
+		display: flex;
+		flex-direction: column;
+		gap: $spacing-sm;
+		.nav-dot {
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			background: rgba(0, 0, 0, 0.3);
+			border: none;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			margin: 2px 0;
+			&:hover {
+				background: #b6e36c;
+				transform: scale(1.2);
+			}
+			&.active {
+				background: #b6e36c;
+				transform: scale(1.3);
+			}
 		}
 	}
-}
 </style>

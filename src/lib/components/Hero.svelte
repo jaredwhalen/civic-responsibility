@@ -1,8 +1,19 @@
 <script>
-	export let videoSrc = '/videos/web-bg.mp4';
-	export let poster = '/videos/placeholder.jpg';
-	export let heroText = '';
-	export let onScrollClick = () => {};
+	/**
+	 * @typedef {Object} Props
+	 * @property {string} [videoSrc]
+	 * @property {string} [poster]
+	 * @property {string} [heroText]
+	 * @property {any} [onScrollClick]
+	 */
+
+	/** @type {Props} */
+	let {
+		videoSrc = '/videos/web-bg.mp4',
+		poster = '/videos/placeholder.jpg',
+		heroText = '',
+		onScrollClick = () => {}
+	} = $props();
 </script>
 
 <section class="hero-section">
@@ -14,7 +25,7 @@
 	</div>
 	<div class="hero-content">
 		<h1 class="hero-title">{heroText}</h1>
-		<button class="scroll-indicator" on:click={onScrollClick}>
+		<button class="scroll-indicator" onclick={onScrollClick}>
 			<span>Scroll down</span>
 			<div class="arrow">▼</div>
 		</button>
