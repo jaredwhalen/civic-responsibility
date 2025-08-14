@@ -210,7 +210,7 @@
 
 	// Sort currentViewData when viewing state data in chart mode
 	let sortedViewData = $derived.by(() => {
-		if (activeView === 'state' && selectedStateViewOption == 'chart') {
+		if (activeView === 'state' && selectedStateView == 'chart') {
 			// Find the state data for the selected state
 			const stateData = states.filter((d) => d.state === selectedStateViewOption);
 
