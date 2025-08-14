@@ -26,7 +26,7 @@
 			<Transition bind:interactiveMode />
 		{/if}
 		{#each content?.text.split('\n') as line}
-			<p>{processTemplate(line)}</p>
+			<p>{@html processTemplate(line)}</p>
 		{/each}
 	</div>
 </section>
@@ -73,20 +73,14 @@
 		.slide.transition {
 			justify-content: center;
 			align-items: end;
-			// height: fit-content;
+			height: 120vh;
 
 			.slide-inner {
 				max-width: 100%;
 				height: 100%;
-				background: #fff;
+
 				padding: 20vh 5rem;
-				background: linear-gradient(
-					0deg,
-					rgba($color-bg-light, 0) 0%,
-					rgba($color-bg-light, 0.75) 20%,
-					rgba($color-bg-light, 0.75) 80%,
-					rgba($color-bg-light, 0) 100%
-				);
+
 				margin: 0px;
 				display: flex;
 				align-items: center;
@@ -101,5 +95,12 @@
 		// .slide.dashboard-faux {
 		// 	height: calc(100vh + 100px);
 		// }
+
+		span.instructions {
+			display: block;
+			font-size: 1rem;
+			font-family: $font-family-sans;
+			margin-top: 20px;
+		}
 	}
 </style>

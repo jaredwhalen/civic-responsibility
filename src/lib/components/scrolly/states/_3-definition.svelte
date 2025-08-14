@@ -9,8 +9,8 @@
   let isTypingTerm = $state(true);
   
   // Configurable timing
-  const TERM_DELAY = 60; // ms per character for term
-  const DEFINITION_DELAY = 30; // ms per character for definition
+  const TERM_DELAY = 30; // ms per character for term
+  const DEFINITION_DELAY = 15; // ms per character for definition
   const PAUSE_BETWEEN = 300; // ms pause between term and definition
   const INITIAL_DELAY = 300; // ms before starting
   

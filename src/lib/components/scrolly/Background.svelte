@@ -33,12 +33,16 @@
 	let ActiveComponent = $derived(components[activeId]);
 </script>
 
-<div
-	class="dashboard-wrapper {interactiveMode ? 'interactive-mode' : ''}"
-	class:visible={showDashboard}
->
-	<Dashboard {activeId} bind:interactiveMode />
-</div>
+{#if showDashboard}
+	<div
+		class="dashboard-wrapper {interactiveMode ? 'interactive-mode' : ''}"
+		class:visible={showDashboard}
+		in:fade={{ duration: 500, delay: 500 }}
+		out:fade={{ duration: 0 }}
+	>
+		<Dashboard {activeId} bind:interactiveMode />
+	</div>
+{/if}
 
 {#key activeId}
 	<div class="scrolly-bg">

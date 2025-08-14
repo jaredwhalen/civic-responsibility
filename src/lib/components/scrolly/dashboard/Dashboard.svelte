@@ -5,8 +5,13 @@
 	import Row from './Row.svelte';
 	import { userResponse } from '$lib/stores/userResponse.js';
 
+	import { interpolateRgb } from 'd3-interpolate';
+
 	// components
 	import Controls from './Controls.svelte';
+	import GroupLegend from './GroupLegend.svelte';
+	import GradientLegend from './GradientLegend.svelte';
+	import MapViz from './Map.svelte';
 
 	// data imports
 	import mean from '$lib/data/csvs/mean_duties_weighted.csv';
@@ -21,6 +26,7 @@
 	let selectedStateView = $state('chart');
 	let selectedStateViewOption = $state(null);
 	let guessMode = $derived(activeId == '6-poll-guess');
+	let mapData = $derived(states.filter((d) => d.duty_label == selectedStateViewOption));
 
 	let isMountedWithDelay = $state(false);
 
@@ -28,7 +34,7 @@
 		if (interactiveMode) {
 			setTimeout(() => {
 				isMountedWithDelay = true;
-			}, 500);
+			}, 250);
 		}
 	});
 
@@ -71,12 +77,18 @@
 				{ label: 'White', color: '#64B42D' },
 				{ label: 'Black', color: '#FAD246' },
 				{ label: 'Hispanic', color: '#5C80BC' },
-				{ label: 'Asian', color: '#E63719' }
+				{ label: 'Asian', color: '#E63719' },
+				{ label: 'Other', color: '#ddd' }
 			]
 		},
 		{
 			label: 'Political Identification',
-			value: 'pid'
+			value: 'pid',
+			series: [
+				{ label: 'Democrat', color: '#5C80BC' },
+				{ label: 'Republican', color: '#E63719' },
+				{ label: 'Independent', color: '#FAD246' }
+			]
 		},
 		{
 			label: 'State',
@@ -119,7 +131,8 @@
 			highlightArr: ['Fighting for people’s rights', 'Honoring the flag']
 		},
 		'11-outro': [],
-		'12-dashboard': []
+		transition: [],
+		'9999-dashboard': []
 	};
 
 	function transformGroupedData(data) {
@@ -173,9 +186,8 @@
 	};
 
 	let currentViewData = $derived.by(() => {
-
 		if (!currentDataMap[activeId]) {
-			return []
+			return [];
 		}
 
 		return guessMode
@@ -198,7 +210,7 @@
 
 	// Sort currentViewData when viewing state data in chart mode
 	let sortedViewData = $derived.by(() => {
-		if (activeView === 'state' && selectedStateView === 'chart' && selectedStateViewOption) {
+		if (activeView === 'state' && selectedStateViewOption == 'chart') {
 			// Find the state data for the selected state
 			const stateData = states.filter((d) => d.state === selectedStateViewOption);
 
@@ -217,11 +229,11 @@
 
 	const dimensions = $derived({
 		width,
-		height: currentViewData.length * rowHeight + 50,
+		height: currentViewData.length * rowHeight + rowHeight*2,
 		margins: {
-			top: 50,
+			top: 15,
 			right: 75,
-			bottom: 30,
+			bottom: 0,
 			left: 400
 		}
 	});
@@ -239,19 +251,31 @@
 	let dashboardHeight = $state(null);
 	let controlsHeight = $state(null);
 	let axisHeight = 50;
+
+
 	let chartContainerHeight = $derived(
 		interactiveMode && isMountedWithDelay
 			? dimensions.height < dashboardHeight
-				? dimensions.height
-				: dashboardHeight - controlsHeight - axisHeight
-			: dimensions.height
+				? dimensions.height - axisHeight
+				: dashboardHeight - controlsHeight - (selectedStateView == 'map' ? 0 : axisHeight)
+			: dimensions.height - axisHeight
 	);
+
+	let chartContainerHeightMaxHeight = $derived(
+		dashboardHeight - controlsHeight - (selectedStateView == 'map' ? 0 : axisHeight)
+	);
+
+	const createCustomColorScale = (colors) => {
+		return scaleLinear().domain([0, 100]).range(colors).interpolate(interpolateRgb);
+	};
+	const mapColorScale = createCustomColorScale(['#fff', '#6DA34D']);
 </script>
 
 <div
-	class="dashboard {interactiveMode && interactiveMode ? 'interactive-mode' : ''}"
+	class="dashboard {showAll ? 'show-all' : ''} {chartContainerHeight >= dashboardHeight
+		? 'overflow'
+		: ''}"
 	bind:clientWidth={width}
-	transition:fade={{ duration: animateMount ? 500 : 0 }}
 	bind:clientHeight={dashboardHeight}
 >
 	{#if interactiveMode}
@@ -266,18 +290,25 @@
 					duties: new Set(transformedData.state.map((d) => d.duty_label))
 				}}
 			/>
+			{#if selectedStateView == 'map'}
+				<GradientLegend colorScale={mapColorScale} />
+			{:else}
+				<GroupLegend options={options.find((o) => o.value === activeView)} {activeView} />
+			{/if}
 		</div>
 	{/if}
 
-	<div
-		class="chart-container {interactiveMode && isMountedWithDelay ? 'interactive-mode' : ''}"
-		style:--chart-height="{chartContainerHeight}px"
-	>
-		{#if activeView == 'state' && selectedStateView == 'map'}
-			<div class="state-container">
-				<h1>{selectedStateViewOption}</h1>
+	<div class="dashboard-content">
+		{#if interactiveMode && activeView == 'state' && selectedStateView == 'map'}
+			<div class="map-container">
+				<MapViz data={mapData} {width} duty={selectedStateViewOption} colorScale={mapColorScale} />
 			</div>
-		{:else}
+		{/if}
+		<div
+			class="chart-container {interactiveMode && isMountedWithDelay ? 'interactive-mode' : ''}"
+			style:--chart-height="{chartContainerHeight}px"
+			style:--chart-max-height="{chartContainerHeightMaxHeight}px"
+		>
 			<svg {width} height={dimensions.height}>
 				<g class="rows">
 					{#each sortedViewData as row, i (row.duty_label)}
@@ -302,64 +333,90 @@
 					{/each}
 				</g>
 			</svg>
-		{/if}
-		{#if showAll}
-			<div
-				class="bottom-gradient"
-				style="position: {interactiveMode && isMountedWithDelay ? 'sticky' : 'absolute'}"
-			></div>
-		{/if}
-		<!-- Bottom gradient overlay -->
-	</div>
 
-	{#if activeView != 'state' || selectedStateView != 'map'}
-		<svg {width} height={axisHeight}>
-			<g class="x-axis axis">
-				<line
-					x1={dimensions.margins.left}
-					x2={width - dimensions.margins.right}
-					stroke="#ddd"
-					stroke-width="2"
-				/>
-				{#each [0, 25, 50, 75, 100] as tickValue}
-					<line
-						x1={xScale(tickValue)}
-						x2={xScale(tickValue)}
-						y1={0}
-						y2={tickSize}
-						stroke="#ddd"
-						stroke-width="2"
-					/>
+			{#if showAll && activeView != 'state'}
+				<div
+					class="bottom-gradient"
+					style="position: {interactiveMode && isMountedWithDelay ? 'sticky' : 'absolute'}"
+				></div>
+			{/if}
+			<!-- Bottom gradient overlay -->
+		</div>
 
-					<g class="tick" transform="translate({xScale(tickValue)}, {tickSize / 2})">
-						<text y="20" text-anchor="middle">{tickValue}%</text>
+		{#if activeView != 'state' || selectedStateView != 'map'}
+			<div class="axis-container">
+				<svg {width} height={axisHeight}>
+					<g class="x-axis axis">
+						<line
+							x1={dimensions.margins.left}
+							x2={width - dimensions.margins.right}
+							stroke="#ddd"
+							stroke-width="2"
+						/>
+						{#each [0, 25, 50, 75, 100] as tickValue}
+							<line
+								x1={xScale(tickValue)}
+								x2={xScale(tickValue)}
+								y1={0}
+								y2={tickSize}
+								stroke="#ddd"
+								stroke-width="2"
+							/>
+
+							<g class="tick" transform="translate({xScale(tickValue)}, {tickSize / 2})">
+								<text y="20" text-anchor="middle">{tickValue}%</text>
+							</g>
+						{/each}
 					</g>
-				{/each}
-			</g>
-		</svg>
-	{/if}
+				</svg>
+			</div>
+		{/if}
+	</div>
 </div>
 
 <style lang="scss">
 	.dashboard {
-		padding: 2rem;
 		font-family: sans-serif;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-
-		height: 100dvh;
+		position: relative;
+		height: 100%;
 		width: 100%;
 		max-width: 1400px;
 		margin: 0 auto;
 
-		// &.interactive-mode {
-		// 	display: block;
-		// }
+		&.show-all.overflow {
+			justify-content: flex-start;
+		}
+	}
+
+	.dashboard-content {
+		position: relative;
+		overflow-y: hidden;
+	}
+
+	.map-container {
+		width: 100%;
+		height: 100%;
+		background-color: $color-bg-light;
+		transition: all 0.5s ease;
+
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 10;
+		// pointer-events: none;
+		// opacity: 0;
+		&.visible {
+			opacity: 1;
+			pointer-events: auto;
+		}
 	}
 
 	.chart-container {
 		height: var(--chart-height);
+		max-height: var(--chart-max-height);
 		overflow: hidden;
 		transition: all 0.5s ease;
 		display: flex;
@@ -373,7 +430,7 @@
 		}
 
 		.bottom-gradient {
-			bottom: 0;
+			bottom: -1px;
 			left: 0;
 			right: 0;
 			height: 20px;

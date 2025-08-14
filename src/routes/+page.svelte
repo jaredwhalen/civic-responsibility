@@ -34,13 +34,13 @@
 			// Small delay to ensure DOM is ready before shrinking modal
 			setTimeout(() => {
 				showExpandedModal = true;
-			}, 500);
+			}, 250);
 		} else {
 			showExpandedModal = false;
 			// Delay hiding the overlay to allow exit animation to complete
 			setTimeout(() => {
 				shouldShowOverlay = false;
-			}, 500); // Match the CSS transition duration
+			}, 250); // Match the CSS transition duration
 		}
 	});
 </script>
@@ -71,9 +71,9 @@
 	<!-- <DebugPanel {count} {index} {offset} {progress} /> -->
 
 	{#if shouldShowOverlay}
-		<div class="dashboard-overlay" transition:fade={{ duration: 500 }}>
+		<div class="dashboard-overlay" transition:fade={{ duration: 250 }}>
 			<div class="dashboard-overlay-content {showExpandedModal ? 'expanded' : ''}">
-				<Dashboard activeId={activeSlide.id} bind:interactiveMode animateMount={false} />
+				<Dashboard activeId="9999-dashboard" bind:interactiveMode animateMount={false} />
 			</div>
 		</div>
 	{/if}
@@ -137,7 +137,10 @@
 		}
 
 		.foreground-container {
-			transition: color 0.75s ease, opacity 0.5s ease;
+			transition:
+				color 0.75s ease,
+				background-color 0.75s ease,
+				opacity 0.5s ease;
 
 			&[data-theme='default'] {
 				color: #000;
@@ -146,6 +149,16 @@
 				}
 			}
 			&[data-theme='dark'] {
+				color: $color-beacon-white;
+				.slide-inner p {
+					background: $color-beacon-dark-green;
+				}
+			}
+
+			&[data-theme='green'] {
+				// $color-beacon-light-green: #64B42D;
+				// $color-beacon-dark-green: #233219;
+				background: #233219e6;
 				color: $color-beacon-white;
 				.slide-inner p {
 					background: $color-beacon-dark-green;
@@ -253,15 +266,16 @@
 			width: 100%;
 			height: 100%;
 			background: $color-bg-light;
-			border-radius: 8px;
-			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+			border-radius: 4px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 			overflow: hidden;
 			transition: all 0.5s ease;
-			
+
 			&.expanded {
 				width: calc(100% - 30px);
 				height: calc(100% - 30px);
 				margin: 15px;
+				overflow: hidden;
 			}
 		}
 	}

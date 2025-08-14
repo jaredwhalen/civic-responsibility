@@ -10,7 +10,7 @@
 		searchOptions,
 		interactiveMode = $bindable()
 	} = $props();
-	let selectedOption = $state(null);
+	let selectedOption = $state('mean');
 
 	let isDropdownOpen = $state(false);
 	let buttonRefs = $state({});
@@ -36,6 +36,10 @@
 	});
 
 	const options = [
+		{
+			label: 'U.S. average',
+			value: 'mean'
+		},
 		{
 			label: 'Gender',
 			value: 'gender'
@@ -71,7 +75,7 @@
 
 	$effect(() => {
 		if (activeView == 'mean') {
-			selectedOption = null;
+			selectedOption = 'mean';
 			selectedStateViewOption = resultsOptions[0]?.value;
 			isDropdownOpen = false;
 
@@ -95,7 +99,7 @@
 		if (container) {
 			containerHeight = container.scrollHeight;
 		}
-		
+
 		// Trigger height animation after a brief delay to ensure DOM is ready
 		setTimeout(() => {
 			isMounted = true;
@@ -107,23 +111,20 @@
 		isDismounting = true;
 		// Wait for animation to complete before actually changing interactiveMode
 		// setTimeout(() => {
-			interactiveMode = false;
+		interactiveMode = false;
 		// }, 0); // Match the CSS transition duration
 	}
 
 	function handleSelect(value) {
 		if (value == selectedOption) {
-			selectedOption = null;
+			selectedOption = 'mean';
 			activeView = 'mean';
 			return;
 		}
 
 		selectedOption = value;
-		if (value == null) {
-			activeView = 'mean';
-		} else {
-			activeView = value;
-		}
+
+		activeView = value;
 	}
 
 	function handleStateSelect(value) {
@@ -144,8 +145,8 @@
 </script>
 
 <!-- <svelte:window on:click={handleClickOutside} /> -->
-<div 
-	class="controls-container {isMounted ? 'mounted' : ''} {isDismounting ? 'dismounting' : ''}" 
+<div
+	class="controls-container {isMounted ? 'mounted' : ''} {isDismounting ? 'dismounting' : ''}"
 	style="height: {isMounted && !isDismounting ? containerHeight + 'px' : '0px'}"
 >
 	<div class="controls-content">
@@ -207,7 +208,9 @@
 							<div class="dropdown-menu" transition:fade={{ duration: 200 }}>
 								{#each resultsOptions as option}
 									<button
-										class="dropdown-item {selectedStateViewOption === option.value ? 'selected' : ''}"
+										class="dropdown-item {selectedStateViewOption === option.value
+											? 'selected'
+											: ''}"
 										onclick={() => handleStateSelect(option.value)}
 									>
 										{option.label}
@@ -223,6 +226,18 @@
 </div>
 
 <style lang="scss">
+	.controls-container {
+		z-index: 1000;
+		position: relative;
+	}
+
+	.controls-content {
+		margin-top: 20px;
+		margin-left: 20px;
+		position: relative;
+		z-index: 10000;
+	}
+
 	.dashboard-controls {
 		// position: absolute;
 		// top: 0;
@@ -233,11 +248,10 @@
 		// margin: 1rem auto;
 
 		display: flex;
-		flex-wrap: wrap;
 		gap: 0rem;
 
 		.dashboard-controls-inner {
-			margin: 1rem;
+			margin: 0.5rem 1rem;
 			width: fit-content;
 
 			.dashboard-controls-inner-title {
@@ -257,7 +271,7 @@
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				gap: 0.25rem;
+				gap: 0.1rem;
 
 				.dashboard-controls-inner-option {
 					padding: 0.5rem 1rem;
@@ -270,6 +284,7 @@
 					cursor: pointer;
 					transition: all 0.2s ease;
 					font-family: sans-serif;
+					white-space: nowrap;
 
 					&.selected {
 						background-color: $color-beacon-yellow;
@@ -287,7 +302,7 @@
 
 		.dropdown-container {
 			position: relative;
-			width: fit-content;
+			width: 100%;
 
 			.dropdown-button {
 				width: 100%;
@@ -306,6 +321,9 @@
 				align-items: center;
 				justify-content: space-between;
 				text-align: left;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
 
 				&:hover {
 					background-color: #f8f8f8;
@@ -354,6 +372,9 @@
 					font-family: sans-serif;
 					text-align: left;
 					border-radius: 0;
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
 
 					&:first-child {
 						border-top-left-radius: 0.5rem;
@@ -380,17 +401,20 @@
 	}
 
 	.controls-container {
-		overflow: hidden;
-		transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
-		            transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-		transform: translateY(-100px);
+		// overflow: hidden;
+		transition:
+			height 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+			transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+		transform: translateY(-400px);
 		opacity: 0;
-		
+		overflow: hidden;
+
 		&.mounted {
 			transform: translateY(0);
 			opacity: 1;
+			overflow: visible;
 		}
-		
+
 		&.dismounting {
 			transform: translateY(-100px);
 			opacity: 0;
@@ -401,7 +425,7 @@
 		// Content wrapper to measure height
 	}
 
-	button[data-button="back"] {
+	button[data-button='back'] {
 		background: none;
 		border: none;
 		color: #666;

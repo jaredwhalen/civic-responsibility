@@ -1,6 +1,4 @@
 <!-- @migration-task Error while migrating Svelte code: This migration would change the name of a slot (background to background_1) making the component unusable -->
-<!-- @migration-task Error while migrating Svelte code: This migration would change the name of a slot (background to background_1) making the component unusable -->
-<!-- @migration-task Error while migrating Svelte code: This migration would change the name of a slot (background to background_1) making the component unusable -->
 <script context="module">
 	const handlers = [];
 	let manager;

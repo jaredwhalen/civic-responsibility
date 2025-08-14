@@ -85,13 +85,13 @@
 		height: 100%;
 		width: 100%;
 
-		background: linear-gradient(
-			0deg,
-			rgba($color-bg-light, 0) 0%,
-			rgba($color-bg-light, 0.75) 20%,
-			rgba($color-bg-light, 0.75) 80%,
-			rgba($color-bg-light, 0) 100%
-		);
+		// background: linear-gradient(
+		// 	0deg,
+		// 	rgba($color-bg-light, 0) 0%,
+		// 	rgba($color-bg-light, 0.75) 20%,
+		// 	rgba($color-bg-light, 0.75) 80%,
+		// 	rgba($color-bg-light, 0) 100%
+		// );
 		margin: 0px;
 	}
 </style>

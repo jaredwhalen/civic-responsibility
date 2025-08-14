@@ -103,8 +103,8 @@
 			cy="0"
 			r={6}
 			fill={color}
-			opacity={faded ? 0.5 : 1}
-			on:mousedown={handleMouseDown}
+			opacity={faded ? 0.5 : 0.75}
+			onmousedown={handleMouseDown}
 			style={guessMode ? 'cursor: grab;' : ''}
 			class:interactive={guessMode}
 		/>
