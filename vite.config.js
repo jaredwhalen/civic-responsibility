@@ -1,9 +1,10 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
+import dsv from '@rollup/plugin-dsv';
 
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [sveltekit(), dsv()],
 	css: {
 		preprocessorOptions: {
 			scss: {

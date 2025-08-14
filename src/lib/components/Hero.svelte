@@ -9,8 +9,8 @@
 
 	/** @type {Props} */
 	let {
-		videoSrc = '/videos/web-bg.mp4',
-		poster = '/videos/placeholder.jpg',
+		videoSrc = '/assets/videos/web-bg.mp4',
+		poster = '/assets/videos/placeholder.jpg',
 		heroText = '',
 		onScrollClick = () => {}
 	} = $props();
@@ -61,7 +61,7 @@
 		width: 100%;
 		height: 100%;
 		backdrop-filter: blur(6px);
-		background: rgba(0, 0, 0, 0.25);
+		background: rgba(0, 0, 0, 0.15);
 		z-index: 2;
 	}
 }
@@ -81,8 +81,9 @@
 		line-height: 1.2;
 		margin-bottom: $spacing-xl;
 		text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+		font-family: $font-family-title;
 		@include respond-to(md) {
-			font-size: 3.2rem;
+			font-size: 4.2rem;
 		}
 	}
 }
@@ -97,7 +98,8 @@
 	flex-direction: column;
 	align-items: center;
 	.arrow {
-		font-size: 2rem;
+		font-size: 1rem;
+		margin-top: 5px;
 		animation: bounce 2s infinite;
 	}
 }
@@ -110,7 +112,7 @@
 		transform: translateY(0);
 	}
 	40% {
-		transform: translateY(-10px);
+		transform: translateY(-5px);
 	}
 	60% {
 		transform: translateY(-5px);

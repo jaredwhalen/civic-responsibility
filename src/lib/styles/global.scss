@@ -1,5 +1,4 @@
 // Global Styles
-// This file contains base styles and imports shared variables and mixins
 
 // CSS Reset and Base Styles
 * {
@@ -140,6 +139,11 @@ input, textarea, select {
 	@include respond-to(md) {
 		display: block;
 	}
+}
+
+// Font utility classes
+.weepeople {
+	font-family: "WeePeople", sans-serif;
 }
 
 // Animation classes
