@@ -1,13 +1,5 @@
 <script>
-	/**
-	 * @typedef {Object} Props
-	 * @property {string} [videoSrc]
-	 * @property {string} [poster]
-	 * @property {string} [heroText]
-	 * @property {any} [onScrollClick]
-	 */
-
-	/** @type {Props} */
+	import { base } from '$app/paths';
 	let {
 		videoSrc = '/assets/videos/web-bg.mp4',
 		poster = '/assets/videos/placeholder.jpg',
@@ -19,7 +11,7 @@
 <section class="hero-section">
 	<div class="hero-video-bg">
 		<video autoplay muted loop playsinline {poster}>
-			<source src={videoSrc} type="video/mp4" />
+			<source src={base + videoSrc} type="video/mp4" />
 		</video>
 		<div class="hero-video-overlay"></div>
 		<div class="hero-video-blur"></div>
