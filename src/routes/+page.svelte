@@ -1,4 +1,5 @@
 <script>
+	import { base } from '$app/paths';
 	import Scroller from '$lib/components/scrolly/_Scroller.svelte';
 	import Background from '$lib/components/scrolly/Background.svelte';
 	import Slide from '$lib/components/scrolly/Slide.svelte';
@@ -57,7 +58,7 @@
 			</button> -->
 		</div>
 		<div class="header-right">
-			<img class="logo" src="/assets/icons/Lockup_WhiteWhite.png" alt="More in Common" />
+			<img class="logo" src={base + '/assets/icons/Lockup_WhiteWhite.png'} alt="More in Common" />
 		</div>
 	</header>
 
