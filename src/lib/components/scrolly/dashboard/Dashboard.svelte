@@ -172,8 +172,13 @@
 		state: transformGroupedData(states)
 	};
 
-	let currentViewData = $derived(
-		guessMode
+	let currentViewData = $derived.by(() => {
+
+		if (!currentDataMap[activeId]) {
+			return []
+		}
+
+		return guessMode
 			? transformedData.mean
 					.filter((d) =>
 						currentDataMap[activeId]?.includeArr?.length
@@ -188,8 +193,8 @@
 					currentDataMap[activeId]?.includeArr?.length
 						? currentDataMap[activeId]?.includeArr.includes(d.duty_label)
 						: true
-				)
-	);
+				);
+	});
 
 	// Sort currentViewData when viewing state data in chart mode
 	let sortedViewData = $derived.by(() => {
@@ -212,11 +217,11 @@
 
 	const dimensions = $derived({
 		width,
-		height: currentViewData.length * rowHeight,
+		height: currentViewData.length * rowHeight + 50,
 		margins: {
-			top: 10,
+			top: 50,
 			right: 75,
-			bottom: 40,
+			bottom: 30,
 			left: 400
 		}
 	});
@@ -233,7 +238,14 @@
 
 	let dashboardHeight = $state(null);
 	let controlsHeight = $state(null);
-	let chartHeight = $derived(rowHeight * currentViewData.length);
+	let axisHeight = 50;
+	let chartContainerHeight = $derived(
+		interactiveMode && isMountedWithDelay
+			? dimensions.height < dashboardHeight
+				? dimensions.height
+				: dashboardHeight - controlsHeight - axisHeight
+			: dimensions.height
+	);
 </script>
 
 <div
@@ -259,13 +271,7 @@
 
 	<div
 		class="chart-container {interactiveMode && isMountedWithDelay ? 'interactive-mode' : ''}"
-		style:--chart-height="{interactiveMode && isMountedWithDelay
-			? chartHeight < dashboardHeight
-				? chartHeight
-				: dashboardHeight - controlsHeight
-			: chartHeight < dashboardHeight
-				? chartHeight
-				: dashboardHeight}px"
+		style:--chart-height="{chartContainerHeight}px"
 	>
 		{#if activeView == 'state' && selectedStateView == 'map'}
 			<div class="state-container">
@@ -298,14 +304,16 @@
 			</svg>
 		{/if}
 		{#if showAll}
-			<div class="bottom-gradient"></div>
+			<div
+				class="bottom-gradient"
+				style="position: {interactiveMode && isMountedWithDelay ? 'sticky' : 'absolute'}"
+			></div>
 		{/if}
 		<!-- Bottom gradient overlay -->
-
 	</div>
 
 	{#if activeView != 'state' || selectedStateView != 'map'}
-		<svg {width} height="50">
+		<svg {width} height={axisHeight}>
 			<g class="x-axis axis">
 				<line
 					x1={dimensions.margins.left}
@@ -365,11 +373,10 @@
 		}
 
 		.bottom-gradient {
-			position: sticky;
 			bottom: 0;
 			left: 0;
 			right: 0;
-			height: 40px;
+			height: 20px;
 			background: linear-gradient(to bottom, transparent, $color-bg-light);
 			pointer-events: none;
 			z-index: 10;

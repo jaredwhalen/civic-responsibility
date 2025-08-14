@@ -1,10 +1,55 @@
 <script>
+	import smoothScroll from '$lib/helpers/smoothScroll.js';
+	
 	let { interactiveMode = $bindable() } = $props();
+	
+	function handleExploreClick() {
+		// Get the transition element and scroll so its bottom is at the bottom of the viewport
+		const transitionElement = document.querySelector('.transition');
+		if (transitionElement) {
+			const elementRect = transitionElement.getBoundingClientRect();
+			const elementBottom = elementRect.bottom;
+			const viewportHeight = window.innerHeight;
+			const scrollOffset = elementBottom - viewportHeight;
+			
+			// If already at the right position, activate immediately
+			if (Math.abs(scrollOffset) < 10) {
+				interactiveMode = true;
+				return;
+			}
+			
+			// Scroll and activate when complete
+			window.scrollBy({
+				top: scrollOffset,
+				behavior: 'smooth'
+			});
+			
+			// Listen for scroll completion
+			let scrollTimeout;
+			const checkScrollComplete = () => {
+				clearTimeout(scrollTimeout);
+				scrollTimeout = setTimeout(() => {
+					// Check if scroll has stopped
+					const newElementRect = transitionElement.getBoundingClientRect();
+					const newScrollOffset = newElementRect.bottom - window.innerHeight;
+					
+					if (Math.abs(newScrollOffset) < 10) {
+						interactiveMode = true;
+					} else {
+						// Continue checking
+						checkScrollComplete();
+					}
+				}, 100);
+			};
+			
+			checkScrollComplete();
+		}
+	}
 </script>
 
 <div class="transition">
 	<div>
-		<button data-button="explore" onclick={() => (interactiveMode = true)}>Click here</button> to explore
+		<button data-button="explore" onclick={handleExploreClick}>Click here</button> to explore
 		how the data breaks down along demographic lines, gender, location, and more.
 	</div>
 	<div>
