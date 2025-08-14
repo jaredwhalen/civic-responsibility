@@ -1,6 +1,10 @@
 <script>
 	import { fly, fade } from 'svelte/transition';
 	import { userResponse } from '$lib/stores/userResponse.js';
+	import tippy, { followCursor } from 'tippy.js';
+	import 'tippy.js/dist/tippy.css';
+	import 'tippy.js/themes/light.css';
+	import { onMount } from 'svelte';
 
 	let {
 		duty_label = '',
@@ -15,11 +19,14 @@
 		active = false,
 		highlight = false,
 		options,
-		circleTransition = 'all 0.5s ease-out'
+		circleTransition = 'all 0.5s ease-out',
+		interactiveMode,
+		hoveredSeries = $bindable()
 	} = $props();
 
 	let isDragging = $state(false);
 	let dragStartX = $state(0);
+	let tippyInstances = $state([]);
 
 	function handleMouseDown(event) {
 		if (!guessMode) return;
@@ -64,6 +71,58 @@
 			};
 		}
 	});
+
+	// Function to create tippy instances
+	function createTippyInstances() {
+		// Clean up existing instances first
+		tippyInstances.forEach((instance) => {
+			if (instance && instance.destroy) {
+				instance.destroy();
+			}
+		});
+		tippyInstances = [];
+
+		// Only create new instances if interactiveMode is true
+		if (interactiveMode) {
+			// Use a more specific selector for this component instance
+			const circles = document.querySelectorAll(`[data-row-index="${index}"][data-tippy-content]`);
+			circles.forEach((circle) => {
+				const instance = tippy(circle, {
+					theme: 'light',
+					duration: 0,
+					followCursor: true,
+					plugins: [followCursor],
+					allowHTML: true
+				});
+				tippyInstances.push(instance);
+			});
+		}
+	}
+
+	// Reactive effect to recreate tooltips when data changes
+	$effect(() => {
+		if (interactiveMode && series.length > 0) {
+			// Use a small delay to ensure DOM is updated
+			setTimeout(createTippyInstances, 0);
+		}
+	});
+
+	onMount(() => {
+		// Initial tippy creation
+		createTippyInstances();
+
+		// Cleanup function
+		return () => {
+			tippyInstances.forEach((instance) => {
+				if (instance && instance.destroy) {
+					instance.destroy();
+				}
+			});
+			tippyInstances = [];
+		};
+	});
+
+
 </script>
 
 <g
@@ -90,13 +149,13 @@
 	}) as s, i}
 		{@const defaultColor = '#dddddd'}
 		{@const color = guessMode
-				? '#E63719'
-				: active
-					? options
-						? options?.series?.find((d) => d.label.toLowerCase() === s.label.toLowerCase())
-								?.color || defaultColor
-						: '#64B42D'
-					: defaultColor}
+			? '#E63719'
+			: active
+				? options
+					? options?.series?.find((d) => d.label.toLowerCase() === s.label.toLowerCase())?.color ||
+						defaultColor
+					: '#64B42D'
+				: defaultColor}
 		{@const faded = color == defaultColor}
 		<circle
 			cx={xScale(s.value)}
@@ -107,6 +166,18 @@
 			onmousedown={handleMouseDown}
 			style={guessMode ? 'cursor: grab;' : ''}
 			class:interactive={guessMode}
+			data-row-index={index}
+			data-tippy-content={interactiveMode
+				? `<b>${s.label ? (s.label.includes('duties') ? 'U.S. average:' : s.label + ":") : ''}</b> ${s.value ? `${s.value.toFixed(1)}%` : ''}`
+				: ''}
+			onmouseover={() => {
+				hoveredSeries = s.label;
+			}}
+			onmouseout={() => {
+				hoveredSeries = null;
+			}}
+			style:stroke={hoveredSeries == s.label ? '#000' : 'none'}
+			style:stroke-width={hoveredSeries == s.label ? '2' : '0'}
 		/>
 
 		{#if guessMode}

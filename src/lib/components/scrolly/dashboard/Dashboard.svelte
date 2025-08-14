@@ -27,6 +27,7 @@
 	let selectedStateViewOption = $state(null);
 	let guessMode = $derived(activeId == '6-poll-guess');
 	let mapData = $derived(states.filter((d) => d.duty_label == selectedStateViewOption));
+	let hoveredSeries = $state(null);
 
 	let isMountedWithDelay = $state(false);
 
@@ -229,7 +230,7 @@
 
 	const dimensions = $derived({
 		width,
-		height: currentViewData.length * rowHeight + rowHeight*2,
+		height: currentViewData.length * rowHeight + rowHeight * 2,
 		margins: {
 			top: 15,
 			right: 75,
@@ -251,7 +252,6 @@
 	let dashboardHeight = $state(null);
 	let controlsHeight = $state(null);
 	let axisHeight = 50;
-
 
 	let chartContainerHeight = $derived(
 		interactiveMode && isMountedWithDelay
@@ -328,7 +328,9 @@
 							options={options.find((o) => o.value === activeView)}
 							circleTransition={activeView == 'state' || (interactiveMode && !isMountedWithDelay)
 								? 'fill 0.5s ease-out'
-								: 'all 0.5s ease-out'}
+								: 'fill 0.5s ease-out, cx 0.5s ease-out'}
+							{interactiveMode}
+							bind:hoveredSeries
 						/>
 					{/each}
 				</g>
