@@ -25,40 +25,37 @@
 	} = $props();
 
 	let isDragging = $state(false);
-	let dragStartX = $state(0);
 	let tippyInstances = $state([]);
+	let svgEl = $state(null);
 
 	function handleMouseDown(event) {
 		if (!guessMode) return;
 		isDragging = true;
 		event.preventDefault();
+		svgEl = event.target.ownerSVGElement;
 	}
 
 	function handleMouseMove(event) {
-		if (!guessMode || !isDragging) return;
+		if (!guessMode || !isDragging || !svgEl) return;
 
-		// Calculate position directly from mouse position relative to scale range
-		const mouseX = event.clientX;
-		const scaleRange = xScale.range();
-		const scaleDomain = xScale.domain();
+		const svgRect = svgEl.getBoundingClientRect();
+		const mouseX = event.clientX - svgRect.left;
+		const newValue = xScale.invert(mouseX);
 
-		// Convert mouse position to value (0-100)
-		const normalizedX = (mouseX - scaleRange[0]) / (scaleRange[1] - scaleRange[0]);
-		const newValue = Math.max(0, Math.min(100, normalizedX * 100));
-
-		console.log(normalizedX);
+		const clampedValue = Math.max(0, Math.min(100, newValue));
 
 		// Update the series value
 		if (series[0]) {
-			series[0].value = newValue;
+			series[0].value = clampedValue;
 		}
 
-		$userResponse.guess = newValue;
+		$userResponse.guess = clampedValue;
 	}
 
 	function handleMouseUp() {
 		if (!guessMode) return;
 		isDragging = false;
+		svgEl = null;
 	}
 
 	// Add global mouse event listeners
