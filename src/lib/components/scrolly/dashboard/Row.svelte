@@ -46,6 +46,8 @@
 		const normalizedX = (mouseX - scaleRange[0]) / (scaleRange[1] - scaleRange[0]);
 		const newValue = Math.max(0, Math.min(100, normalizedX * 100));
 
+		console.log(normalizedX);
+
 		// Update the series value
 		if (series[0]) {
 			series[0].value = newValue;

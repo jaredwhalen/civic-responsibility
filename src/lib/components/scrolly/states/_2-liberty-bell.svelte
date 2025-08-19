@@ -81,6 +81,7 @@
 		top: -10%;
 		right: -15%;
 		position: absolute;
+		transition: opacity 0.5s ease-in-out;
     
 	}
 </style>
