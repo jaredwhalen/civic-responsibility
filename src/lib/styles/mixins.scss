@@ -1,7 +1,48 @@
 // Global SASS Mixins
 // This file contains shared mixins that can be imported by other components
 
-// Responsive breakpoint mixin
+// Breakpoint variables
+$breakpoints: (
+	'mobile': 767px,
+	'tablet': 1023px,
+	'desktop': 1279px,
+	'small-mobile': 480px,
+	'large-mobile': 767px,
+	'small-tablet': 899px,
+	'large-tablet': 1023px,
+	'small-desktop': 1279px,
+	'large-desktop': 1280px
+);
+
+// Main media query function
+@function mq($breakpoint, $type: 'min') {
+	@if not map-has-key($breakpoints, $breakpoint) {
+		@error "Unknown breakpoint: #{$breakpoint}. Available breakpoints: #{map-keys($breakpoints)}";
+	}
+	
+	$value: map-get($breakpoints, $breakpoint);
+	
+	@if $type == 'max' {
+		@return $value;
+	} @else if $type == 'min' {
+		@return $value;
+	} @else {
+		@error "Invalid type: #{$type}. Use 'min' or 'max'";
+	}
+}
+
+// Media query mixin
+@mixin mq($breakpoint, $type: 'min') {
+	$value: mq($breakpoint, $type);
+	
+	@if $type == 'max' {
+		@media (max-width: $value) { @content; }
+	} @else {
+		@media (min-width: $value) { @content; }
+	}
+}
+
+// Legacy responsive breakpoint mixin (keeping for backward compatibility)
 @mixin respond-to($breakpoint) {
 	@if $breakpoint == sm {
 		@media (min-width: $breakpoint-sm) { @content; }
@@ -14,6 +55,29 @@
 	} @else if $breakpoint == 2xl {
 		@media (min-width: $breakpoint-2xl) { @content; }
 	}
+}
+
+// Orientation mixins
+@mixin portrait {
+	@media (orientation: portrait) { @content; }
+}
+
+@mixin landscape {
+	@media (orientation: landscape) { @content; }
+}
+
+// Touch device detection
+@mixin touch-device {
+	@media (hover: none) and (pointer: coarse) { @content; }
+}
+
+@mixin non-touch-device {
+	@media (hover: hover) and (pointer: fine) { @content; }
+}
+
+// High DPI displays
+@mixin retina {
+	@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { @content; }
 }
 
 // Button mixin

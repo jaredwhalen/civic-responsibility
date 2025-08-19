@@ -31,6 +31,9 @@
 
 	// Get the correct component for the current activeId
 	let ActiveComponent = $derived(components[activeId]);
+	
+	// Generate accessible background description
+	const backgroundDescription = $derived(`Background visual for ${activeId || 'current slide'}`);
 </script>
 
 {#if showDashboard}
@@ -39,13 +42,22 @@
 		class:visible={showDashboard}
 		in:fade={{ duration: 500, delay: 500 }}
 		out:fade={{ duration: 0 }}
+		role="region"
+		aria-label="Interactive dashboard"
+		aria-describedby="dashboard-content"
 	>
+
 		<Dashboard {activeId} bind:interactiveMode />
 	</div>
 {/if}
 
 {#key activeId}
-	<div class="scrolly-bg">
+	<div 
+		class="scrolly-bg"
+		role="presentation"
+		aria-label={backgroundDescription}
+		aria-hidden="true"
+	>
 		<div class="scrolly-bg-inner">
 			{#if ActiveComponent}
 				<ActiveComponent {offset} />
@@ -55,6 +67,8 @@
 {/key}
 
 <style lang="scss">
+	@import '$lib/styles/mixins.scss';
+	
 	.scrolly-bg {
 		position: sticky;
 		top: 0;
@@ -66,6 +80,15 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+
+		// Mobile responsive - full width
+		@include mq('mobile', 'max') {
+			left: 0;
+			width: 100%;
+			position: relative;
+		}
+
+
 
 		.scrolly-bg-inner {
 			width: 100%;
@@ -88,5 +111,10 @@
 			opacity: 1;
 			pointer-events: auto;
 		}
+		
+
 	}
+	
+
+
 </style>
