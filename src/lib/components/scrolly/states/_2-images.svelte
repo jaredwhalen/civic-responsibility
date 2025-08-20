@@ -39,7 +39,9 @@
 			object-fit: contain; // Ensure images fit within their container
 			// border: 1px solid $color-theme-blue;
 			// box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
-
+			background-color: $color-beacon-white;
+			border: 1px solid $color-theme-blue;
+			padding: 10px;
 			&:nth-of-type(1) {
 				transform: translateX(100px);
 			}
