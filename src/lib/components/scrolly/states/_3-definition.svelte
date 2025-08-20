@@ -102,7 +102,7 @@
     font-size: 2.5rem;
     margin: 0 0 1rem 0;
     line-height: 1.2;
-    color: $color-beacon-yellow;
+    color: $color-theme-blue;
     font-family: $font-family-body;
   }
 
@@ -111,7 +111,6 @@
     margin: 0;
     line-height: 1.4;
     font-weight: normal;
-    color: $color-beacon-white;
     font-family: $font-family-body;
   }
 

@@ -66,7 +66,7 @@
 	<meta name="description" content={meta.description || 'Interactive civic responsibility exploration'}>
 </svelte:head>
 
-<main style:--bg-color={'#f7f3ee'} role="main" aria-label="Civic Responsibility Interactive Experience">
+<main style:--bg-color={'#d1dfed'} role="main" aria-label="Civic Responsibility Interactive Experience">
 	<header class="main-header" role="banner" aria-label="Site navigation">
 		<div class="header-left">
 			<!-- <button class="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="main-menu">
@@ -192,10 +192,10 @@
 			transition: background-color 0.75s ease;
 
 			&[data-theme='default'] {
-				background: $color-bg-light;
+				background: $color-theme-light;
 			}
 			&[data-theme='dark'] {
-				background-color: $color-beacon-dark-green;
+				background-color: $color-theme-dark;
 			}
 		}
 
@@ -208,23 +208,23 @@
 			&[data-theme='default'] {
 				color: #000;
 				.slide-inner p {
-					background: $color-bg-light;
+					// background: $color-theme-light;
 				}
 			}
 			&[data-theme='dark'] {
-				color: $color-beacon-white;
+				// color: $color-beacon-white;
 				.slide-inner p {
-					background: $color-beacon-dark-green;
+					// background: $color-beacon-dark-green;
 				}
 			}
 
 			&[data-theme='green'] {
 				// $color-beacon-light-green: #64B42D;
 				// $color-beacon-dark-green: #233219;
-				background: #233219e6;
-				color: $color-beacon-white;
+				background: $color-theme-transition;
+				// color: $color-beacon-white;
 				.slide-inner p {
-					background: $color-beacon-dark-green;
+					// background: $color-beacon-dark-green;
 				}
 			}
 
@@ -352,7 +352,7 @@
 		width: 100vw;
 		height: 100vh;
 		z-index: 9999;
-		background: $color-beacon-light-green;
+		background: $color-theme-blue;
 		box-sizing: border-box;
 		padding: 0px;
 
@@ -366,7 +366,7 @@
 		.dashboard-overlay-content {
 			width: 100%;
 			height: 100%;
-			background: $color-bg-light;
+			background: $color-theme-light;
 			border-radius: 4px;
 			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 			overflow: hidden;

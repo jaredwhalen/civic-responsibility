@@ -46,6 +46,7 @@
 		height: 12px;
 		border-radius: 50%;
 		flex-shrink: 0;
+		border: 1px solid #aaa;
 	}
 
 	.legend-label {

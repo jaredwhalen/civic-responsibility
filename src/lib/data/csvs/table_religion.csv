@@ -18,7 +18,7 @@
 "Agnostic","Loving America",34.6559539818445
 "Agnostic","Making the most of your opportunities",37.3914509716172
 "Agnostic","Connecting across differences",48.1068147438593
-"Agnostic","Being grateful for your opportunities as an American",47.0704427183295
+"Agnostic","Being grateful for your opportunities",47.0704427183295
 "Agnostic","Honoring the flag",59.8609758215942
 "Agnostic","Welcoming refugees",64.4752407201584
 "Agnostic","Paying your taxes",91.543386187085
@@ -48,7 +48,7 @@
 "Atheist","Loving America",30.3793793537066
 "Atheist","Making the most of your opportunities",45.119345852805
 "Atheist","Connecting across differences",57.4619626620675
-"Atheist","Being grateful for your opportunities as an American",45.3358871784124
+"Atheist","Being grateful for your opportunities",45.3358871784124
 "Atheist","Honoring the flag",51.3587961319953
 "Atheist","Welcoming refugees",60.4365178996794
 "Atheist","Paying your taxes",88.408726951539
@@ -78,7 +78,7 @@
 "Buddhist","Loving America",54.4846847010384
 "Buddhist","Making the most of your opportunities",55.8425182497231
 "Buddhist","Connecting across differences",69.5099726193173
-"Buddhist","Being grateful for your opportunities as an American",69.680368911811
+"Buddhist","Being grateful for your opportunities",69.680368911811
 "Buddhist","Honoring the flag",70.8000610316977
 "Buddhist","Welcoming refugees",56.4763279548764
 "Buddhist","Paying your taxes",78.1918634118432
@@ -108,7 +108,7 @@
 "Eastern or Greek Orthodox","Loving America",59.5729024794655
 "Eastern or Greek Orthodox","Making the most of your opportunities",44.5215662855387
 "Eastern or Greek Orthodox","Connecting across differences",35.9402620090476
-"Eastern or Greek Orthodox","Being grateful for your opportunities as an American",45.9130630689701
+"Eastern or Greek Orthodox","Being grateful for your opportunities",45.9130630689701
 "Eastern or Greek Orthodox","Honoring the flag",73.9023029001187
 "Eastern or Greek Orthodox","Welcoming refugees",50.8711821935815
 "Eastern or Greek Orthodox","Paying your taxes",86.5177818231836
@@ -138,7 +138,7 @@
 "Hindu","Loving America",77.2241174517648
 "Hindu","Making the most of your opportunities",61.6916435502507
 "Hindu","Connecting across differences",86.8941907992597
-"Hindu","Being grateful for your opportunities as an American",88.3446028857538
+"Hindu","Being grateful for your opportunities",88.3446028857538
 "Hindu","Honoring the flag",90.9919411073681
 "Hindu","Welcoming refugees",55.0296939036957
 "Hindu","Paying your taxes",82.1878664636272
@@ -168,7 +168,7 @@
 "Jewish","Loving America",48.0263861696721
 "Jewish","Making the most of your opportunities",43.9399272027991
 "Jewish","Connecting across differences",53.3186457855069
-"Jewish","Being grateful for your opportunities as an American",54.7410564560709
+"Jewish","Being grateful for your opportunities",54.7410564560709
 "Jewish","Honoring the flag",71.0353130528086
 "Jewish","Welcoming refugees",57.2692977031791
 "Jewish","Paying your taxes",93.4356914612201
@@ -198,7 +198,7 @@
 "Mormon","Loving America",47.2700460566612
 "Mormon","Making the most of your opportunities",42.1965762725254
 "Mormon","Connecting across differences",43.430072593027
-"Mormon","Being grateful for your opportunities as an American",66.8012835695616
+"Mormon","Being grateful for your opportunities",66.8012835695616
 "Mormon","Honoring the flag",87.0458300557397
 "Mormon","Welcoming refugees",41.8436230041016
 "Mormon","Paying your taxes",88.7572527958612
@@ -228,7 +228,7 @@
 "Muslim","Loving America",72.8439726170416
 "Muslim","Making the most of your opportunities",74.2695327643475
 "Muslim","Connecting across differences",71.5014427400508
-"Muslim","Being grateful for your opportunities as an American",79.3484264168777
+"Muslim","Being grateful for your opportunities",79.3484264168777
 "Muslim","Honoring the flag",80.2155429965425
 "Muslim","Welcoming refugees",70.1277141585506
 "Muslim","Paying your taxes",85.4396625216374
@@ -258,7 +258,7 @@
 "Nothing in particular","Loving America",52.343303806251
 "Nothing in particular","Making the most of your opportunities",48.6070514996493
 "Nothing in particular","Connecting across differences",55.9342272325813
-"Nothing in particular","Being grateful for your opportunities as an American",58.0934124262346
+"Nothing in particular","Being grateful for your opportunities",58.0934124262346
 "Nothing in particular","Honoring the flag",69.2110667181779
 "Nothing in particular","Welcoming refugees",45.1157658438007
 "Nothing in particular","Paying your taxes",84.3454703793421
@@ -288,7 +288,7 @@
 "Protestant","Loving America",62.384412671157
 "Protestant","Making the most of your opportunities",41.9991084790053
 "Protestant","Connecting across differences",44.9554684380622
-"Protestant","Being grateful for your opportunities as an American",62.3705327790057
+"Protestant","Being grateful for your opportunities",62.3705327790057
 "Protestant","Honoring the flag",84.084657059228
 "Protestant","Welcoming refugees",38.947462109212
 "Protestant","Paying your taxes",92.3920051690422
@@ -318,7 +318,7 @@
 "Roman Catholic","Loving America",63.9092818775255
 "Roman Catholic","Making the most of your opportunities",46.8561099411868
 "Roman Catholic","Connecting across differences",52.4749394303097
-"Roman Catholic","Being grateful for your opportunities as an American",64.5336982627856
+"Roman Catholic","Being grateful for your opportunities",64.5336982627856
 "Roman Catholic","Honoring the flag",83.7498776509798
 "Roman Catholic","Welcoming refugees",43.3361935312142
 "Roman Catholic","Paying your taxes",90.1326822537454
@@ -348,7 +348,7 @@
 "Something else","Loving America",63.0828890768543
 "Something else","Making the most of your opportunities",50.1315959072801
 "Something else","Connecting across differences",54.7834922045702
-"Something else","Being grateful for your opportunities as an American",66.4455718827145
+"Something else","Being grateful for your opportunities",66.4455718827145
 "Something else","Honoring the flag",81.8266729068981
 "Something else","Welcoming refugees",42.5475292992734
 "Something else","Paying your taxes",89.222305470558

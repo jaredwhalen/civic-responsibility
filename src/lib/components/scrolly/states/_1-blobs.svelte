@@ -1,6 +1,6 @@
 <script>
 	import { run } from 'svelte/legacy';
-
+	import { getCSSVar } from '$lib/helpers/getCSSVar';
 	import { onMount, tick } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import * as d3 from 'd3';
@@ -90,10 +90,10 @@
 	});
 </script>
 
-<div class="inner-container">
+<div class="inner-container" in:fade|global={{ duration: 400, delay: 500 }}>
 	<svg bind:this={svgContainer} width="100%" height={height} transition:fade|global={{ duration: 400 }}>
-		<path bind:this={democratLine} fill="#2C71B0" opacity="0.6" />
-		<path bind:this={republicanLine} fill="#CC2724" opacity="0.6" />
+		<path bind:this={democratLine} fill={getCSSVar('--color-theme-blue')} opacity="0.5" />
+		<path bind:this={republicanLine} fill={getCSSVar('--color-theme-red')} opacity="0.5" />
 	</svg>
 </div>
 

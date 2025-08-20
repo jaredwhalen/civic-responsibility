@@ -18,7 +18,7 @@
 "Asian","Loving America",61.6832217727831
 "Asian","Making the most of your opportunities",51.9917666925334
 "Asian","Connecting across differences",62.9721926572393
-"Asian","Being grateful for your opportunities as an American",63.836133483514
+"Asian","Being grateful for your opportunities",63.836133483514
 "Asian","Honoring the flag",77.4053341645207
 "Asian","Welcoming refugees",54.7241191503767
 "Asian","Paying your taxes",85.695706067836
@@ -48,7 +48,7 @@
 "Black","Loving America",57.0525220950901
 "Black","Making the most of your opportunities",57.7437919265393
 "Black","Connecting across differences",58.393058063008
-"Black","Being grateful for your opportunities as an American",59.6651385556911
+"Black","Being grateful for your opportunities",59.6651385556911
 "Black","Honoring the flag",70.9552251003727
 "Black","Welcoming refugees",48.3225621363109
 "Black","Paying your taxes",85.4629183070382
@@ -78,7 +78,7 @@
 "Hispanic","Loving America",56.7401639535631
 "Hispanic","Making the most of your opportunities",55.008685674838
 "Hispanic","Connecting across differences",59.9327801508913
-"Hispanic","Being grateful for your opportunities as an American",66.9804927288229
+"Hispanic","Being grateful for your opportunities",66.9804927288229
 "Hispanic","Honoring the flag",73.1210545481025
 "Hispanic","Welcoming refugees",50.7137673071047
 "Hispanic","Paying your taxes",87.0372042023069
@@ -108,7 +108,7 @@
 "Mixed race","Loving America",56.1192155889191
 "Mixed race","Making the most of your opportunities",47.2805492257078
 "Mixed race","Connecting across differences",61.9274968064146
-"Mixed race","Being grateful for your opportunities as an American",56.5757121940516
+"Mixed race","Being grateful for your opportunities",56.5757121940516
 "Mixed race","Honoring the flag",79.8863709001
 "Mixed race","Welcoming refugees",53.9140406673825
 "Mixed race","Paying your taxes",79.9997677824179
@@ -138,7 +138,7 @@
 "Native American","Loving America",53.9081237746201
 "Native American","Making the most of your opportunities",40.2588226355637
 "Native American","Connecting across differences",53.795079775145
-"Native American","Being grateful for your opportunities as an American",36.851671491859
+"Native American","Being grateful for your opportunities",36.851671491859
 "Native American","Honoring the flag",71.3786439233517
 "Native American","Welcoming refugees",44.6584079305124
 "Native American","Paying your taxes",75.0534741863431
@@ -168,7 +168,7 @@
 "Native Hawaiian","Loving America",65.0646949726784
 "Native Hawaiian","Making the most of your opportunities",68.6105434526574
 "Native Hawaiian","Connecting across differences",74.0834959314671
-"Native Hawaiian","Being grateful for your opportunities as an American",69.9910301450413
+"Native Hawaiian","Being grateful for your opportunities",69.9910301450413
 "Native Hawaiian","Honoring the flag",84.1524864477055
 "Native Hawaiian","Welcoming refugees",66.0893928663906
 "Native Hawaiian","Paying your taxes",88.8676352890123
@@ -198,7 +198,7 @@
 "Other","Loving America",65.0905503671417
 "Other","Making the most of your opportunities",47.7704722996083
 "Other","Connecting across differences",54.848156373606
-"Other","Being grateful for your opportunities as an American",75.7878565597601
+"Other","Being grateful for your opportunities",75.7878565597601
 "Other","Honoring the flag",72.4269120895987
 "Other","Welcoming refugees",20.694609334422
 "Other","Paying your taxes",88.7985290826572
@@ -228,7 +228,7 @@
 "White","Loving America",57.8526007549127
 "White","Making the most of your opportunities",41.4776644386469
 "White","Connecting across differences",47.4006624541944
-"White","Being grateful for your opportunities as an American",60.449534779771
+"White","Being grateful for your opportunities",60.449534779771
 "White","Honoring the flag",79.9699528745302
 "White","Welcoming refugees",42.2602855864676
 "White","Paying your taxes",91.453534608236

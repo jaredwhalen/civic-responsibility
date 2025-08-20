@@ -18,7 +18,7 @@
 "2-year college degree","Loving America",59.8763403301197
 "2-year college degree","Making the most of your opportunities",48.4263179638621
 "2-year college degree","Connecting across differences",51.4538950669574
-"2-year college degree","Being grateful for your opportunities as an American",64.2206374797894
+"2-year college degree","Being grateful for your opportunities",64.2206374797894
 "2-year college degree","Honoring the flag",72.9933092294971
 "2-year college degree","Welcoming refugees",40.3956209942259
 "2-year college degree","Paying your taxes",91.7650477287466
@@ -48,7 +48,7 @@
 "4-year college degree","Loving America",55.6777668556797
 "4-year college degree","Making the most of your opportunities",38.2640786830207
 "4-year college degree","Connecting across differences",47.9532801320251
-"4-year college degree","Being grateful for your opportunities as an American",54.9191249240374
+"4-year college degree","Being grateful for your opportunities",54.9191249240374
 "4-year college degree","Honoring the flag",75.6557386194971
 "4-year college degree","Welcoming refugees",45.4226913588146
 "4-year college degree","Paying your taxes",92.0555195337583
@@ -78,7 +78,7 @@
 "Did not graduate from high school","Loving America",61.9123133451589
 "Did not graduate from high school","Making the most of your opportunities",53.9051404146978
 "Did not graduate from high school","Connecting across differences",59.0403252677656
-"Did not graduate from high school","Being grateful for your opportunities as an American",72.715904786008
+"Did not graduate from high school","Being grateful for your opportunities",72.715904786008
 "Did not graduate from high school","Honoring the flag",78.9404373334598
 "Did not graduate from high school","Welcoming refugees",47.0980766959532
 "Did not graduate from high school","Paying your taxes",80.8812476163774
@@ -108,7 +108,7 @@
 "High school graduate","Loving America",59.0242364424275
 "High school graduate","Making the most of your opportunities",53.954011029816
 "High school graduate","Connecting across differences",55.757561198817
-"High school graduate","Being grateful for your opportunities as an American",64.6032703680159
+"High school graduate","Being grateful for your opportunities",64.6032703680159
 "High school graduate","Honoring the flag",78.9942944025852
 "High school graduate","Welcoming refugees",45.4624494149831
 "High school graduate","Paying your taxes",85.3439263818665
@@ -138,7 +138,7 @@
 "Postgraduate degree (MA, MBA, MD, JD, PhD, etc.)","Loving America",53.9495349756511
 "Postgraduate degree (MA, MBA, MD, JD, PhD, etc.)","Making the most of your opportunities",42.9625349325786
 "Postgraduate degree (MA, MBA, MD, JD, PhD, etc.)","Connecting across differences",52.0853821594709
-"Postgraduate degree (MA, MBA, MD, JD, PhD, etc.)","Being grateful for your opportunities as an American",56.9108759419391
+"Postgraduate degree (MA, MBA, MD, JD, PhD, etc.)","Being grateful for your opportunities",56.9108759419391
 "Postgraduate degree (MA, MBA, MD, JD, PhD, etc.)","Honoring the flag",77.5579695626614
 "Postgraduate degree (MA, MBA, MD, JD, PhD, etc.)","Welcoming refugees",51.8567055114787
 "Postgraduate degree (MA, MBA, MD, JD, PhD, etc.)","Paying your taxes",93.2518659965734
@@ -168,7 +168,7 @@
 "Some college, but no degree","Loving America",57.9528371879128
 "Some college, but no degree","Making the most of your opportunities",44.951869364406
 "Some college, but no degree","Connecting across differences",51.1627469971238
-"Some college, but no degree","Being grateful for your opportunities as an American",61.5616426805984
+"Some college, but no degree","Being grateful for your opportunities",61.5616426805984
 "Some college, but no degree","Honoring the flag",79.6114120214464
 "Some college, but no degree","Welcoming refugees",43.707117049563
 "Some college, but no degree","Paying your taxes",89.9836877403115

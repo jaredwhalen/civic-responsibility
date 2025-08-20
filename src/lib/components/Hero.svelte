@@ -40,7 +40,9 @@
 				<!-- <span class="scroll-indicator">↓ Scroll down </span> -->
 			</div>
 
-		<span class="scroll-indicator" transition:fade={{ duration: 500, delay: 600 }}>↓ Scroll down </span>
+			<span class="scroll-indicator" transition:fade={{ duration: 500, delay: 600 }}
+				>↓ Scroll down
+			</span>
 		{/if}
 	</div>
 </section>
@@ -75,8 +77,10 @@
 			left: 0;
 			width: 100%;
 			height: 100%;
-			background: radial-gradient(circle, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
-			// background: #19477a;
+			// background: radial-gradient(circle, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 80%);
+			background: #000;
+			background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.6) 100%);
+			// background: #64707d;
 			// background: linear-gradient(
 			// 	144deg,
 			// 	rgba(192, 36, 17, 1) 0%,
@@ -151,6 +155,8 @@
 				justify-content: center;
 				padding-left: 50px;
 				padding-bottom: 100px;
+				// text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);z
+
 				h1 {
 					display: inline-block;
 					margin: 0px;
@@ -171,33 +177,32 @@
 						bottom: 0.5vw;
 						left: 0;
 						z-index: -1;
-						
+
 						// Animated highlight that grows from left to right
 						transform: scaleX(0);
 						transform-origin: left;
 						animation: highlightGrow 0.5s ease-out forwards;
+						animation-delay: 500ms; // Start after first text appears
+						// box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 					}
 
 					// border: 4px solid $color-beacon-white;
 
 					&:nth-child(1) {
 						&::after {
-							background-color: #0a264e;
-							animation-delay: 500ms; // Start after first text appears
+							background-color: $color-theme-blue;
 						}
 					}
 
 					&:nth-child(2) {
 						&::after {
-							background-color: #c02411;
-							animation-delay: 500ms; // Start after second text appears
+							background-color: $color-theme-red;
 						}
 					}
 
 					&:nth-child(3) {
 						&::after {
-							background-color: #0a264e;
-							animation-delay: 500ms; // Start after third text appears
+							background-color: $color-theme-blue;
 						}
 					}
 				}
@@ -279,7 +284,7 @@
 	// 		transform: translateY(-5px);
 	// 	}
 	// }
-	
+
 	// Keyframe animation for highlight growth
 	@keyframes highlightGrow {
 		0% {
@@ -289,7 +294,7 @@
 			transform: scaleX(1);
 		}
 	}
-	
+
 	// Reduced motion support for accessibility
 	@media (prefers-reduced-motion: reduce) {
 		h1::after {

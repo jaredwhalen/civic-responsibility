@@ -15,21 +15,38 @@ $color-beacon-dark-green: #233219;
 $color-beacon-yellow: #FAD246;
 $color-beacon-orange: #E63719;
 $color-beacon-white: #F5F5F5;
-$color-bg-light: $color-beacon-white;
 
 
+
+:root {
+    // --color-theme-light: #EDE6DE;
+    --color-theme-light: #e3e3e3;
+    --color-theme-dark: #373737;
+    --color-theme-red: #d13c28;
+    --color-theme-blue: #1a3863;
+    --color-theme-yellow: #FAD246;
+    --color-theme-green: #64B42D;
+}
+
+
+$color-theme-light: var(--color-theme-light);
+$color-theme-dark: var(--color-theme-dark);
+$color-theme-red: var(--color-theme-red);
+$color-theme-blue: var(--color-theme-blue);
+$color-theme-yellow: var(--color-theme-yellow);
+$color-theme-transition: #1a3863e6;
 
 // Neutral colors
 $text-color: #2c3e50;
 $text-light: #7f8c8d;
-$background-color: #f8f9fa;
+$background-color: #ced8e1;
 $border-color: #ecf0f1;
 
 // Typography
 $font-family-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 $font-family-mono: 'Courier New', Courier, monospace;
 $font-family-title: "Poppins", sans-serif;
-$font-family-body: 'Cormorant', serif;
+$font-family-body: "Poppins", sans-serif;
 $font-family-mono: 'Sono', sans-serif;
 $font-family-sans: 'Raleway', sans-serif;
 

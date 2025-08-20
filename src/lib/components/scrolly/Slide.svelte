@@ -18,35 +18,30 @@
 	}
 
 	let { content, cls = '', index, interactiveMode = $bindable() } = $props();
-	
+
 	// Generate accessible slide title and description
 	const slideTitle = $derived(content?.title || `Slide ${index + 1}`);
 	const slideDescription = $derived(content?.text ? processTemplate(content.text) : '');
 	const isTransitionSlide = $derived(content?.id === 'transition');
 </script>
 
-<section 
-	class={`slide ${cls}`} 
+<section
+	class={`slide ${cls}`}
 	data-index={index}
 	role="region"
 	aria-label={slideTitle}
 	aria-describedby="slide-content-{index}"
 	aria-live="polite"
 >
-	<div 
-		class="slide-inner"
-		id="slide-content-{index}"
-		role="main"
-		aria-label="Slide content"
-	>
+	<div class="slide-inner" id="slide-content-{index}" role="main" aria-label="Slide content">
 		{#if isTransitionSlide}
 			<Transition bind:interactiveMode />
 		{/if}
-		
+
 		{#if content?.text}
 			<div class="slide-text" role="text">
 				{#each content.text.split('\n') as line, lineIndex}
-					<p 
+					<p
 						id="slide-line-{index}-{lineIndex}"
 						role="paragraph"
 						aria-label="Slide text line {lineIndex + 1}"
@@ -56,7 +51,7 @@
 				{/each}
 			</div>
 		{/if}
-		
+
 		<!-- Screen reader only content for better navigation -->
 		<div class="sr-only" aria-hidden="true">
 			Slide {index + 1} of content
@@ -66,7 +61,7 @@
 
 <style lang="scss">
 	@import '$lib/styles/mixins.scss';
-	
+
 	.slide {
 		height: 100vh;
 		display: flex;
@@ -79,13 +74,17 @@
 
 		.slide-inner {
 			max-width: 500px;
-			margin-left: 2rem;
+			margin-left: 4rem;
 			padding: $spacing-xl;
+			// border-radius: 10px;
+			// box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+			border: 1px solid #999;
 
-			font-size: 2rem;
+			font-size: 1.7rem;
 			line-height: 1.5;
-			font-weight: 300;
+			font-weight: 400;
 			font-family: $font-family-body;
+			background-color: #fff;
 
 			// Mobile responsive adjustments
 			@include mq('mobile', 'max') {
@@ -97,6 +96,7 @@
 			p {
 				display: inline;
 				transition: background-color 0.75s ease;
+				padding: 0.25rem 0px;
 			}
 		}
 	}
@@ -140,6 +140,37 @@
 			// margin-top: -100vh;
 		}
 
+		.slide {
+			.slide-inner {
+				p {
+					span {
+						&.underline {
+							position: relative;
+							z-index: 1;
+							width: fit-content;
+							display: inline-block;
+							&::after {
+								content: '';
+								display: block;
+								width: 100%;
+								height: 22px;
+								position: absolute;
+								bottom: 0px;
+								z-index: -1;
+							}
+
+							&.yellow {
+								&::after {
+									background-color: $color-theme-yellow;
+									opacity: 0.75;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
 		.slide.transition {
 			justify-content: center;
 			align-items: end;
@@ -148,6 +179,8 @@
 			.slide-inner {
 				max-width: 100%;
 				height: 100%;
+				background: none;
+				border: none;
 
 				padding: 20vh 5rem;
 
@@ -171,11 +204,15 @@
 			font-size: 1rem;
 			font-family: $font-family-sans;
 			margin-top: 20px;
-			
+
 			// Mobile responsive instructions
 			@include mq('mobile', 'max') {
 				font-size: 0.9rem;
 				margin-top: 15px;
+			}
+
+			.dot {
+				color: $color-theme-red;
 			}
 		}
 	}

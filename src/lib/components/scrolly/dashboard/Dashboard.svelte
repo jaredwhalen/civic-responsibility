@@ -7,6 +7,8 @@
 
 	import { interpolateRgb } from 'd3-interpolate';
 
+	import { getCSSVar } from '$lib/helpers/getCSSVar';
+
 	// components
 	import Controls from './Controls.svelte';
 	import GroupLegend from './GroupLegend.svelte';
@@ -20,13 +22,15 @@
 	import race from '$lib/data/csvs/table_racegroup.csv';
 	import pid from '$lib/data/csvs/table_pid3.csv';
 	import states from '$lib/data/csvs/mean_duties_weighted_by_state.csv';
+	import { get } from 'svelte/store';
 
 	let { activeId, interactiveMode = $bindable(), animateMount = true } = $props();
 	let activeView = $state('mean');
 	let selectedStateView = $state('chart');
-	let selectedStateViewOption = $state(null);
+	let selectedStateChartViewOptions = $state([]);
+	let selectedStateMapViewOption = $state(null);
 	let guessMode = $derived(activeId == '6-poll-guess');
-	let mapData = $derived(states.filter((d) => d.duty_label == selectedStateViewOption));
+	let mapData = $derived(states.filter((d) => d.duty_label == selectedStateMapViewOption));
 	let hoveredSeries = $state(null);
 
 	let isMountedWithDelay = $state(false);
@@ -45,10 +49,17 @@
 		}
 	});
 
-	// Set initial selectedStateViewOption when states data is available
+	// Set initial selectedStateMapViewOption when states data is available
 	$effect(() => {
 		if (states && states.length > 0) {
-			selectedStateViewOption = states[0].state;
+			selectedStateMapViewOption = states[0].state;
+		}
+	});
+
+	// Initialize selectedStateChartViewOptions when switching to chart view
+	$effect(() => {
+		if (selectedStateView === 'chart') {
+			selectedStateChartViewOptions = [];
 		}
 	});
 
@@ -57,51 +68,53 @@
 			label: 'Gender',
 			value: 'gender',
 			series: [
-				{ label: 'Male', color: '#64B42D' },
-				{ label: 'Female', color: '#FAD246' }
+				{ label: 'Male', color: getCSSVar('--color-theme-blue') },
+				{ label: 'Female', color: getCSSVar('--color-theme-red') }
 			]
 		},
 		{
 			label: 'Generation',
 			value: 'generation',
 			series: [
-				{ label: 'Gen Z', color: '#64B42D' },
-				{ label: 'Millennials', color: '#FAD246' },
-				{ label: 'Gen X', color: '#5C80BC' },
-				{ label: 'Baby Boomers', color: '#E63719' }
+				{ label: 'Gen Z', color: getCSSVar('--color-theme-blue') },
+				{ label: 'Millennials', color: getCSSVar('--color-theme-red') },
+				{ label: 'Gen X', color: getCSSVar('--color-theme-green') },
+				{ label: 'Baby Boomers', color: getCSSVar('--color-theme-yellow') }
 			]
 		},
 		{
 			label: 'Race/Ethnicity',
 			value: 'race',
 			series: [
-				{ label: 'White', color: '#64B42D' },
-				{ label: 'Black', color: '#FAD246' },
-				{ label: 'Hispanic', color: '#5C80BC' },
-				{ label: 'Asian', color: '#E63719' },
-				{ label: 'Other', color: '#ddd' }
+				{ label: 'White', color: getCSSVar('--color-theme-blue') },
+				{ label: 'Black', color: getCSSVar('--color-theme-red') },
+				{ label: 'Hispanic', color: getCSSVar('--color-theme-green') },
+				{ label: 'Asian', color: getCSSVar('--color-theme-yellow') },
+				{ label: 'Other', color: '#dddddd' }
 			]
 		},
 		{
 			label: 'Political Identification',
 			value: 'pid',
 			series: [
-				{ label: 'Democrat', color: '#5C80BC' },
-				{ label: 'Republican', color: '#E63719' },
-				{ label: 'Independent', color: '#FAD246' }
+				{ label: 'Democrat', color: getCSSVar('--color-theme-blue') },
+				{ label: 'Republican', color: getCSSVar('--color-theme-red') },
+				{ label: 'Independent', color: getCSSVar('--color-theme-yellow') }
 			]
 		},
 		{
 			label: 'State',
 			value: 'state',
-			series: [
-				{
-					label: selectedStateViewOption,
-					color: '#64B42D'
-				}
-			]
+			series: selectedStateView === 'chart' && selectedStateChartViewOptions.length > 0
+				? selectedStateChartViewOptions.map((state, index) => ({
+					label: state,
+					color: [getCSSVar('--color-theme-blue'), getCSSVar('--color-theme-red'), getCSSVar('--color-theme-green')][index % 3] // Cycle through 3 colors
+				}))
+				: [] // Empty array when no states selected
 		}
 	]);
+
+
 
 	// data maps
 	let currentDataMap = {
@@ -126,10 +139,10 @@
 				'Supporting democracy',
 				'Paying your taxes',
 				'Donating to charity',
-				'Fighting for people’s rights',
+				'Fighting for people\'s rights',
 				'Honoring the flag'
 			],
-			highlightArr: ['Fighting for people’s rights', 'Honoring the flag']
+			highlightArr: ['Fighting for people\'s rights', 'Honoring the flag']
 		},
 		'11-outro': [],
 		transition: [],
@@ -211,11 +224,11 @@
 
 	// Sort currentViewData when viewing state data in chart mode
 	let sortedViewData = $derived.by(() => {
-		if (activeView === 'state' && selectedStateView == 'chart') {
-			// Find the state data for the selected state
-			const stateData = states.filter((d) => d.state === selectedStateViewOption);
+		if (activeView === 'state' && selectedStateView == 'chart' && selectedStateChartViewOptions.length > 0) {
+			// Find the state data for the first selected state
+			const stateData = states.filter((d) => d.state === selectedStateChartViewOptions[0]);
 
-			// Sort duties by their values for the selected state (descending)
+			// Sort duties by their values for the first selected state (descending)
 			return [...currentViewData].sort((a, b) => {
 				const aValue = stateData.find((d) => d.duty_label === a.duty_label)?.mean || 0;
 				const bValue = stateData.find((d) => d.duty_label === b.duty_label)?.mean || 0;
@@ -268,7 +281,7 @@
 	const createCustomColorScale = (colors) => {
 		return scaleLinear().domain([0, 100]).range(colors).interpolate(interpolateRgb);
 	};
-	const mapColorScale = createCustomColorScale(['#fff', '#6DA34D']);
+	const mapColorScale = createCustomColorScale([getCSSVar('--color-theme-light'), getCSSVar('--color-theme-blue')]);
 </script>
 
 <div
@@ -283,7 +296,8 @@
 			<Controls
 				bind:activeView
 				bind:selectedStateView
-				bind:selectedStateViewOption
+				bind:selectedStateMapViewOption
+				bind:selectedStateChartViewOptions
 				bind:interactiveMode
 				searchOptions={{
 					states: new Set(states.map((d) => d.state)),
@@ -301,7 +315,7 @@
 	<div class="dashboard-content">
 		{#if interactiveMode && activeView == 'state' && selectedStateView == 'map'}
 			<div class="map-container">
-				<MapViz data={mapData} {width} duty={selectedStateViewOption} colorScale={mapColorScale} />
+				<MapViz data={mapData} {width} duty={selectedStateMapViewOption} colorScale={mapColorScale} />
 			</div>
 		{/if}
 		<div
@@ -327,7 +341,7 @@
 								: false}
 							options={options.find((o) => o.value === activeView)}
 							circleTransition={activeView == 'state' || (interactiveMode && !isMountedWithDelay)
-								? 'fill 0.5s ease-out'
+								? 'fill 0.5s ease-out,'
 								: 'fill 0.5s ease-out, cx 0.5s ease-out'}
 							{interactiveMode}
 							bind:hoveredSeries
@@ -352,7 +366,7 @@
 						<line
 							x1={dimensions.margins.left}
 							x2={width - dimensions.margins.right}
-							stroke="#ddd"
+							stroke="#aaa"
 							stroke-width="2"
 						/>
 						{#each [0, 25, 50, 75, 100] as tickValue}
@@ -361,7 +375,7 @@
 								x2={xScale(tickValue)}
 								y1={0}
 								y2={tickSize}
-								stroke="#ddd"
+								stroke="#aaa"
 								stroke-width="2"
 							/>
 
@@ -401,7 +415,7 @@
 	.map-container {
 		width: 100%;
 		height: 100%;
-		background-color: $color-bg-light;
+		background-color: $color-theme-light;
 		transition: all 0.5s ease;
 
 		position: absolute;
@@ -436,7 +450,7 @@
 			left: 0;
 			right: 0;
 			height: 20px;
-			background: linear-gradient(to bottom, transparent, $color-bg-light);
+			background: linear-gradient(to bottom, transparent, $color-theme-light);
 			pointer-events: none;
 			z-index: 10;
 		}

@@ -18,7 +18,7 @@
 "Midwest","Loving America",53.1807899761244
 "Midwest","Making the most of your opportunities",43.2408776642823
 "Midwest","Connecting across differences",49.0757865437761
-"Midwest","Being grateful for your opportunities as an American",61.1919545395183
+"Midwest","Being grateful for your opportunities",61.1919545395183
 "Midwest","Honoring the flag",75.8204127039474
 "Midwest","Welcoming refugees",40.8039850750478
 "Midwest","Paying your taxes",90.8035907105258
@@ -48,7 +48,7 @@
 "Northeast","Loving America",59.2863478384795
 "Northeast","Making the most of your opportunities",44.7247133225362
 "Northeast","Connecting across differences",50.141189687451
-"Northeast","Being grateful for your opportunities as an American",61.1531457211659
+"Northeast","Being grateful for your opportunities",61.1531457211659
 "Northeast","Honoring the flag",78.0176986605093
 "Northeast","Welcoming refugees",46.6155875364181
 "Northeast","Paying your taxes",92.6326596431465
@@ -78,7 +78,7 @@
 "South","Loving America",57.9674711596925
 "South","Making the most of your opportunities",45.3789147258831
 "South","Connecting across differences",51.4284281884874
-"South","Being grateful for your opportunities as an American",59.4132773631039
+"South","Being grateful for your opportunities",59.4132773631039
 "South","Honoring the flag",77.1308094807641
 "South","Welcoming refugees",42.6852692069678
 "South","Paying your taxes",88.4254905821789
@@ -108,7 +108,7 @@
 "West","Loving America",59.813984303886
 "West","Making the most of your opportunities",52.885261856231
 "West","Connecting across differences",58.5344185268476
-"West","Being grateful for your opportunities as an American",64.9051288958456
+"West","Being grateful for your opportunities",64.9051288958456
 "West","Honoring the flag",78.8140077269008
 "West","Welcoming refugees",53.0797972287664
 "West","Paying your taxes",85.9423168082699

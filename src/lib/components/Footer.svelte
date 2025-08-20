@@ -25,9 +25,9 @@
 
 <style lang="scss">
 .footer-root {
-	background: #2d3b1f;
+	background: $color-theme-blue;
 	color: #fff;
-	padding: 2.5rem 2rem 1.5rem 2rem;
+	padding: 3rem;
 	position: relative;
 	box-shadow: 0 2px 12px rgba(0,0,0,0.12);
 	font-family: $font-family-primary;
