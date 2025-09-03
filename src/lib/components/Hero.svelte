@@ -238,13 +238,13 @@
 			min-width: 44px;
 		}
 
-		&:hover,
-		&:focus {
-			background: rgba(255, 255, 255, 0.1);
-			transform: translateY(-2px);
-			outline: 2px solid rgba(255, 255, 255, 0.3);
-			outline-offset: 2px;
-		}
+		// &:hover,
+		// &:focus {
+		// 	background: rgba(255, 255, 255, 0.1);
+		// 	transform: translateY(-2px);
+		// 	outline: 2px solid rgba(255, 255, 255, 0.3);
+		// 	outline-offset: 2px;
+		// }
 
 		&:active {
 			transform: translateY(0);
