@@ -256,7 +256,7 @@
 		width,
 		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
-			top: 10,
+			top: 15,
 			right: 50,
 			bottom: 0,
 			left: 300
