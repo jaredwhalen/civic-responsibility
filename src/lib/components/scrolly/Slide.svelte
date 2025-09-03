@@ -17,7 +17,7 @@
 		});
 	}
 
-	let { content, cls = '', index, interactiveMode = $bindable() } = $props();
+	let { content, cls = '', index, interactiveMode = $bindable(), noText = false } = $props();
 
 	// Generate accessible slide title and description
 	const slideTitle = $derived(content?.title || `Slide ${index + 1}`);
@@ -33,30 +33,32 @@
 	aria-describedby="slide-content-{index}"
 	aria-live="polite"
 >
-	<div class="slide-inner" id="slide-content-{index}" role="main" aria-label="Slide content">
-		{#if isTransitionSlide}
-			<Transition bind:interactiveMode />
-		{/if}
+	{#if !noText}
+		<div class="slide-inner" id="slide-content-{index}" role="main" aria-label="Slide content">
+			{#if isTransitionSlide}
+				<Transition bind:interactiveMode />
+			{/if}
 
-		{#if content?.text}
-			<div class="slide-text" role="text">
-				{#each content.text.split('\n') as line, lineIndex}
-					<p
-						id="slide-line-{index}-{lineIndex}"
-						role="paragraph"
-						aria-label="Slide text line {lineIndex + 1}"
-					>
-						{@html processTemplate(line)}
-					</p>
-				{/each}
+			{#if content?.text}
+				<div class="slide-text" role="text">
+					{#each content.text.split('\n') as line, lineIndex}
+						<p
+							id="slide-line-{index}-{lineIndex}"
+							role="paragraph"
+							aria-label="Slide text line {lineIndex + 1}"
+						>
+							{@html processTemplate(line)}
+						</p>
+					{/each}
+				</div>
+			{/if}
+
+			<!-- Screen reader only content for better navigation -->
+			<div class="sr-only" aria-hidden="true">
+				Slide {index + 1} of content
 			</div>
-		{/if}
-
-		<!-- Screen reader only content for better navigation -->
-		<div class="sr-only" aria-hidden="true">
-			Slide {index + 1} of content
 		</div>
-	</div>
+	{/if}
 </section>
 
 <style lang="scss">
@@ -68,6 +70,17 @@
 		align-items: center;
 		padding: $spacing-xl 0;
 
+		&::after {
+			content: '';
+			position: absolute;
+			right: 2.5px;
+			width: 10px;
+			height: 10px;
+			background: #000;
+			border-radius: 50%;
+			opacity: 0.3;
+		}
+
 		// &:last-of-type {
 		// 	margin-bottom: 100vh;
 		// }
@@ -76,16 +89,12 @@
 			max-width: 500px;
 			margin-left: 4rem;
 			padding: $spacing-xl;
-			// border-radius: 10px;
-			// box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 			border: 1px solid #999;
-
 			font-size: 1.7rem;
 			line-height: 1.5;
 			font-weight: 400;
 			font-family: $font-family-body;
-			background-color: #fff;
-
+			background-color: rgb(236, 241, 250);
 			// Mobile responsive adjustments
 			@include mq('mobile', 'max') {
 				max-width: 100%;

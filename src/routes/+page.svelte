@@ -3,6 +3,7 @@
 	import Scroller from '$lib/components/scrolly/_Scroller.svelte';
 	import Background from '$lib/components/scrolly/Background.svelte';
 	import Slide from '$lib/components/scrolly/Slide.svelte';
+	import TextFooter from '$lib/components/scrolly/TextFooter.svelte';
 	import Dashboard from '$lib/components/scrolly/dashboard/Dashboard.svelte';
 	import Hero from '$lib/components/Hero.svelte';
 	import Footer from '$lib/components/Footer.svelte';
@@ -14,17 +15,27 @@
 
 	const { meta, content } = copy;
 
-	let count = $state(0);
-	let index = $state(0);
-	let offset = $state(0);
-	let progress = $state(0);
-	let top = 0;
-	let threshold = 0.25;
-	let bottom = 1;
+	// First Scrolly component variables (slidesScroll)
+	let count1 = $state(0);
+	let index1 = $state(0);
+	let offset1 = $state(0);
+	let progress1 = $state(0);
+	let top1 = 0;
+	let threshold1 = 0.25;
+	let bottom1 = 1;
 
-	// content.scrolly.slides.push({id: '9999-dashboard', cls: 'dashboard-faux', showDashboard: true, interactiveBg: true})
+	// Second Scrolly component variables (slidesFixed)
+	let count2 = $state(0);
+	let index2 = $state(0);
+	let offset2 = $state(0);
+	let progress2 = $state(0);
+	let top2 = 0;
+	let threshold2 = 0.25;
+	let bottom2 = 1;
 
-	const activeSlide = $derived(content.scrolly.slides[index]);
+	// Derived variables for each Scrolly component
+	const activeSlide1 = $derived(content.scrolly.slidesScroll[index1]);
+	const activeSlide2 = $derived(content.scrolly.slidesFixed[index2]);
 
 	let interactiveMode = $state(false);
 	let shouldShowOverlay = $state(false);
@@ -62,11 +73,18 @@
 
 <svelte:head>
 	<title>{meta.title}</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-	<meta name="description" content={meta.description || 'Interactive civic responsibility exploration'}>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+	<meta
+		name="description"
+		content={meta.description || 'Interactive civic responsibility exploration'}
+	/>
 </svelte:head>
 
-<main style:--bg-color={'#d1dfed'} role="main" aria-label="Civic Responsibility Interactive Experience">
+<main
+	style:--bg-color={'#d1dfed'}
+	role="main"
+	aria-label="Civic Responsibility Interactive Experience"
+>
 	<header class="main-header" role="banner" aria-label="Site navigation">
 		<div class="header-left">
 			<!-- <button class="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="main-menu">
@@ -74,10 +92,10 @@
 			</button> -->
 		</div>
 		<div class="header-right">
-			<img 
-				class="logo" 
-				src={base + '/assets/icons/Lockup_WhiteWhite.png'} 
-				alt="More in Common" 
+			<img
+				class="logo"
+				src={base + '/assets/icons/Lockup_WhiteWhite.png'}
+				alt="More in Common"
 				role="img"
 				aria-label="More in Common logo"
 			/>
@@ -91,64 +109,60 @@
 	/>
 
 	<!-- Debug Panel -->
-	<!-- <DebugPanel {count} {index} {offset} {progress} /> -->
+	<!-- <DebugPanel {count1} {index1} {offset1} {progress1} /> -->
 
 	{#if shouldShowOverlay}
-		<div 
-			class="dashboard-overlay" 
+		<div
+			class="dashboard-overlay"
 			transition:fade={{ duration: 250 }}
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="dashboard-title"
 			aria-describedby="dashboard-description"
 		>
-			<div class="dashboard-overlay-content {showExpandedModal ? 'expanded' : ''} {$isMobile ? 'mobile' : ''} {$isTablet ? 'tablet' : ''}">
+			<div
+				class="dashboard-overlay-content {showExpandedModal ? 'expanded' : ''} {$isMobile
+					? 'mobile'
+					: ''} {$isTablet ? 'tablet' : ''}"
+			>
 				<div class="dashboard-header">
 					<h2 id="dashboard-title" class="visually-hidden">Interactive Dashboard</h2>
-					<p id="dashboard-description" class="visually-hidden">Explore civic responsibility data and insights</p>
-					<!-- <button 
-						class="close-button"
-						onclick={() => interactiveMode = false}
-						aria-label="Close dashboard"
-						type="button"
-					>
-						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<line x1="18" y1="6" x2="6" y2="18"></line>
-							<line x1="6" y1="6" x2="18" y2="18"></line>
-						</svg>
-					</button> -->
+					<p id="dashboard-description" class="visually-hidden">
+						Explore civic responsibility data and insights
+					</p>
 				</div>
 				<Dashboard activeId="9999-dashboard" bind:interactiveMode animateMount={false} />
 			</div>
 		</div>
 	{/if}
-	
+
+	<!-- First Scrolly Component (slidesScroll) -->
 	<Scroller
-		{top}
-		{threshold}
-		{bottom}
-		bind:count
-		bind:index
-		bind:offset
-		bind:progress
-		interactiveBg={Boolean(activeSlide.interactiveBg)}
+		top={top1}
+		threshold={threshold1}
+		bottom={bottom1}
+		bind:count={count1}
+		bind:index={index1}
+		bind:offset={offset1}
+		bind:progress={progress1}
+		interactiveBg={Boolean(activeSlide1.interactiveBg)}
 		role="region"
-		aria-label="Interactive content scroll area"
+		aria-label="First interactive content scroll area"
 	>
 		{#snippet background()}
-			<div 
-				class="background-container" 
-				data-theme={activeSlide.theme || 'default'}
+			<div
+				class="background-container"
+				data-theme={activeSlide1.theme || 'default'}
 				role="presentation"
 				aria-hidden="true"
 			>
 				<Background
-					{count}
-					{index}
-					{offset}
-					{progress}
-					activeId={activeSlide.id}
-					showDashboard={Boolean(activeSlide.showDashboard)}
+					count={count1}
+					index={index1}
+					offset={offset1}
+					progress={progress1}
+					activeId={activeSlide1.id}
+					showDashboard={Boolean(activeSlide1.showDashboard)}
 					{interactiveMode}
 				/>
 			</div>
@@ -157,17 +171,72 @@
 		{#snippet foreground()}
 			<div
 				class="foreground-container {interactiveMode ? 'interactive-mode' : ''}"
-				data-theme={activeSlide.theme || 'default'}
+				data-theme={activeSlide1.theme || 'default'}
 				role="main"
-				aria-label="Content slides"
+				aria-label="First content slides"
 			>
-				{#each content.scrolly.slides as slide, slideIndex}
-					<Slide 
-						content={slide} 
-						cls="slide-{slideIndex} {slide.cls}" 
-						index={slideIndex} 
-						bind:interactiveMode 
-						aria-label="Slide {slideIndex + 1} of {content.scrolly.slides.length}"
+				{#each content.scrolly.slidesScroll as slide, slideIndex}
+					<Slide
+						content={slide}
+						cls="slide-{slideIndex} {slide.cls}"
+						index={slideIndex}
+						bind:interactiveMode
+						aria-label="Slide {slideIndex + 1} of {content.scrolly.slidesScroll.length}"
+					/>
+				{/each}
+			</div>
+		{/snippet}
+	</Scroller>
+
+	<!-- Second Scrolly Component (slidesFixed) -->
+	<Scroller
+		top={top2}
+		threshold={threshold2}
+		bottom={bottom2}
+		bind:count={count2}
+		bind:index={index2}
+		bind:offset={offset2}
+		bind:progress={progress2}
+		interactiveBg={Boolean(activeSlide2.interactiveBg)}
+		role="region"
+		aria-label="Second interactive content scroll area"
+	>
+		{#snippet background()}
+			<div
+				class="background-container"
+				data-theme={activeSlide2.theme || 'default'}
+				role="presentation"
+				aria-hidden="true"
+			>
+				<Background
+					count={count2}
+					index={index2}
+					offset={offset2}
+					progress={progress2}
+					activeId={activeSlide2.id}
+					showDashboard={Boolean(activeSlide2.showDashboard)}
+					{interactiveMode}
+				/>
+			</div>
+
+			<TextFooter content={activeSlide2} />
+		{/snippet}
+
+		{#snippet foreground()}
+			<div
+				class="foreground-container {interactiveMode ? 'interactive-mode' : ''}"
+				data-theme={activeSlide2.theme || 'default'}
+				role="main"
+				aria-label="Second content slides"
+			>
+				{#each content.scrolly.slidesFixed as slide, slideIndex}
+					<Slide
+						content={slide}
+						cls="slide-{slideIndex} {slide.cls}"
+						index={slideIndex}
+						bind:interactiveMode
+						aria-label="Slide {slideIndex + 1} of {content.scrolly.slidesFixed.length}"
+						noText={slide.noFgText}
 					/>
 				{/each}
 			</div>
@@ -179,7 +248,7 @@
 
 <style lang="scss">
 	@import '$lib/styles/mixins.scss';
-	
+
 	:global {
 		body {
 			background: #f7f3ee;
@@ -396,7 +465,7 @@
 			// Mobile specific styles
 			&.mobile {
 				border-radius: 0;
-				
+
 				&.expanded {
 					border-radius: 8px;
 				}
@@ -485,5 +554,9 @@
 			min-height: 44px;
 			min-width: 44px;
 		}
+	}
+
+	:global(.show-on-interaction) {
+		display: none;
 	}
 </style>

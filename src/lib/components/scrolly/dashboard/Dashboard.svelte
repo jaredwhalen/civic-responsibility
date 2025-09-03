@@ -5,8 +5,9 @@
 	import Row from './Row.svelte';
 	import { userResponse } from '$lib/stores/userResponse.js';
 
+	import { scaleSequential } from 'd3-scale';
 	import { interpolateRgb } from 'd3-interpolate';
-
+	import { interpolateYlGn } from 'd3-scale-chromatic';
 	import { getCSSVar } from '$lib/helpers/getCSSVar';
 
 	// components
@@ -26,7 +27,7 @@
 
 	let { activeId, interactiveMode = $bindable(), animateMount = true } = $props();
 	let activeView = $state('mean');
-	let selectedStateView = $state('chart');
+	let selectedStateView = $state('map');
 	let selectedStateChartViewOptions = $state([]);
 	let selectedStateMapViewOption = $state(null);
 	let guessMode = $derived(activeId == '6-poll-guess');
@@ -69,7 +70,7 @@
 			value: 'gender',
 			series: [
 				{ label: 'Male', color: getCSSVar('--color-theme-blue') },
-				{ label: 'Female', color: getCSSVar('--color-theme-red') }
+				{ label: 'Female', color: getCSSVar('--color-theme-green') }
 			]
 		},
 		{
@@ -77,9 +78,9 @@
 			value: 'generation',
 			series: [
 				{ label: 'Gen Z', color: getCSSVar('--color-theme-blue') },
-				{ label: 'Millennials', color: getCSSVar('--color-theme-red') },
-				{ label: 'Gen X', color: getCSSVar('--color-theme-green') },
-				{ label: 'Baby Boomers', color: getCSSVar('--color-theme-yellow') }
+				{ label: 'Millennials', color: getCSSVar('--color-theme-green') },
+				{ label: 'Gen X', color: getCSSVar('--color-theme-yellow') },
+				{ label: 'Baby Boomers', color: getCSSVar('--color-theme-red') }
 			]
 		},
 		{
@@ -87,9 +88,9 @@
 			value: 'race',
 			series: [
 				{ label: 'White', color: getCSSVar('--color-theme-blue') },
-				{ label: 'Black', color: getCSSVar('--color-theme-red') },
-				{ label: 'Hispanic', color: getCSSVar('--color-theme-green') },
-				{ label: 'Asian', color: getCSSVar('--color-theme-yellow') },
+				{ label: 'Black', color: getCSSVar('--color-theme-green') },
+				{ label: 'Hispanic', color: getCSSVar('--color-theme-yellow') },
+				{ label: 'Asian', color: getCSSVar('--color-theme-red') },
 				{ label: 'Other', color: '#dddddd' }
 			]
 		},
@@ -99,22 +100,25 @@
 			series: [
 				{ label: 'Democrat', color: getCSSVar('--color-theme-blue') },
 				{ label: 'Republican', color: getCSSVar('--color-theme-red') },
-				{ label: 'Independent', color: getCSSVar('--color-theme-yellow') }
+				{ label: 'Independent', color: getCSSVar('#dddddd') }
 			]
 		},
 		{
 			label: 'State',
 			value: 'state',
-			series: selectedStateView === 'chart' && selectedStateChartViewOptions.length > 0
-				? selectedStateChartViewOptions.map((state, index) => ({
-					label: state,
-					color: [getCSSVar('--color-theme-blue'), getCSSVar('--color-theme-red'), getCSSVar('--color-theme-green')][index % 3] // Cycle through 3 colors
-				}))
-				: [] // Empty array when no states selected
+			series:
+				selectedStateView === 'chart' && selectedStateChartViewOptions.length > 0
+					? selectedStateChartViewOptions.map((state, index) => ({
+							label: state,
+							color: [
+								getCSSVar('--color-theme-blue'),
+								getCSSVar('--color-theme-green'),
+								getCSSVar('--color-theme-yellow')
+							][index % 3]
+						}))
+					: [] // Empty array when no states selected
 		}
 	]);
-
-
 
 	// data maps
 	let currentDataMap = {
@@ -139,12 +143,14 @@
 				'Supporting democracy',
 				'Paying your taxes',
 				'Donating to charity',
-				'Fighting for people\'s rights',
+				"Fighting for people's rights",
 				'Honoring the flag'
 			],
-			highlightArr: ['Fighting for people\'s rights', 'Honoring the flag']
+			highlightArr: ["Fighting for people's rights", 'Honoring the flag']
 		},
 		'11-outro': [],
+		'12-outro': [],
+		'13-outro': [],
 		transition: [],
 		'9999-dashboard': []
 	};
@@ -224,7 +230,11 @@
 
 	// Sort currentViewData when viewing state data in chart mode
 	let sortedViewData = $derived.by(() => {
-		if (activeView === 'state' && selectedStateView == 'chart' && selectedStateChartViewOptions.length > 0) {
+		if (
+			activeView === 'state' &&
+			selectedStateView == 'chart' &&
+			selectedStateChartViewOptions.length > 0
+		) {
 			// Find the state data for the first selected state
 			const stateData = states.filter((d) => d.state === selectedStateChartViewOptions[0]);
 
@@ -239,24 +249,19 @@
 	});
 
 	let width = $state(0);
-	const rowHeight = 28;
+	const baseRowHeight = 28;
+	const minRowHeight = 20;
 
 	const dimensions = $derived({
 		width,
-		height: currentViewData.length * rowHeight + rowHeight * 2,
+		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
-			top: 15,
-			right: 75,
+			top: 10,
+			right: 50,
 			bottom: 0,
-			left: 400
+			left: 300
 		}
 	});
-
-	const xScale = $derived(
-		scaleLinear()
-			.domain([0, 100])
-			.range([dimensions.margins.left, width - dimensions.margins.right])
-	);
 
 	const tickSize = 10;
 
@@ -266,22 +271,67 @@
 	let controlsHeight = $state(null);
 	let axisHeight = 50;
 
+	// Calculate dynamic row height based on available space
+	const rowHeight = $derived.by(() => {
+		// if (!dashboardHeight || !controlsHeight) return baseRowHeight;
+
+		const availableHeight = dashboardHeight - axisHeight;
+
+		const requiredHeight =
+			currentViewData.length * baseRowHeight + dimensions.margins.top + dimensions.margins.bottom;
+
+		if (requiredHeight <= availableHeight) {
+			return baseRowHeight;
+		}
+
+		// Calculate height needed per row
+		const calculatedHeight = Math.max(
+			minRowHeight,
+			(availableHeight - dimensions.margins.top - dimensions.margins.bottom) /
+				currentViewData.length
+		);
+
+		return calculatedHeight;
+	});
+
+	// Update dimensions height when rowHeight changes
+	const adjustedDimensions = $derived({
+		...dimensions,
+		height: currentViewData.length * rowHeight + rowHeight * 2
+	});
+
+	$inspect(rowHeight);
+
 	let chartContainerHeight = $derived(
 		interactiveMode && isMountedWithDelay
-			? dimensions.height < dashboardHeight
-				? dimensions.height - axisHeight
+			? adjustedDimensions.height < dashboardHeight
+				? adjustedDimensions.height -
+					axisHeight +
+					dimensions.margins.top +
+					dimensions.margins.bottom
 				: dashboardHeight - controlsHeight - (selectedStateView == 'map' ? 0 : axisHeight)
-			: dimensions.height - axisHeight
+			: adjustedDimensions.height - axisHeight + dimensions.margins.top + dimensions.margins.bottom
 	);
 
 	let chartContainerHeightMaxHeight = $derived(
-		dashboardHeight - controlsHeight - (selectedStateView == 'map' ? 0 : axisHeight)
+		dashboardHeight -
+			(interactiveMode ? controlsHeight : 0) -
+			(selectedStateView == 'map' ? 0 : axisHeight)
+	);
+
+	const xScale = $derived(
+		scaleLinear()
+			.domain([0, 100])
+			.range([dimensions.margins.left, width - dimensions.margins.right])
 	);
 
 	const createCustomColorScale = (colors) => {
 		return scaleLinear().domain([0, 100]).range(colors).interpolate(interpolateRgb);
 	};
-	const mapColorScale = createCustomColorScale([getCSSVar('--color-theme-light'), getCSSVar('--color-theme-blue')]);
+
+	const mapColorScale = scaleSequential().interpolator(interpolateYlGn).domain([0, 100]);
+	// const mapColorScale = createCustomColorScale([getCSSVar('--color-theme-light'), getCSSVar('--color-theme-green')]);
+
 </script>
 
 <div
@@ -304,7 +354,7 @@
 					duties: new Set(transformedData.state.map((d) => d.duty_label))
 				}}
 			/>
-			{#if selectedStateView == 'map'}
+			{#if activeView == 'state' && selectedStateView == 'map'}
 				<GradientLegend colorScale={mapColorScale} />
 			{:else}
 				<GroupLegend options={options.find((o) => o.value === activeView)} {activeView} />
@@ -315,7 +365,12 @@
 	<div class="dashboard-content">
 		{#if interactiveMode && activeView == 'state' && selectedStateView == 'map'}
 			<div class="map-container">
-				<MapViz data={mapData} {width} duty={selectedStateMapViewOption} colorScale={mapColorScale} />
+				<MapViz
+					data={mapData}
+					{width}
+					duty={selectedStateMapViewOption}
+					colorScale={mapColorScale}
+				/>
 			</div>
 		{/if}
 		<div
@@ -323,7 +378,7 @@
 			style:--chart-height="{chartContainerHeight}px"
 			style:--chart-max-height="{chartContainerHeightMaxHeight}px"
 		>
-			<svg {width} height={dimensions.height}>
+			<svg {width} height={adjustedDimensions.height}>
 				<g class="rows">
 					{#each sortedViewData as row, i (row.duty_label)}
 						<Row

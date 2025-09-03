@@ -73,12 +73,12 @@
 
 	const stateViewOptions = [
 		{
-			label: 'Chart',
-			value: 'chart'
-		},
-		{
 			label: 'Map',
 			value: 'map'
+		},
+		{
+			label: 'Chart',
+			value: 'chart'
 		}
 	];
 
@@ -143,7 +143,9 @@
 			// Handle multiple state selection for chart view
 			if (selectedStateChartViewOptions.includes(value)) {
 				// Remove state if already selected
-				selectedStateChartViewOptions = selectedStateChartViewOptions.filter((state) => state !== value);
+				selectedStateChartViewOptions = selectedStateChartViewOptions.filter(
+					(state) => state !== value
+				);
 			} else if (selectedStateChartViewOptions.length < 3) {
 				// Add state if under limit
 				selectedStateChartViewOptions = [...selectedStateChartViewOptions, value];
@@ -161,7 +163,9 @@
 
 	// Remove a specific state from selection
 	function removeState(stateToRemove) {
-		selectedStateChartViewOptions = selectedStateChartViewOptions.filter((state) => state !== stateToRemove);
+		selectedStateChartViewOptions = selectedStateChartViewOptions.filter(
+			(state) => state !== stateToRemove
+		);
 	}
 
 	// Get state abbreviation for display in pills
@@ -219,7 +223,7 @@
 			{#if activeView == 'state'}
 				<div class="dashboard-controls-inner">
 					<div class="dashboard-controls-inner-title">
-						<h3>View type</h3>
+						<h3>Display</h3>
 					</div>
 
 					<div class="dashboard-controls-inner-options">
@@ -239,7 +243,7 @@
 						<h3>View results for</h3>
 					</div>
 
-					<div class="dropdown-container">    
+					<div class="dropdown-container">
 						<button class="dropdown-button" onclick={toggleDropdown} aria-expanded={isDropdownOpen}>
 							<span class="dropdown-arrow" class:is-open={isDropdownOpen}>▼</span>
 							<span class="dropdown-text">
@@ -337,10 +341,10 @@
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				gap: 0.1rem;
+				gap: 0.25rem;
 
 				.dashboard-controls-inner-option {
-					padding: 0.5rem 1rem;
+					padding: 0.5rem 0.5rem;
 					border: none;
 					border-radius: 0.25rem;
 					background: transparent;

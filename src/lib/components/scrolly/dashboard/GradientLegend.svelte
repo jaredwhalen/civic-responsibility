@@ -2,8 +2,6 @@
 	let { colorScale } = $props();
 
 	let range = colorScale.range();
-
-	console.log(range);
 </script>
 
 <div class="legend">
@@ -24,10 +22,9 @@
 	.legend {
 		margin-left: 40px;
 		margin-bottom: 20px;
-	
+
 		width: 100%;
 		max-width: 250px;
-	
 
 		.legend-title {
 			font-size: 14px;

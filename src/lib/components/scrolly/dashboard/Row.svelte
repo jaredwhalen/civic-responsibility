@@ -51,6 +51,7 @@
 		}
 
 		$userResponse.guess = clampedValue;
+		$userResponse.userSubmitted = true;
 	}
 
 	function handleMouseUp() {
@@ -156,7 +157,7 @@
 						defaultColor
 					: getCSSVar('--color-theme-blue')
 				: defaultColor}
-		{@const faded = color == defaultColor}
+		<!-- {@const faded = color == defaultColor} -->
 		<circle
 			cx={xScale(s.value)}
 			cy="0"

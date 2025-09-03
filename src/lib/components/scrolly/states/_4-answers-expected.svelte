@@ -12,27 +12,27 @@
 	const commentData = [
 		{
 			text: 'Obeying the law',
-			position: { top: '15%', left: '0%', color: `${getCSSVar('--color-theme-red')}50`}
+			position: { top: '15%', left: '0%', color: `${getCSSVar('--color-theme-yellow')}50`}
 		},
 		{
 			text: 'Honoring the Constitution',
-			position: { top: '20%', left: '55%', color: `${getCSSVar('--color-theme-blue')}50`}
+			position: { top: '20%', left: '55%', color: `${getCSSVar('--color-theme-yellow')}50`}
 		},
 		{
 			text: 'Paying your taxes',
-			position: { top: '70%', left: '15%', color: `${getCSSVar('--color-theme-red')}50`}
+			position: { top: '70%', left: '15%', color: `${getCSSVar('--color-theme-yellow')}50`}
 		},
 		{
 			text: 'Serving on a jury',
-			position: { top: '55%', left: '50%', color: `${getCSSVar('--color-theme-blue')}50`}
+			position: { top: '55%', left: '50%', color: `${getCSSVar('--color-theme-yellow')}50`}
 		},
 		{
 			text: 'Voting',
-			position: { top: '80%', left: '70%', color: `${getCSSVar('--color-theme-red')}50`}
+			position: { top: '80%', left: '70%', color: `${getCSSVar('--color-theme-yellow')}50`}
 		},
 		{
 			text: 'Practicing freedom of speech',
-			position: { top: '35%', left: '10%', color: `${getCSSVar('--color-theme-blue')}50`}
+			position: { top: '35%', left: '10%', color: `${getCSSVar('--color-theme-yellow')}50`}
 		}
 	];
 

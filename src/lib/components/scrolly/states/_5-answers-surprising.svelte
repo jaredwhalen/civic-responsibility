@@ -12,27 +12,27 @@
 	const commentData = [
 		{
 			text: 'Tolerating differences',
-			position: { top: '15%', left: '10%', color: `${getCSSVar('--color-theme-red')}50`}
+			position: { top: '15%', left: '10%', color: `${getCSSVar('--color-theme-green')}50`}
 		},
 		{
 			text: 'Protecting the environment',
-			position: { top: '10%', left: '55%', color: `${getCSSVar('--color-theme-blue')}50`}
+			position: { top: '10%', left: '55%', color: `${getCSSVar('--color-theme-green')}50`}
 		},
 		{
 			text: 'Being grateful for your opportunities',
-			position: { top: '65%', left: '50%', color: `${getCSSVar('--color-theme-red')}50`}
+			position: { top: '65%', left: '50%', color: `${getCSSVar('--color-theme-green')}50`}
 		},
 		{
 			text: 'Caring for future generation',
-			position: { top: '50%', left: '15%', color: `${getCSSVar('--color-theme-blue')}50`}
+			position: { top: '50%', left: '15%', color: `${getCSSVar('--color-theme-green')}50`}
 		},
 		{
 			text: 'Making one’s voice heard',
-			position: { top: '80%', left: '10%', color: `${getCSSVar('--color-theme-red')}50`}
+			position: { top: '80%', left: '10%', color: `${getCSSVar('--color-theme-green')}50`}
 		},
 		{
 			text: 'Helping one’s community',
-			position: { top: '35%', left: '50%', color: `${getCSSVar('--color-theme-blue')}50`}
+			position: { top: '35%', left: '50%', color: `${getCSSVar('--color-theme-green')}50`}
 		}
 	];
 </script>
