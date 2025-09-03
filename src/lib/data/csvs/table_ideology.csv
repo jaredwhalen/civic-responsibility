@@ -18,7 +18,7 @@
 "Conservative","Loving America",70.7088931044888
 "Conservative","Making the most of your opportunities",46.0258108387876
 "Conservative","Connecting across differences",43.0090941317504
-"Conservative","Being grateful for your opportunities as an American",71.336595490182
+"Conservative","Being grateful for your opportunities",71.336595490182
 "Conservative","Honoring the flag",90.040402419429
 "Conservative","Welcoming refugees",30.2501912386515
 "Conservative","Paying your taxes",92.0268044758709
@@ -48,7 +48,7 @@
 "Liberal","Loving America",35.287599416484
 "Liberal","Making the most of your opportunities",36.9064313074902
 "Liberal","Connecting across differences",57.6744118992017
-"Liberal","Being grateful for your opportunities as an American",46.616152375635
+"Liberal","Being grateful for your opportunities",46.616152375635
 "Liberal","Honoring the flag",58.6911608737717
 "Liberal","Welcoming refugees",64.6963858494183
 "Liberal","Paying your taxes",86.8241281686674
@@ -78,7 +78,7 @@
 "Moderate","Loving America",60.0926293600099
 "Moderate","Making the most of your opportunities",47.5796727691892
 "Moderate","Connecting across differences",57.2036242856067
-"Moderate","Being grateful for your opportunities as an American",62.7821456612422
+"Moderate","Being grateful for your opportunities",62.7821456612422
 "Moderate","Honoring the flag",79.754660738427
 "Moderate","Welcoming refugees",47.4971402187521
 "Moderate","Paying your taxes",89.1573127120845
@@ -108,7 +108,7 @@
 "Not sure","Loving America",58.9425260540002
 "Not sure","Making the most of your opportunities",54.6223337740962
 "Not sure","Connecting across differences",56.962873510301
-"Not sure","Being grateful for your opportunities as an American",64.1499672976033
+"Not sure","Being grateful for your opportunities",64.1499672976033
 "Not sure","Honoring the flag",76.7987506789545
 "Not sure","Welcoming refugees",45.1284588694908
 "Not sure","Paying your taxes",81.8737134101451
@@ -138,7 +138,7 @@
 "Slightly conservative","Loving America",63.9333696332469
 "Slightly conservative","Making the most of your opportunities",44.8226188012659
 "Slightly conservative","Connecting across differences",46.0497913963627
-"Slightly conservative","Being grateful for your opportunities as an American",64.07139879526
+"Slightly conservative","Being grateful for your opportunities",64.07139879526
 "Slightly conservative","Honoring the flag",84.7027290451502
 "Slightly conservative","Welcoming refugees",30.8844171157271
 "Slightly conservative","Paying your taxes",90.2261015846628
@@ -168,7 +168,7 @@
 "Slightly liberal","Loving America",37.7690592826107
 "Slightly liberal","Making the most of your opportunities",42.582922863966
 "Slightly liberal","Connecting across differences",46.6498142548187
-"Slightly liberal","Being grateful for your opportunities as an American",46.9442697007437
+"Slightly liberal","Being grateful for your opportunities",46.9442697007437
 "Slightly liberal","Honoring the flag",61.9236613338064
 "Slightly liberal","Welcoming refugees",50.3538376824019
 "Slightly liberal","Paying your taxes",88.480196460567
@@ -198,7 +198,7 @@
 "Very conservative","Loving America",78.1835468451704
 "Very conservative","Making the most of your opportunities",55.828054785433
 "Very conservative","Connecting across differences",48.8188483821577
-"Very conservative","Being grateful for your opportunities as an American",76.1139750297323
+"Very conservative","Being grateful for your opportunities",76.1139750297323
 "Very conservative","Honoring the flag",90.7413229202117
 "Very conservative","Welcoming refugees",33.8271407732783
 "Very conservative","Paying your taxes",86.6320069203146
@@ -228,7 +228,7 @@
 "Very liberal","Loving America",39.9030009099861
 "Very liberal","Making the most of your opportunities",48.4949100867069
 "Very liberal","Connecting across differences",58.7225401912989
-"Very liberal","Being grateful for your opportunities as an American",48.6264075249415
+"Very liberal","Being grateful for your opportunities",48.6264075249415
 "Very liberal","Honoring the flag",59.8070882692248
 "Very liberal","Welcoming refugees",68.6126712942792
 "Very liberal","Paying your taxes",92.3779828470831

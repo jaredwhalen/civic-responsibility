@@ -3,7 +3,7 @@
 	import Bubble from './Bubble.svelte';
 	import { fade, fly } from 'svelte/transition';
 
-	let { commentData, color = '#64B42D', direction = 'left', delay = { in: 0, out: 0 } } = $props();
+	let { commentData, direction = 'left', delay = { in: 0, out: 0 } } = $props();
 </script>
 
 {#each commentData as comment, index}
@@ -16,7 +16,7 @@
         left: {comment.position.left}; 
       "
 	>
-		<Bubble {color} {direction}>
+		<Bubble color={comment.position.color || getCSSVar('--color-theme-light')} {direction}>
 			{comment.text}
 		</Bubble>
 	</div>
@@ -25,9 +25,8 @@
 <style lang="scss">
 	.comment-item {
 		position: absolute;
-		font-family: serif;
 		font-size: clamp(0.9rem, 3rem, 2rem);
-		color: $color-beacon-light-green;
+		color: $color-theme-light;
 		line-height: 1.3;
 		padding: 0.5rem;
 

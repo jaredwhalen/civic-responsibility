@@ -5,6 +5,7 @@
 	import 'tippy.js/dist/tippy.css';
 	import 'tippy.js/themes/light.css';
 	import { onMount } from 'svelte';
+	import { getCSSVar } from '$lib/helpers/getCSSVar';
 
 	let {
 		duty_label = '',
@@ -50,6 +51,7 @@
 		}
 
 		$userResponse.guess = clampedValue;
+		$userResponse.userSubmitted = true;
 	}
 
 	function handleMouseUp() {
@@ -133,7 +135,7 @@
 	style="--delay: {index * 10}ms;"
 	style:--circle-transition={circleTransition}
 >
-	<line x1={dimensions.margins.left} x2={xScale.range()[1]} y1="0" y2="0" stroke="#ddd" />
+	<line x1={dimensions.margins.left} x2={xScale.range()[1]} y1="0" y2="0" stroke="#aaa" />
 
 	{#key duty_label}
 		<text x={dimensions.margins.left - 10} y="0" dy="0.32em" text-anchor="end" class:highlight>
@@ -146,22 +148,21 @@
 		const bMatches = options?.series?.find((d) => d.label.toLowerCase() === b.label.toLowerCase());
 		return aMatches ? 1 : bMatches ? -1 : 0;
 	}) as s, i}
-		{@const defaultColor = '#dddddd'}
+		{@const defaultColor = '#bbbbbb'}
 		{@const color = guessMode
-			? '#E63719'
+			? getCSSVar('--color-theme-red')
 			: active
 				? options
 					? options?.series?.find((d) => d.label.toLowerCase() === s.label.toLowerCase())?.color ||
 						defaultColor
-					: '#64B42D'
+					: getCSSVar('--color-theme-blue')
 				: defaultColor}
-		{@const faded = color == defaultColor}
+		<!-- {@const faded = color == defaultColor} -->
 		<circle
 			cx={xScale(s.value)}
 			cy="0"
 			r={6}
-			fill={color}
-			opacity={faded ? 0.5 : 0.75}
+			fill="{color}90"
 			onmousedown={handleMouseDown}
 			style={guessMode ? 'cursor: grab;' : ''}
 			class:interactive={guessMode}
@@ -175,8 +176,9 @@
 			onmouseout={() => {
 				hoveredSeries = null;
 			}}
-			style:stroke={hoveredSeries == s.label ? '#000' : 'none'}
-			style:stroke-width={hoveredSeries == s.label ? '2' : '0'}
+			style:stroke={hoveredSeries == s.label ? '#000' : color}
+			style:stroke-width={hoveredSeries == s.label ? '2' : '1'}
+			class:isDragging
 		/>
 
 		{#if guessMode}
@@ -189,6 +191,7 @@
 				stroke="#000"
 				stroke-width="2"
 				class="interactive"
+				class:isDragging
 			/>
 		{/if}
 	{/each}
@@ -201,12 +204,13 @@
 
 	text {
 		font-family: $font-family-sans;
+		font-size: 1rem;
 		&.highlight {
 			font-weight: 600;
 		}
 	}
 
-	circle:not(.interactive) {
+	circle:not(.isDragging) {
 		transition: var(--circle-transition);
 	}
 </style>

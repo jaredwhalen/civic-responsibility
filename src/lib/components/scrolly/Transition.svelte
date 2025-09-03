@@ -69,15 +69,18 @@
 		font-size: inherit;
 
 		&[data-button='explore'] {
-			background: $color-beacon-light-green;
+			background: $color-theme-light;
+			color: $color-theme-dark;
 		}
 		&[data-button='quiz'] {
-			background: $color-beacon-yellow;
+			background: $color-theme-red;
+			color: $color-theme-light;
 		}
 	}
 
 	.transition {
 		display: flex;
+		color: $color-theme-light;
 
 		gap: 3rem;
 		align-items: center;
@@ -87,10 +90,10 @@
 
 		// background: linear-gradient(
 		// 	0deg,
-		// 	rgba($color-bg-light, 0) 0%,
-		// 	rgba($color-bg-light, 0.75) 20%,
-		// 	rgba($color-bg-light, 0.75) 80%,
-		// 	rgba($color-bg-light, 0) 100%
+		// 	rgba($color-theme-light, 0) 0%,
+		// 	rgba($color-theme-light, 0.75) 20%,
+		// 	rgba($color-theme-light, 0.75) 80%,
+		// 	rgba($color-theme-light, 0) 100%
 		// );
 		margin: 0px;
 	}

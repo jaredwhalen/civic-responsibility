@@ -1,6 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Aboreto&family=Cormorant:ital,wght@0,300..700;1,300..700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Sono:wght@200..800&display=swap');
-
-
+@import url('https://fonts.googleapis.com/css2?family=Aboreto&family=Cormorant:ital,wght@0,300..700;1,300..700&family=Oswald:wght@200..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Sono:wght@200..800&family=Staatliches&display=swap');
 // Global SASS Variables
 // This file contains shared variables that can be imported by other components
 
@@ -17,21 +15,38 @@ $color-beacon-dark-green: #233219;
 $color-beacon-yellow: #FAD246;
 $color-beacon-orange: #E63719;
 $color-beacon-white: #F5F5F5;
-$color-bg-light: $color-beacon-white;
 
 
+
+:root {
+    // --color-theme-light: #EDE6DE;
+    --color-theme-light: #F5F5F5;
+    --color-theme-dark: #373737;
+    --color-theme-red: #d13c28;
+    --color-theme-blue: #1a3863;
+    --color-theme-yellow: #FAD246;
+    --color-theme-green: #64B42D;
+}
+
+
+$color-theme-light: var(--color-theme-light);
+$color-theme-dark: var(--color-theme-dark);
+$color-theme-red: var(--color-theme-red);
+$color-theme-blue: var(--color-theme-blue);
+$color-theme-yellow: var(--color-theme-yellow);
+$color-theme-transition: #1a3863e6;
 
 // Neutral colors
 $text-color: #2c3e50;
 $text-light: #7f8c8d;
-$background-color: #f8f9fa;
+$background-color: #ced8e1;
 $border-color: #ecf0f1;
 
 // Typography
 $font-family-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 $font-family-mono: 'Courier New', Courier, monospace;
-$font-family-title: 'Aboreto', serif;
-$font-family-body: 'Cormorant', serif;
+$font-family-title: "Poppins", sans-serif;
+$font-family-body: "Poppins", sans-serif;
 $font-family-mono: 'Sono', sans-serif;
 $font-family-sans: 'Raleway', sans-serif;
 

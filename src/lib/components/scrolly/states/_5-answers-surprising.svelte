@@ -2,7 +2,8 @@
 	import { onMount } from 'svelte';
 	import Comments from '../Comments.svelte';
 	import { fade, fly } from 'svelte/transition';
-
+	import { getCSSVar } from '$lib/helpers/getCSSVar';
+		
 	let { activeId } = $props();
 
 	const STATE_ID = '5-answers-surprising';
@@ -11,33 +12,33 @@
 	const commentData = [
 		{
 			text: 'Tolerating differences',
-			position: { top: '15%', left: '10%'}
+			position: { top: '15%', left: '10%', color: `${getCSSVar('--color-theme-green')}50`}
 		},
 		{
 			text: 'Protecting the environment',
-			position: { top: '10%', left: '55%'}
+			position: { top: '10%', left: '55%', color: `${getCSSVar('--color-theme-green')}50`}
 		},
 		{
 			text: 'Being grateful for your opportunities',
-			position: { top: '65%', left: '50%'}
+			position: { top: '65%', left: '50%', color: `${getCSSVar('--color-theme-green')}50`}
 		},
 		{
 			text: 'Caring for future generation',
-			position: { top: '50%', left: '15%'}
+			position: { top: '50%', left: '15%', color: `${getCSSVar('--color-theme-green')}50`}
 		},
 		{
 			text: 'Making one’s voice heard',
-			position: { top: '80%', left: '10%'}
+			position: { top: '80%', left: '10%', color: `${getCSSVar('--color-theme-green')}50`}
 		},
 		{
 			text: 'Helping one’s community',
-			position: { top: '35%', left: '50%'}
+			position: { top: '35%', left: '50%', color: `${getCSSVar('--color-theme-green')}50`}
 		}
 	];
 </script>
 
 <div class="answers-container">
-	<Comments {commentData} color="#FAD246" direction="right" delay={{ in: 500, out: 0 }} />
+	<Comments {commentData} direction="right" delay={{ in: 500, out: 0 }} />
 </div>
 
 <style lang="scss">

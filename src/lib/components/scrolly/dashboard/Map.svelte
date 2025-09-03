@@ -15,9 +15,6 @@
 
 	let { data, duty, colorScale } = $props();
 
-
-
-
 	let containerWidth = $state(0);
 	let containerHeight = $state(0);
 
@@ -54,10 +51,15 @@
 	});
 </script>
 
-<div class="map-container" bind:clientWidth={containerWidth} bind:clientHeight={containerHeight} transition:fade>
+<div
+	class="map-container"
+	bind:clientWidth={containerWidth}
+	bind:clientHeight={containerHeight}
+	transition:fade
+>
 	<svg {width} {height}>
 		{#each paths as { d, fill }}
-			<path {d} {fill} stroke="#333" stroke-width="0.5"></path>
+			<path {d} {fill} stroke-width="0.5"></path>
 		{/each}
 
 		<g>
@@ -65,7 +67,6 @@
 				<path
 					{d}
 					fill="transparent"
-					stroke="#000"
 					stroke-width="1"
 					data-tippy-content={`
             <em style="line-height: 1.5;">${duty}</em><br/>
@@ -94,11 +95,18 @@
 
 	svg {
 		margin-top: 10px;
+		
+		path {
+			stroke: $color-theme-light;
+			stroke-width: 1.2px;
+		}
 
 		path.outline {
+			stroke: $color-theme-light;
 			opacity: 0;
 			&:hover {
-				stroke: #000;
+				stroke: $color-theme-yellow;
+
 				stroke-width: 2px;
 				opacity: 1;
 			}

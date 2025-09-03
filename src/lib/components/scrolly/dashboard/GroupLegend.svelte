@@ -7,10 +7,21 @@
 		<!-- <div class="legend-title">Legend</div> -->
 		<div class="legend-items">
 			{#each options.series as series}
+				{#if series.label != 'Other'}
 				<div class="legend-item">
 					<div class="legend-dot" style="background-color: {series.color}"></div>
 					<span class="legend-label">{series.label}</span>
 				</div>
+				{:else}
+				<div class="legend-item">
+					<div class="legend-dots-cluster">
+						<div class="legend-dot-small" style="background-color: {series.color}"></div>
+						<div class="legend-dot-small" style="background-color: {series.color}"></div>
+						<div class="legend-dot-small" style="background-color: {series.color}"></div>
+					</div>
+					<span class="legend-label">All other groups</span>
+				</div>
+				{/if}
 			{/each}
 		</div>
 	{/if}
@@ -46,6 +57,22 @@
 		height: 12px;
 		border-radius: 50%;
 		flex-shrink: 0;
+		border: 1px solid #aaa;
+	}
+
+	.legend-dots-cluster {
+		display: flex;
+		align-items: center;
+		gap: 2px;
+		position: relative;
+	}
+
+	.legend-dot-small {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		flex-shrink: 0;
+		border: 1px solid #aaa;
 	}
 
 	.legend-label {
