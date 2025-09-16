@@ -31,6 +31,8 @@
 	let isDragging = $state(false);
 	let tippyInstances = $state([]);
 	let svgEl = $state(null);
+	let lineX2 = $state(0);
+	let showText = $state(false);
 
 	function handleMouseDown(event) {
 		if (!guessMode) return;
@@ -73,6 +75,24 @@
 				document.removeEventListener('mousemove', handleMouseMove);
 				document.removeEventListener('mouseup', handleMouseUp);
 			};
+		}
+	});
+
+	// Animate line growth and text in poll correct mode
+	$effect(() => {
+		if (pollCorrectMode && series.length === 2 && $userResponse.userSubmitted) {
+			// Start line at guess position
+			lineX2 = xScale(series[0].value);
+			showText = false;
+
+			// Animate to correct answer position and show text
+			setTimeout(() => {
+				lineX2 = xScale(series[1].value);
+				showText = true;
+			}, 50);
+		} else if (guessMode || pollCorrectMode) {
+			// Show text immediately in other modes
+			showText = true;
 		}
 	});
 
@@ -136,7 +156,14 @@
 	style="--delay: {index * 10}ms;"
 	style:--circle-transition={circleTransition}
 >
-	<line x1={dimensions.margins.left} x2={xScale.range()[1]} y1="0" y2="0" stroke="#aaa" stroke-width={inIntro ? 2 : 1}/>
+	<line
+		x1={dimensions.margins.left}
+		x2={xScale.range()[1]}
+		y1="0"
+		y2="0"
+		stroke="#aaa"
+		stroke-width={inIntro ? 2 : 1}
+	/>
 
 	{#key duty_label}
 		<text
@@ -155,9 +182,10 @@
 	{#if pollCorrectMode && series.length === 2 && $userResponse.userSubmitted}
 		<!-- Draw line between guess and correct answer -->
 		<line
+			class="correct-line"
 			x1={xScale(series[0].value)}
 			y1="0"
-			x2={xScale(series[1].value)}
+			x2={lineX2}
 			y2="0"
 			stroke="#333"
 			stroke-width="4"
@@ -170,29 +198,32 @@
 		const bMatches = options?.series?.find((d) => d.label.toLowerCase() === b.label.toLowerCase());
 		return aMatches ? 1 : bMatches ? -1 : 0;
 	}) as s, i}
-		{@const shouldShowGuess = !pollCorrectMode || s.label !== 'Your guess' || $userResponse.userSubmitted}
-		{@const shouldHideGuessLabel = pollCorrectMode && series.length === 2 && 
+		{@const shouldShowGuess =
+			!pollCorrectMode || s.label !== 'Your guess' || $userResponse.userSubmitted}
+		{@const shouldHideGuessLabel =
+			pollCorrectMode &&
+			series.length === 2 &&
 			Math.abs(xScale(series[0].value) - xScale(series[1].value)) < 10}
-		
+
 		{#if shouldShowGuess}
 			{@const defaultColor = '#bbbbbb'}
 			{@const color = guessMode
 				? getCSSVar('--color-theme-red')
 				: pollCorrectMode
-					? s.label === 'Your guess' 
+					? s.label === 'Your guess'
 						? getCSSVar('--color-theme-red')
 						: getCSSVar('--color-theme-green')
 					: active
 						? customSeries
 							? customSeries.find((d) => d.label === s.label)?.color || defaultColor
 							: options
-								? options?.series?.find((d) => d.label.toLowerCase() === s.label.toLowerCase())?.color ||
-									defaultColor
+								? options?.series?.find((d) => d.label.toLowerCase() === s.label.toLowerCase())
+										?.color || defaultColor
 								: getCSSVar('--color-theme-blue')
 						: defaultColor}
-			
-			{@const textOffset = (guessMode || pollCorrectMode) ? -30 : -30}
-			
+
+			{@const textOffset = guessMode || pollCorrectMode ? -30 : -30}
+
 			<circle
 				cx={xScale(s.value)}
 				cy="0"
@@ -223,6 +254,7 @@
 						y={textOffset}
 						text-anchor="middle"
 						class="guess-mode-text"
+						class:show={showText}
 						font-weight="600"
 						fill="#333"
 					>
@@ -266,8 +298,14 @@
 		font-family: $font-family-sans;
 		font-size: 2rem;
 		font-weight: 600;
-		transition: opacity 0.5s ease;
+		opacity: 0;
 		transform: translateX(10px);
+		transition: all 0.5s var(--delay, 0s) cubic-bezier(0.25, 0.1, 0.25, 1);
+
+		&.show {
+			opacity: 1;
+			transform: translateX(0);
+		}
 	}
 
 	circle:not(.isDragging) {
@@ -276,5 +314,18 @@
 
 	.hide {
 		opacity: 0;
+	}
+
+	.correct-line {
+		stroke-dasharray: 1000;
+		stroke-dashoffset: 1000;
+		animation: drawLine 1s ease-out forwards;
+		animation-delay: 0.5s;
+	}
+
+	@keyframes drawLine {
+		to {
+			stroke-dashoffset: 0;
+		}
 	}
 </style>

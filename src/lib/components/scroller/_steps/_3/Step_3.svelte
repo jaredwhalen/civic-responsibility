@@ -12,7 +12,8 @@
 	let textOpacity = $derived(progress >= 20 ? 1 : 0); // Text appears at 20% scroll
 	let textY = $derived(progress >= 20 ? 0 : 30); // Text starts below and moves up
 	let textParallax = $derived(progress * 10); // Subtle parallax effect for text
-	let overlayOpacity = $derived(Math.max(0.5, 1 - (progress / 25) * 0.5)); // Overlay fades from 1 to 0.5 over 0-25% scroll
+	let overlayOpacity = $derived(0.25 + (progress / 90) * 0.6); // Fade from 0.25 to 1.0 over 0-90% scroll
+	let backgroundScale = $derived(1 + (progress / 100) * 0.2); // Background scales from 1 to 1.2 over full scroll
 
 	onMount(() => {
 		gsap.registerPlugin(ScrollTrigger);
@@ -49,6 +50,12 @@
 		if (backgroundElement) {
 			gsap.to(backgroundElement.querySelector('.color-overlay'), {
 				opacity: overlayOpacity,
+				duration: 0.1,
+				ease: 'none'
+			});
+
+			gsap.to(backgroundElement.querySelector('.background-image'), {
+				scale: backgroundScale,
 				duration: 0.1,
 				ease: 'none'
 			});
