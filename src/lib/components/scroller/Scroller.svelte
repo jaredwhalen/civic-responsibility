@@ -1,0 +1,61 @@
+<script>
+	import Step_1 from './_steps/_1/Step_1.svelte';
+	import Step_2 from './_steps/_2/Step_2.svelte';
+	import Step_3 from './_steps/_3/Step_3.svelte';
+	import Step_4 from './_steps/_4/Step_4.svelte';
+	import Step_5 from './_steps/_5/Step_5.svelte';
+</script>
+
+<div class="scroller">
+	<div class="light-bg">
+		<Step_1 />
+		<Step_2 />
+	</div>
+	<Step_3 />
+	<div class="dark-bg">
+		<Step_4 />
+		<Step_5 />
+	</div>
+</div>
+
+<style lang="scss">
+	@import '../../styles/variables.scss';
+
+	.scroller {
+		position: relative;
+		width: 100%;
+	}
+
+	// Global text classes for consistent typography
+	:global(.text-hero) {
+		font-size: 3rem;
+		font-weight: 700;
+		color: inherit;
+		margin: 0;
+		line-height: 1.2;
+		letter-spacing: 0.02em;
+	}
+
+	:global(.text-body) {
+		font-size: 2.8rem;
+		font-weight: 400;
+		color: inherit;
+		line-height: 1.2;
+		letter-spacing: 0.02em;
+	}
+
+	:global(.text-accent) {
+		font-weight: 700;
+		font-size: 2.8rem;
+		position: relative;
+		display: inline-block;
+	}
+
+	.light-bg {
+		background: linear-gradient(135deg, var(--bg-color), #fff);
+	}
+
+	.dark-bg {
+		background: linear-gradient(135deg, var(--color-theme-blue), #111);
+	}
+</style>

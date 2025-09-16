@@ -15,6 +15,7 @@
 	import GroupLegend from './GroupLegend.svelte';
 	import GradientLegend from './GradientLegend.svelte';
 	import MapViz from './Map.svelte';
+	import Axis from './Axis.svelte';
 
 	// data imports
 	import mean from '$lib/data/csvs/mean_duties_weighted.csv';
@@ -30,7 +31,8 @@
 	let selectedStateView = $state('map');
 	let selectedStateChartViewOptions = $state([]);
 	let selectedStateMapViewOption = $state(null);
-	let guessMode = $derived(activeId == '6-poll-guess');
+	let guessMode = $derived(activeId == 'poll-guess');
+	let pollCorrectMode = $derived(activeId == 'poll-correct');
 	let mapData = $derived(states.filter((d) => d.duty_label == selectedStateMapViewOption));
 	let hoveredSeries = $state(null);
 
@@ -47,6 +49,13 @@
 	$effect(() => {
 		if (activeId != '9999-dashboard') {
 			activeView = 'mean';
+		}
+	});
+
+	// Store correct answer when in poll-correct mode
+	$effect(() => {
+		if (pollCorrectMode && currentViewData.length > 0) {
+			$userResponse.correctAnswer = currentViewData[0].series[1].value; // Correct answer is the second series
 		}
 	});
 
@@ -98,8 +107,8 @@
 			label: 'Political Identification',
 			value: 'pid',
 			series: [
-				{ label: 'Democrat', color: getCSSVar('--color-theme-blue') },
-				{ label: 'Republican', color: getCSSVar('--color-theme-red') },
+				{ label: 'Democrat', color: getCSSVar('--color-theme-dem-blue') },
+				{ label: 'Republican', color: getCSSVar('--color-theme-gop-red') },
 				{ label: 'Independent', color: getCSSVar('#dddddd') }
 			]
 		},
@@ -122,26 +131,75 @@
 
 	// data maps
 	let currentDataMap = {
-		'6-poll-guess': {
-			includeArr: ['Supporting democracy'],
-			highlightArr: ['Supporting democracy']
+		'poll-guess': {
+			includeArr: ['Defending freedom'],
+			highlightArr: ['Defending freedom']
 		},
-		'7-poll-correct': {
-			includeArr: ['Supporting democracy'],
-			highlightArr: ['Supporting democracy']
+		'poll-correct': {
+			includeArr: ['Defending freedom'],
+			highlightArr: ['Defending freedom']
 		},
-		'8-chart-taxes': {
-			includeArr: ['Supporting democracy', 'Paying your taxes'],
-			highlightArr: ['Paying your taxes']
+		'chart-constitution': {
+			includeArr: ['Defending freedom', 'Following the Constitution'],
+			highlightArr: ['Following the Constitution']
 		},
-		'9-chart-charity': {
-			includeArr: ['Supporting democracy', 'Paying your taxes', 'Donating to charity'],
+		'chart-charity': {
+			includeArr: ['Defending freedom', 'Following the Constitution', 'Donating to charity'],
 			highlightArr: ['Donating to charity']
+		},
+		'chart-party-agree': {
+			includeArr: ['Defending freedom', 'Voting', 'Helping your community'],
+			highlightArr: ['Defending freedom', 'Voting', 'Helping your community'],
+			view: 'pid',
+			series: [
+				{ label: 'Democrat', color: getCSSVar('--color-theme-dem-blue') },
+				{ label: 'Republican', color: getCSSVar('--color-theme-gop-red') }
+			]
+		},
+		'chart-party-disagree': {
+			includeArr: [
+				'Loving America',
+				'Fighting for people’s rights',
+				'Supporting equality',
+				'Being self-reliant'
+			],
+			highlightArr: [
+				'Loving America',
+				'Fighting for people’s rights',
+				'Supporting equality',
+				'Being self-reliant'
+			],
+			view: 'pid',
+			series: [
+				{ label: 'Democrat', color: getCSSVar('--color-theme-dem-blue') },
+				{ label: 'Republican', color: getCSSVar('--color-theme-gop-red') }
+			]
+		},
+		'chart-generation': {
+			includeArr: [
+				'Supporting Democracy',
+				'Honoring the flag',
+				'Connecting across differences',
+				'Working hard'
+			],
+			highlightArr: [
+				'Supporting Democracy',
+				'Honoring the flag',
+				'Connecting across differences',
+				'Working hard'
+			],
+			view: 'generation',
+			series: [
+				{ label: 'Gen Z', color: getCSSVar('--color-theme-blue') },
+				{ label: 'Millennials', color: getCSSVar('--color-theme-green') },
+				{ label: 'Gen X', color: getCSSVar('--color-theme-yellow') },
+				{ label: 'Baby Boomers', color: getCSSVar('--color-theme-red') }
+			]
 		},
 		'10-chart-majority': {
 			includeArr: [
-				'Supporting democracy',
-				'Paying your taxes',
+				'Defending freedom',
+				'Following the Constitution',
 				'Donating to charity',
 				"Fighting for people's rights",
 				'Honoring the flag'
@@ -210,22 +268,57 @@
 			return [];
 		}
 
-		return guessMode
-			? transformedData.mean
-					.filter((d) =>
-						currentDataMap[activeId]?.includeArr?.length
-							? currentDataMap[activeId]?.includeArr.includes(d.duty_label)
-							: true
-					)
-					.map((d) => ({
-						...d,
-						series: [{ label: 'mean', value: $userResponse.guess }]
-					}))
-			: transformedData[activeView].filter((d) =>
+		// Determine which dataset to use based on view property or activeView
+		const dataView = currentDataMap[activeId]?.view || activeView;
+		const dataSource = transformedData[dataView] || transformedData[activeView];
+
+		if (guessMode) {
+			return dataSource
+				.filter((d) =>
 					currentDataMap[activeId]?.includeArr?.length
 						? currentDataMap[activeId]?.includeArr.includes(d.duty_label)
 						: true
-				);
+				)
+				.map((d) => ({
+					...d,
+					series: [{ label: 'Your guess', value: $userResponse.guess }]
+				}));
+		}
+
+		if (pollCorrectMode) {
+			return dataSource
+				.filter((d) =>
+					currentDataMap[activeId]?.includeArr?.length
+						? currentDataMap[activeId]?.includeArr.includes(d.duty_label)
+						: true
+				)
+				.map((d) => ({
+					...d,
+					series: [
+						{ label: 'Your guess', value: $userResponse.guess },
+						{ label: 'Correct answer', value: d.series[0].value }
+					]
+				}));
+		}
+
+		// Use custom series if defined in currentDataMap, otherwise use full dataset
+		const baseData = dataSource.filter((d) =>
+			currentDataMap[activeId]?.includeArr?.length
+				? currentDataMap[activeId]?.includeArr.includes(d.duty_label)
+				: true
+		);
+
+		// If custom series is defined, filter to only show those series
+		if (currentDataMap[activeId]?.series) {
+			return baseData.map((d) => ({
+				...d,
+				series: d.series.filter((s) =>
+					currentDataMap[activeId].series.some((customSeries) => customSeries.label === s.label)
+				)
+			}));
+		}
+
+		return baseData;
 	});
 
 	// Sort currentViewData when viewing state data in chart mode
@@ -256,10 +349,10 @@
 		width,
 		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
-			top: 15,
+			top: 60,
 			right: 50,
 			bottom: 0,
-			left: 300
+			left: guessMode ? 50 : 300
 		}
 	});
 
@@ -331,13 +424,13 @@
 
 	const mapColorScale = scaleSequential().interpolator(interpolateYlGn).domain([0, 100]);
 	// const mapColorScale = createCustomColorScale([getCSSVar('--color-theme-light'), getCSSVar('--color-theme-green')]);
-
 </script>
 
 <div
 	class="dashboard {showAll ? 'show-all' : ''} {chartContainerHeight >= dashboardHeight
 		? 'overflow'
 		: ''}"
+	class:intro={!interactiveMode}
 	bind:clientWidth={width}
 	bind:clientHeight={dashboardHeight}
 >
@@ -388,6 +481,7 @@
 							{dimensions}
 							{rowHeight}
 							{guessMode}
+							{pollCorrectMode}
 							{tickSize}
 							index={i}
 							active={showAll || currentDataMap[activeId]?.highlightArr.includes(row.duty_label)}
@@ -395,10 +489,12 @@
 								? currentDataMap[activeId]?.highlightArr.includes(row.duty_label)
 								: false}
 							options={options.find((o) => o.value === activeView)}
+							customSeries={currentDataMap[activeId]?.series}
 							circleTransition={activeView == 'state' || (interactiveMode && !isMountedWithDelay)
 								? 'fill 0.5s ease-out,'
 								: 'fill 0.5s ease-out, cx 0.5s ease-out'}
 							{interactiveMode}
+							inIntro={!interactiveMode}
 							bind:hoveredSeries
 						/>
 					{/each}
@@ -415,32 +511,7 @@
 		</div>
 
 		{#if activeView != 'state' || selectedStateView != 'map'}
-			<div class="axis-container">
-				<svg {width} height={axisHeight}>
-					<g class="x-axis axis">
-						<line
-							x1={dimensions.margins.left}
-							x2={width - dimensions.margins.right}
-							stroke="#aaa"
-							stroke-width="2"
-						/>
-						{#each [0, 25, 50, 75, 100] as tickValue}
-							<line
-								x1={xScale(tickValue)}
-								x2={xScale(tickValue)}
-								y1={0}
-								y2={tickSize}
-								stroke="#aaa"
-								stroke-width="2"
-							/>
-
-							<g class="tick" transform="translate({xScale(tickValue)}, {tickSize / 2})">
-								<text y="20" text-anchor="middle">{tickValue}%</text>
-							</g>
-						{/each}
-					</g>
-				</svg>
-			</div>
+			<Axis {width} {dimensions} {axisHeight} {tickSize} {xScale} inIntro={!interactiveMode} />
 		{/if}
 	</div>
 </div>
@@ -456,6 +527,9 @@
 		width: 100%;
 		max-width: 1400px;
 		margin: 0 auto;
+
+		&.intro {
+		}
 
 		&.show-all.overflow {
 			justify-content: flex-start;
@@ -556,10 +630,4 @@
 	// svg * {
 	// 	transition: all 0.5s ease;
 	// }
-
-	.axis {
-		text {
-			font-family: $font-family-mono;
-		}
-	}
 </style>

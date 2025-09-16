@@ -1,10 +1,5 @@
 <script>
 	import { base } from '$app/paths';
-	import Scroller from '$lib/components/scrolly/_Scroller.svelte';
-	import Background from '$lib/components/scrolly/Background.svelte';
-	import Slide from '$lib/components/scrolly/Slide.svelte';
-	import TextFooter from '$lib/components/scrolly/TextFooter.svelte';
-	import Dashboard from '$lib/components/scrolly/dashboard/Dashboard.svelte';
 	import Hero from '$lib/components/Hero.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import DebugPanel from '$lib/components/DebugPanel.svelte';
@@ -12,19 +7,13 @@
 	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { isMobile, isTablet } from '$lib/stores/responsive.js';
-
+	import GSAPScroller from '$lib/components/scroller/Scroller.svelte';
+	import Scroller from '$lib/components/scrolly/_Scroller.svelte';
+	import Background from '$lib/components/scrolly/Background.svelte';
+	import Slide from '$lib/components/scrolly/Slide.svelte';
+	import TextFooter from '$lib/components/scrolly/TextFooter.svelte';
 	const { meta, content } = copy;
 
-	// First Scrolly component variables (slidesScroll)
-	let count1 = $state(0);
-	let index1 = $state(0);
-	let offset1 = $state(0);
-	let progress1 = $state(0);
-	let top1 = 0;
-	let threshold1 = 0.25;
-	let bottom1 = 1;
-
-	// Second Scrolly component variables (slidesFixed)
 	let count2 = $state(0);
 	let index2 = $state(0);
 	let offset2 = $state(0);
@@ -33,42 +22,13 @@
 	let threshold2 = 0.25;
 	let bottom2 = 1;
 
-	// Derived variables for each Scrolly component
-	const activeSlide1 = $derived(content.scrolly.slidesScroll[index1]);
-	const activeSlide2 = $derived(content.scrolly.slidesFixed[index2]);
-
 	let interactiveMode = $state(false);
 	let shouldShowOverlay = $state(false);
 	let showExpandedModal = $state(false);
 
-	// Show overlay when dashboard appears
-	$effect(() => {
-		if (interactiveMode) {
-			shouldShowOverlay = true;
-			// Small delay to ensure DOM is ready before shrinking modal
-			setTimeout(() => {
-				showExpandedModal = true;
-			}, 250);
-		} else {
-			showExpandedModal = false;
-			// Delay hiding the overlay to allow exit animation to complete
-			setTimeout(() => {
-				shouldShowOverlay = false;
-			}, 250); // Match the CSS transition duration
-		}
-	});
+	// Derived variables for each Scrolly component
 
-	// Handle escape key to close dashboard
-	onMount(() => {
-		const handleKeydown = (event) => {
-			if (event.key === 'Escape' && interactiveMode) {
-				interactiveMode = false;
-			}
-		};
-
-		document.addEventListener('keydown', handleKeydown);
-		return () => document.removeEventListener('keydown', handleKeydown);
-	});
+	const activeSlide2 = $derived(content.scrolly.slidesFixed[index2]);
 </script>
 
 <svelte:head>
@@ -80,17 +40,8 @@
 	/>
 </svelte:head>
 
-<main
-	style:--bg-color={'#d1dfed'}
-	role="main"
-	aria-label="Civic Responsibility Interactive Experience"
->
+<main role="main" aria-label="Civic Responsibility Interactive Experience">
 	<header class="main-header" role="banner" aria-label="Site navigation">
-		<div class="header-left">
-			<!-- <button class="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="main-menu">
-				<span></span><span></span><span></span>
-			</button> -->
-		</div>
 		<div class="header-right">
 			<img
 				class="logo"
@@ -108,87 +59,8 @@
 		heroText={content.hero.text}
 	/>
 
-	<!-- Debug Panel -->
-	<!-- <DebugPanel {count1} {index1} {offset1} {progress1} /> -->
+	<GSAPScroller />
 
-	{#if shouldShowOverlay}
-		<div
-			class="dashboard-overlay"
-			transition:fade={{ duration: 250 }}
-			role="dialog"
-			aria-modal="true"
-			aria-labelledby="dashboard-title"
-			aria-describedby="dashboard-description"
-		>
-			<div
-				class="dashboard-overlay-content {showExpandedModal ? 'expanded' : ''} {$isMobile
-					? 'mobile'
-					: ''} {$isTablet ? 'tablet' : ''}"
-			>
-				<div class="dashboard-header">
-					<h2 id="dashboard-title" class="visually-hidden">Interactive Dashboard</h2>
-					<p id="dashboard-description" class="visually-hidden">
-						Explore civic responsibility data and insights
-					</p>
-				</div>
-				<Dashboard activeId="9999-dashboard" bind:interactiveMode animateMount={false} />
-			</div>
-		</div>
-	{/if}
-
-	<!-- First Scrolly Component (slidesScroll) -->
-	<Scroller
-		top={top1}
-		threshold={threshold1}
-		bottom={bottom1}
-		bind:count={count1}
-		bind:index={index1}
-		bind:offset={offset1}
-		bind:progress={progress1}
-		interactiveBg={Boolean(activeSlide1.interactiveBg)}
-		role="region"
-		aria-label="First interactive content scroll area"
-	>
-		{#snippet background()}
-			<div
-				class="background-container"
-				data-theme={activeSlide1.theme || 'default'}
-				role="presentation"
-				aria-hidden="true"
-			>
-				<Background
-					count={count1}
-					index={index1}
-					offset={offset1}
-					progress={progress1}
-					activeId={activeSlide1.id}
-					showDashboard={Boolean(activeSlide1.showDashboard)}
-					{interactiveMode}
-				/>
-			</div>
-		{/snippet}
-
-		{#snippet foreground()}
-			<div
-				class="foreground-container {interactiveMode ? 'interactive-mode' : ''}"
-				data-theme={activeSlide1.theme || 'default'}
-				role="main"
-				aria-label="First content slides"
-			>
-				{#each content.scrolly.slidesScroll as slide, slideIndex}
-					<Slide
-						content={slide}
-						cls="slide-{slideIndex} {slide.cls}"
-						index={slideIndex}
-						bind:interactiveMode
-						aria-label="Slide {slideIndex + 1} of {content.scrolly.slidesScroll.length}"
-					/>
-				{/each}
-			</div>
-		{/snippet}
-	</Scroller>
-
-	<!-- Second Scrolly Component (slidesFixed) -->
 	<Scroller
 		top={top2}
 		threshold={threshold2}
@@ -248,68 +120,6 @@
 
 <style lang="scss">
 	@import '$lib/styles/mixins.scss';
-
-	:global {
-		body {
-			background: #f7f3ee;
-		}
-
-		.background-container {
-			z-index: 0;
-			position: relative;
-
-			transition: background-color 0.75s ease;
-
-			&[data-theme='default'] {
-				background: $color-theme-light;
-			}
-			&[data-theme='dark'] {
-				background-color: $color-theme-dark;
-			}
-		}
-
-		.foreground-container {
-			transition:
-				color 0.75s ease,
-				background-color 0.75s ease,
-				opacity 0.5s ease;
-
-			&[data-theme='default'] {
-				color: #000;
-				.slide-inner p {
-					// background: $color-theme-light;
-				}
-			}
-			&[data-theme='dark'] {
-				// color: $color-beacon-white;
-				.slide-inner p {
-					// background: $color-beacon-dark-green;
-				}
-			}
-
-			&[data-theme='green'] {
-				// $color-beacon-light-green: #64B42D;
-				// $color-beacon-dark-green: #233219;
-				background: $color-theme-transition;
-				// color: $color-beacon-white;
-				.slide-inner p {
-					// background: $color-beacon-dark-green;
-				}
-			}
-
-			&.interactive-mode {
-				opacity: 0;
-			}
-		}
-
-		svelte-scroller-foreground {
-			pointer-events: none;
-		}
-
-		svelte-scroller-background-container.interactive {
-			pointer-events: all;
-		}
-	}
 
 	// Accessibility utilities
 	.visually-hidden {
@@ -412,151 +222,65 @@
 		}
 	}
 
-	.dashboard-overlay {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		width: 100vw;
-		height: 100vh;
-		z-index: 9999;
-		background: $color-theme-blue;
-		box-sizing: border-box;
-		padding: 0px;
-
-		transition: all 0.5s ease;
-
-		// Mobile responsive adjustments
-		@include mq('mobile', 'max') {
-			padding: 0;
+	:global {
+		body {
+			background: #f7f3ee;
 		}
 
-		.dashboard-overlay-content {
-			width: 100%;
-			height: 100%;
-			background: $color-theme-light;
-			border-radius: 4px;
-			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-			overflow: hidden;
-			transition: all 0.5s ease;
+		.background-container {
+			z-index: 0;
 			position: relative;
 
-			&.expanded {
-				width: calc(100% - 30px);
-				height: calc(100% - 30px);
-				margin: 15px;
-				overflow: hidden;
+			transition: background-color 0.75s ease;
 
-				// Mobile responsive expanded state
-				@include mq('mobile', 'max') {
-					width: calc(100% - 20px);
-					height: calc(100% - 20px);
-					margin: 10px;
-				}
-
-				@include mq('small-mobile', 'max') {
-					width: calc(100% - 10px);
-					height: calc(100% - 10px);
-					margin: 5px;
-				}
+			&[data-theme='default'] {
+				background: $color-theme-light;
 			}
+			&[data-theme='dark'] {
+				background-color: $color-theme-dark;
+			}
+		}
 
-			// Mobile specific styles
-			&.mobile {
-				border-radius: 0;
+		.foreground-container {
+			transition:
+				color 0.75s ease,
+				background-color 0.75s ease,
+				opacity 0.5s ease;
 
-				&.expanded {
-					border-radius: 8px;
+			&[data-theme='default'] {
+				color: #000;
+				.slide-inner p {
+					// background: $color-theme-light;
 				}
 			}
-
-			&.tablet {
-				&.expanded {
-					border-radius: 12px;
+			&[data-theme='dark'] {
+				// color: $color-beacon-white;
+				.slide-inner p {
+					// background: $color-beacon-dark-green;
 				}
 			}
-		}
 
-		.dashboard-header {
-			position: absolute;
-			top: 0;
-			right: 0;
-			z-index: 10000;
-			padding: $spacing-md;
-			display: flex;
-			justify-content: flex-end;
+			&[data-theme='green'] {
+				// $color-beacon-light-green: #64B42D;
+				// $color-beacon-dark-green: #233219;
+				background: $color-theme-transition;
+				// color: $color-beacon-white;
+				.slide-inner p {
+					// background: $color-beacon-dark-green;
+				}
+			}
 
-			@include mq('mobile', 'max') {
-				padding: $spacing-sm;
+			&.interactive-mode {
+				opacity: 0;
 			}
 		}
 
-		.close-button {
-			background: rgba(255, 255, 255, 0.9);
-			border: none;
-			border-radius: 50%;
-			width: 40px;
-			height: 40px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			cursor: pointer;
-			transition: all 0.2s ease;
-			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-
-			@include mq('mobile', 'max') {
-				width: 36px;
-				height: 36px;
-			}
-
-			&:hover,
-			&:focus {
-				background: rgba(255, 255, 255, 1);
-				transform: scale(1.1);
-				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-			}
-
-			&:active {
-				transform: scale(0.95);
-			}
-
-			svg {
-				color: #333;
-			}
+		svelte-scroller-foreground {
+			pointer-events: none;
 		}
-	}
 
-	:global(body:has(.dashboard-overlay)) {
-		overflow: hidden;
-	}
-
-	// Mobile responsive global styles
-	@include mq('mobile', 'max') {
-		:global {
-			html {
-				font-size: 14px;
-			}
+		svelte-scroller-background-container.interactive {
+			pointer-events: all;
 		}
-	}
-
-	@include mq('small-mobile', 'max') {
-		:global {
-			html {
-				font-size: 13px;
-			}
-		}
-	}
-
-	// Touch-friendly improvements
-	@include touch-device {
-		.close-button {
-			min-height: 44px;
-			min-width: 44px;
-		}
-	}
-
-	:global(.show-on-interaction) {
-		display: none;
 	}
 </style>
