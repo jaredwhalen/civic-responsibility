@@ -42,6 +42,8 @@
 
 		text {
 			font-family: $font-family-mono;
+			font-size: 1rem;
+			fill: #888;
 		}
 
 		&.intro {

@@ -25,11 +25,13 @@
 
 <style lang="scss">
 .footer-root {
-	background: $color-theme-blue;
+	background: linear-gradient(135deg, var(--color-theme-blue), #111);
+
 	color: #fff;
 	padding: 3rem;
 	position: relative;
 	box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+	
 	font-family: $font-family-primary;
 }
 .footer-content {

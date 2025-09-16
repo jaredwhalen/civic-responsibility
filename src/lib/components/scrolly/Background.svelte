@@ -43,7 +43,7 @@
 		class="dashboard-wrapper {interactiveMode ? 'interactive-mode' : ''}"
 		class:visible={showDashboard}
 		in:fade={{ duration: 500, delay: 500 }}
-		out:fade={{ duration: 0 }}
+		out:fade={{ duration: 500 }}
 		role="region"
 		aria-label="Interactive dashboard"
 		aria-describedby="dashboard-content"

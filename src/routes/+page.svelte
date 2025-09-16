@@ -12,6 +12,8 @@
 	import Background from '$lib/components/scrolly/Background.svelte';
 	import Slide from '$lib/components/scrolly/Slide.svelte';
 	import TextFooter from '$lib/components/scrolly/TextFooter.svelte';
+	import CTA from '$lib/components/CTA.svelte';
+	import Dashboard from '$lib/components/scrolly/dashboard/Dashboard.svelte';
 	const { meta, content } = copy;
 
 	let count2 = $state(0);
@@ -59,7 +61,7 @@
 		heroText={content.hero.text}
 	/>
 
-	<GSAPScroller />
+	<GSAPScroller section="intro" />
 
 	<Scroller
 		top={top2}
@@ -114,6 +116,12 @@
 			</div>
 		{/snippet}
 	</Scroller>
+
+	<GSAPScroller section="outro" />
+
+	<CTA />
+
+	<Dashboard activeId="9999-dashboard" interactiveMode={true} animateMount={false} />
 
 	<Footer />
 </main>
@@ -234,7 +242,13 @@
 			transition: background-color 0.75s ease;
 
 			&[data-theme='default'] {
-				background: $color-theme-light;
+				background: linear-gradient(135deg, var(--bg-color), #fff);
+				background: var(--bg-color);
+			}
+			&[data-theme='light'] {
+				// background: linear-gradient(135deg, var(--bg-color), #fff);
+				background: var(--bg-color);
+				// background: linear-gradient(135deg, var(--color-theme-blue), #111);
 			}
 			&[data-theme='dark'] {
 				background-color: $color-theme-dark;
@@ -267,6 +281,14 @@
 				// color: $color-beacon-white;
 				.slide-inner p {
 					// background: $color-beacon-dark-green;
+				}
+			}
+
+			&[data-theme='blue'] {
+				background: var(--bg-color);
+				// background: linear-gradient(135deg, var(--color-theme-blue), #111);
+				.slide-inner p {
+					// background: $color-theme-light;
 				}
 			}
 

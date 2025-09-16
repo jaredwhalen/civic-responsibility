@@ -133,37 +133,37 @@
 					transition: background-color 0.75s ease;
 					padding: 0.25rem 0px;
 
-					span {
-						&.underline {
-							position: relative;
-							z-index: 1;
-							width: fit-content;
-							display: inline-block;
-							&::after {
-								content: '';
-								display: block;
-								width: 100%;
-								height: 30px;
-								position: absolute;
-								bottom: 0px;
-								z-index: -1;
-							}
+					// span {
+					// 	&.underline {
+					// 		position: relative;
+					// 		z-index: 1;
+					// 		width: fit-content;
+					// 		display: inline-block;
+					// 		&::after {
+					// 			content: '';
+					// 			display: block;
+					// 			width: 100%;
+					// 			height: 30px;
+					// 			position: absolute;
+					// 			bottom: 0px;
+					// 			z-index: -1;
+					// 		}
 
-							&.democrat {
-								&::after {
-									background-color: var(--color-theme-dem-blue);
-									opacity: 0.75;
-								}
-							}
+					// 		&.democrat {
+					// 			&::after {
+					// 				background-color: var(--color-theme-dem-blue);
+					// 				opacity: 0.75;
+					// 			}
+					// 		}
 
-							&.republican {
-								&::after {
-									background-color: var(--color-theme-gop-red);
-									opacity: 0.75;
-								}
-							}
-						}
-					}
+					// 		&.republican {
+					// 			&::after {
+					// 				background-color: var(--color-theme-gop-red);
+					// 				opacity: 0.75;
+					// 			}
+					// 		}
+					// 	}
+					// }
 				}
 			}
 		}

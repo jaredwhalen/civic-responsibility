@@ -38,13 +38,13 @@
 
 	let isMountedWithDelay = $state(false);
 
-	onMount(() => {
-		if (interactiveMode) {
-			setTimeout(() => {
-				isMountedWithDelay = true;
-			}, 250);
-		}
-	});
+	// onMount(() => {
+	// 	if (interactiveMode) {
+	// 		setTimeout(() => {
+	// 			isMountedWithDelay = true;
+	// 		}, 250);
+	// 	}
+	// });
 
 	$effect(() => {
 		if (activeId != '9999-dashboard') {
@@ -349,7 +349,7 @@
 		width,
 		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
-			top: 60,
+			top: interactiveMode ? 30 :60,
 			right: 50,
 			bottom: 0,
 			left: guessMode ? 50 : 300
@@ -393,8 +393,6 @@
 		height: currentViewData.length * rowHeight + rowHeight * 2
 	});
 
-	$inspect(rowHeight);
-
 	let chartContainerHeight = $derived(
 		interactiveMode && isMountedWithDelay
 			? adjustedDimensions.height < dashboardHeight
@@ -424,6 +422,8 @@
 
 	const mapColorScale = scaleSequential().interpolator(interpolateYlGn).domain([0, 100]);
 	// const mapColorScale = createCustomColorScale([getCSSVar('--color-theme-light'), getCSSVar('--color-theme-green')]);
+
+	$inspect(selectedStateMapViewOption);
 </script>
 
 <div
@@ -524,13 +524,18 @@
 		justify-content: center;
 		position: relative;
 		height: 100%;
+	
 		width: 100%;
 		max-width: 1400px;
 		margin: 0 auto;
+		background-color: var(--bg-color);
 
 		&.intro {
 		}
 
+		&.show-all {
+			min-height: 100vh;
+		}
 		&.show-all.overflow {
 			justify-content: flex-start;
 		}
@@ -544,8 +549,9 @@
 	.map-container {
 		width: 100%;
 		height: 100%;
-		background-color: $color-theme-light;
 		transition: all 0.5s ease;
+
+		background-color: var(--bg-color);
 
 		position: absolute;
 		top: 0;
@@ -579,7 +585,7 @@
 			left: 0;
 			right: 0;
 			height: 20px;
-			background: linear-gradient(to bottom, transparent, $color-theme-light);
+			// background: linear-gradient(to bottom, transparent, $color-theme-light);
 			pointer-events: none;
 			z-index: 10;
 		}
@@ -590,38 +596,8 @@
 		font-size: 14px;
 		font-family: sans-serif;
 	}
-	:global(.x-axis .tick text) {
-		font-size: 12px;
-		fill: #888;
-	}
 
-	.legend {
-		display: flex;
-		justify-content: flex-end;
-		margin-bottom: 1rem;
-		font-size: 14px;
-	}
 
-	.legend-item {
-		display: flex;
-		align-items: center;
-		margin-left: 1.5rem;
-
-		.dot {
-			width: 12px;
-			height: 12px;
-			border-radius: 50%;
-			margin-right: 0.5rem;
-
-			&.men {
-				background-color: #a3c102;
-			}
-
-			&.women {
-				background-color: #333;
-			}
-		}
-	}
 
 	svg {
 		transition: height 0.5s ease;

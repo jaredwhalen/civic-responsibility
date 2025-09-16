@@ -7,6 +7,9 @@
 	let questionElement;
 	let definitionElement;
 	let progress = $state(0);
+	let questionHeight = $state(0);
+	let definitionHeight = $state(0);
+	let maxHeight = $derived(Math.max(questionHeight, definitionHeight));
 
 	// Reactive calculations based on scroll progress
 	let questionProgress = $derived(Math.max(0, Math.min(1, (progress - 20) / 15))); // 20-35% scroll
@@ -20,6 +23,14 @@
 
 	onMount(() => {
 		gsap.registerPlugin(ScrollTrigger);
+
+		// Measure heights after elements are rendered
+		if (questionElement) {
+			questionHeight = questionElement.offsetHeight;
+		}
+		if (definitionElement) {
+			definitionHeight = definitionElement.offsetHeight;
+		}
 
 		// Set initial states
 		gsap.set(questionElement, { opacity: 0, x: -200 });
@@ -62,7 +73,7 @@
 </script>
 
 <div class="step-4" bind:this={stepElement}>
-	<div class="text-content" bind:this={questionElement}>
+	<div class="text-content" bind:this={questionElement} style:min-height="{maxHeight}px">
 		<div class="text-body">
 			We asked 5,000 Americans from all 50 states: <b
 				>What are the responsibilities of being an American?</b
@@ -70,7 +81,7 @@
 		</div>
 	</div>
 
-	<div class="definition-content" bind:this={definitionElement}>
+	<div class="definition-content" bind:this={definitionElement} style:min-height="{maxHeight}px">
 		<div class="dictionary-entry">
 			<div class="term">
 				<span class="term-text">civic responsibilities</span>
@@ -97,29 +108,35 @@
 
 		color: var(--color-theme-light);
 
-		.text-content {
-			position: sticky;
-			top: 50vh;
-			transform: translateY(-50%);
-			width: 50%;
-			padding: 2rem;
-			text-align: right;
-			z-index: 10;
-			max-width: 700px;
-			b {
-				color: var(--color-theme-blue-light);
-			}
+	.text-content {
+		position: sticky;
+		top: 50vh;
+		transform: translateY(-50%);
+		width: 50%;
+		padding: 2rem;
+		text-align: right;
+		z-index: 10;
+		max-width: 700px;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		b {
+			color: var(--color-theme-blue-light);
 		}
+	}
 
-		.definition-content {
-			position: sticky;
-			top: 50vh;
-			transform: translateY(-50%);
-			width: 50%;
-			padding: 2rem;
-			text-align: left;
-			z-index: 5;
-			max-width: 700px;
+	.definition-content {
+		position: sticky;
+		top: 50vh;
+		transform: translateY(-50%);
+		width: 50%;
+		padding: 2rem;
+		text-align: left;
+		z-index: 5;
+		max-width: 700px;
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
 
 			.dictionary-entry {
 				// background: var(--color-theme-blue-light);

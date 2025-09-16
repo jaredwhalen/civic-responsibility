@@ -49,6 +49,7 @@
 			allowHTML: true
 		});
 	});
+	
 </script>
 
 <div

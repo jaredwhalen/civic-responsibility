@@ -96,9 +96,19 @@
 		}
 	});
 
+	// $inspect(hoveredSeries);
+
 	// Function to create tippy instances
 	function createTippyInstances() {
-		// Clean up existing instances first
+		// Clean up existing instances first - destroy any tippy instances on our elements
+		const existingCircles = document.querySelectorAll(`[data-row-index="${index}"][data-tippy-content]`);
+		existingCircles.forEach((circle) => {
+			if (circle._tippy) {
+				circle._tippy.destroy();
+			}
+		});
+		
+		// Also clean up our tracked instances
 		tippyInstances.forEach((instance) => {
 			if (instance && instance.destroy) {
 				instance.destroy();
@@ -106,8 +116,7 @@
 		});
 		tippyInstances = [];
 
-		// Only create new instances if interactiveMode is true
-		if (interactiveMode) {
+		if (!guessMode) {
 			// Use a more specific selector for this component instance
 			const circles = document.querySelectorAll(`[data-row-index="${index}"][data-tippy-content]`);
 			circles.forEach((circle) => {
@@ -125,7 +134,9 @@
 
 	// Reactive effect to recreate tooltips when data changes
 	$effect(() => {
-		if (interactiveMode && series.length > 0) {
+		if (options && interactiveMode && series.length > 0) {
+			// Watch for changes in series values to trigger tooltip recreation
+			series.forEach(s => s.value);
 			// Use a small delay to ensure DOM is updated
 			setTimeout(createTippyInstances, 0);
 		}
@@ -233,7 +244,7 @@
 				style={guessMode ? 'cursor: grab;' : ''}
 				class:interactive={guessMode}
 				data-row-index={index}
-				data-tippy-content={interactiveMode
+				data-tippy-content={!guessMode
 					? `<b>${s.label ? (s.label.includes('duties') ? 'U.S. average:' : s.label + ':') : ''}</b> ${s.value ? `${s.value.toFixed(1)}%` : ''}`
 					: ''}
 				onmouseover={() => {

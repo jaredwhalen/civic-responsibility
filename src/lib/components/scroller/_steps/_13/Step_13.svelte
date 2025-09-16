@@ -1,0 +1,303 @@
+<script>
+	import { onMount } from 'svelte';
+	import { gsap } from 'gsap';
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+	import { getCSSVar } from '$lib/helpers/getCSSVar';
+
+	let stepElement;
+	let textElement;
+	let pieChartElement;
+	let progress = $state(0);
+
+	// Donut chart data - just 93%
+	const donutData = {
+		value: 93,
+		color: getCSSVar('--color-theme-blue-light'),
+		backgroundColor: '#bbb'
+	};
+
+	// Reactive calculations based on scroll progress
+	let firstLineProgress = $derived(Math.max(0, Math.min(1, (progress - 15) / 20))); // 15-35% scroll
+	let secondLineProgress = $derived(Math.max(0, Math.min(1, (progress - 25) / 25))); // 25-50% scroll
+	let pieChartAnimationProgress = $derived(Math.max(0, Math.min(1, (progress - 35) / 30))); // 35-65% scroll for donut fill/scale
+
+	// Overall opacity for the entire content block (text + chart)
+	let overallContentOpacity = $derived(() => {
+		// Fade in from 0 to 1 between 15% and 35% (aligned with first line animation)
+		if (progress >= 15 && progress <= 35) {
+			return (progress - 15) / 20;
+		}
+		// Stay at 1 between 35% and 70%
+		if (progress > 35 && progress < 70) {
+			return 1;
+		}
+		// Fade out from 1 to 0 between 70% and 90%
+		if (progress >= 70 && progress <= 90) {
+			return 1 - (progress - 70) / 20;
+		}
+		// Outside these ranges, it's 0
+		return 0;
+	});
+
+	// Pie chart scale should still be tied to its own animation progress
+	let pieChartScale = $derived(0.8 + pieChartAnimationProgress * 0.2); // Scale from 0.8 to 1.0
+
+	onMount(() => {
+		gsap.registerPlugin(ScrollTrigger);
+
+		// Set initial states
+		gsap.set(textElement, { opacity: 0 });
+		gsap.set(pieChartElement, { scale: 0.8, opacity: 0 });
+
+		// Set initial states for both lines
+		const firstLine = textElement?.querySelector('.first-line');
+		const secondLineWords = textElement?.querySelectorAll('.second-line .word');
+
+		if (firstLine) {
+			gsap.set(firstLine, { opacity: 0, y: -50 });
+		}
+
+		if (secondLineWords) {
+			gsap.set(secondLineWords, { opacity: 0, y: 30, scale: 0.8 });
+		}
+
+		// Create scroll trigger for this section
+		const trigger = ScrollTrigger.create({
+			trigger: stepElement,
+			start: 'top bottom',
+			end: 'bottom top',
+			onUpdate: (self) => {
+				progress = self.progress * 100;
+			}
+		});
+
+		return () => {
+			trigger.kill();
+		};
+	});
+
+	// Watch for progress changes and update animations
+	$effect(() => {
+		if (textElement) {
+			gsap.to(textElement, {
+				opacity: overallContentOpacity, // Use overall opacity
+				duration: 0.1,
+				ease: 'none'
+			});
+
+			// Animate first line (slides down from top)
+			const firstLine = textElement.querySelector('.first-line');
+			if (firstLine) {
+				const firstLineOpacity = firstLineProgress;
+				const firstLineY = -50 + firstLineProgress * 50;
+
+				gsap.set(firstLine, {
+					opacity: firstLineOpacity,
+					y: firstLineY,
+					duration: 0.1,
+					ease: 'none'
+				});
+			}
+
+			// Animate second line words (one by one)
+			const secondLineWords = textElement.querySelectorAll('.second-line .word');
+			secondLineWords.forEach((word, index) => {
+				const wordProgress = Math.max(0, Math.min(1, (secondLineProgress - index * 0.15) / 0.4));
+				const wordOpacity = wordProgress;
+				const wordY = 30 - wordProgress * 30;
+				const wordScale = 0.8 + wordProgress * 0.2;
+
+				gsap.set(word, {
+					opacity: wordOpacity,
+					y: wordY,
+					scale: wordScale,
+					duration: 0.1,
+					ease: 'none'
+				});
+			});
+		}
+
+		if (pieChartElement) {
+			gsap.to(pieChartElement, {
+				scale: pieChartScale,
+				opacity: overallContentOpacity, // Use overall opacity
+				duration: 0.1,
+				ease: 'none'
+			});
+		}
+	});
+</script>
+
+<div class="step-13" bind:this={stepElement}>
+	<div class="sticky-container">
+		<div class="text-content" bind:this={textElement}>
+			<div class="text-body">
+				<div class="first-line">Now more than ever, it is important to</div>
+				<div class="second-line">
+					<span class="word">honor</span> <span class="word">our</span>
+					<span class="word">civic</span> <span class="word">responsibilities</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="pie-chart-container" bind:this={pieChartElement}>
+			<div class="pie-chart">
+				<svg viewBox="0 0 200 200" class="pie-svg">
+					<!-- Background circle (donut hole) -->
+					<circle
+						cx="100"
+						cy="100"
+						r="80"
+						fill="none"
+						stroke={donutData.backgroundColor}
+						stroke-width="20"
+					/>
+
+					<!-- Animated donut segment using stroke-dasharray -->
+					<circle
+						cx="100"
+						cy="100"
+						r="80"
+						fill="none"
+						stroke={donutData.color}
+						stroke-width="20"
+						stroke-linecap="butt"
+						stroke-dasharray="502.65"
+						stroke-dashoffset={502.65 - 502.65 * pieChartAnimationProgress * (donutData.value / 100)}
+						transform="rotate(-90 100 100)"
+					/>
+				</svg>
+
+				<!-- Center percentage -->
+				<div class="center-percentage">
+					<span class="percentage-number">93%</span>
+				</div>
+
+				<!-- Chart label -->
+				<div class="chart-label">
+					<div class="label-line"></div>
+					<div class="label-text">
+						Percentage of Americans who say, "Now more than ever, it is important to honor our civic
+						responsibilities"
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style lang="scss">
+	@import '../../../../styles/variables.scss';
+
+	.step-13 {
+		height: 150vh;
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		background: var(--bg-color);
+		gap: 4rem;
+        margin-top: -1px;
+
+		.sticky-container {
+			position: sticky;
+			top: 15vh;
+			width: 100%;
+			z-index: 10;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 2rem;
+		}
+
+		.text-content {
+			width: 100%;
+			padding: 2rem;
+			text-align: center;
+			z-index: 10;
+			max-width: 900px;
+			will-change: transform, opacity;
+
+			.text-body {
+				text-align: center;
+
+				.first-line {
+					font-size: 2.5rem;
+					font-weight: 300;
+					line-height: 1.3;
+					margin-bottom: 1rem;
+					opacity: 0;
+					transform: translateY(-50px);
+				}
+
+				.second-line {
+					font-size: 4.5rem;
+					font-weight: 600;
+					line-height: 1.1;
+					color: var(--color-theme-blue);
+
+					.word {
+						display: inline-block;
+						margin-right: 0.2em;
+						transform-style: preserve-3d;
+						opacity: 0;
+						transform: translateY(30px) scale(0.8);
+					}
+				}
+			}
+		}
+
+		.pie-chart-container {
+			z-index: 5;
+			will-change: transform, opacity;
+			padding-bottom: 5rem;
+		}
+
+		.pie-chart {
+			position: relative;
+			width: 300px;
+
+			.pie-svg {
+				width: 100%;
+				height: 100%;
+				filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+			}
+
+			.center-percentage {
+				position: absolute;
+				top: calc(50% - 50px);
+				left: 50%;
+				transform: translate(-50%, -50%);
+				text-align: center;
+
+				.percentage-number {
+					font-size: 4.5rem;
+					font-weight: bold;
+					color: var(--color-theme-blue-light);
+					font-family: $font-family-sans;
+				}
+			}
+
+			.chart-label {
+				text-align: center;
+
+				.label-line {
+					width: 2px;
+					height: 20px;
+					background: #4a6b3a;
+					margin: 0 auto 10px;
+				}
+
+				.label-text {
+					font-size: 0.9rem;
+					font-weight: 500;
+					line-height: 1.4;
+					max-width: 300px;
+					margin: 0 auto;
+				}
+			}
+		}
+	}
+</style>

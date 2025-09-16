@@ -4,18 +4,28 @@
 	import Step_3 from './_steps/_3/Step_3.svelte';
 	import Step_4 from './_steps/_4/Step_4.svelte';
 	import Step_5 from './_steps/_5/Step_5.svelte';
+
+	import Step_13 from './_steps/_13/Step_13.svelte';
+
+	let { section } = $props();
 </script>
 
 <div class="scroller">
-	<div class="light-bg">
-		<Step_1 />
-		<Step_2 />
-	</div>
-	<Step_3 />
-	<div class="dark-bg">
-		<Step_4 />
-		<Step_5 />
-	</div>
+	{#if section == 'intro'}
+		<div class="light-bg">
+			<Step_1 />
+			<Step_2 />
+		</div>
+		<Step_3 />
+		<div class="dark-bg">
+			<Step_4 />
+			<Step_5 />
+		</div>
+	{/if}
+
+	{#if section == 'outro'}
+		<Step_13 />
+	{/if}
 </div>
 
 <style lang="scss">
