@@ -101,6 +101,7 @@
 	// Function to get circle color
 	function getCircleColor(s) {
 		const defaultColor = '#bbbbbb';
+		return guessMode
 			? getCSSVar('--color-theme-red')
 			: pollCorrectMode
 				? s.label === 'Your guess'
