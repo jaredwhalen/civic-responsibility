@@ -107,15 +107,25 @@
 			`[data-row-index="${index}"][data-tippy-content]`
 		);
 		existingCircles.forEach((circle) => {
-			if (circle._tippy) {
-				circle._tippy.destroy();
+			if (circle._tippy && typeof circle._tippy.destroy === 'function') {
+				try {
+					circle._tippy.destroy();
+				} catch (e) {
+					// Silently ignore errors from destroyed instances
+					console.warn('Error destroying tippy instance:', e);
+				}
 			}
 		});
 
 		// Also clean up our tracked instances
 		tippyInstances.forEach((instance) => {
-			if (instance && instance.destroy) {
-				instance.destroy();
+			if (instance && typeof instance.destroy === 'function') {
+				try {
+					instance.destroy();
+				} catch (e) {
+					// Silently ignore errors from destroyed instances
+					console.warn('Error destroying tippy instance:', e);
+				}
 			}
 		});
 		tippyInstances = [];
@@ -124,14 +134,18 @@
 			// Use a more specific selector for this component instance
 			const circles = document.querySelectorAll(`[data-row-index="${index}"][data-tippy-content]`);
 			circles.forEach((circle) => {
-				const instance = tippy(circle, {
-					theme: 'light',
-					duration: 0,
-					followCursor: true,
-					plugins: [followCursor],
-					allowHTML: true
-				});
-				tippyInstances.push(instance);
+				try {
+					const instance = tippy(circle, {
+						theme: 'light',
+						duration: 0,
+						followCursor: true,
+						plugins: [followCursor],
+						allowHTML: true
+					});
+					tippyInstances.push(instance);
+				} catch (e) {
+					console.warn('Error creating tippy instance:', e);
+				}
 			});
 		}
 	}
@@ -153,8 +167,13 @@
 		// Cleanup function
 		return () => {
 			tippyInstances.forEach((instance) => {
-				if (instance && instance.destroy) {
-					instance.destroy();
+				if (instance && typeof instance.destroy === 'function') {
+					try {
+						instance.destroy();
+					} catch (e) {
+						// Silently ignore errors from destroyed instances
+						console.warn('Error destroying tippy instance in cleanup:', e);
+					}
 				}
 			});
 			tippyInstances = [];
@@ -166,6 +185,7 @@
 	class="row"
 	class:active
 	class:highlight
+	class:interactive={interactiveMode}
 	transform="translate(0, {y})"
 	transition:fly={{ duration: 500, y: 100, delay: index * 10 }}
 	style="--delay: {index * 10}ms;"
@@ -243,7 +263,7 @@
 				cx={xScale(s.value)}
 				cy="0"
 				r={inIntro ? 12 : 6}
-				fill="{color}"
+				fill={color}
 				onmousedown={handleMouseDown}
 				style={guessMode ? 'cursor: grab;' : ''}
 				class:interactive={guessMode}
@@ -298,6 +318,13 @@
 <style lang="scss">
 	.row {
 		transition: transform 0.5s var(--delay, 0s) cubic-bezier(0.25, 0.1, 0.25, 1);
+	}
+
+	.row.interactive {
+
+		.duty-label {
+			font-size: 1rem;
+		}
 	}
 
 	.duty-label {
