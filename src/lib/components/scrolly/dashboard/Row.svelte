@@ -28,7 +28,6 @@
 		hoveredSeries = $bindable()
 	} = $props();
 
-	$inspect(series);
 
 	let isDragging = $state(false);
 	let tippyInstances = $state([]);

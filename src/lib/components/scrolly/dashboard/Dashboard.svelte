@@ -161,14 +161,8 @@
 			]
 		},
 		'chart-party-disagree': {
-			includeArr: [
-				'Loving America',
-				'Supporting equality',
-			],
-			highlightArr: [
-				'Loving America',
-				'Supporting equality',
-			],
+			includeArr: ['Loving America', 'Supporting equality'],
+			highlightArr: ['Loving America', 'Supporting equality'],
 			view: 'pid',
 			series: [
 				{ label: 'Democrat', color: getCSSVar('--color-theme-dem-blue') },
@@ -176,16 +170,8 @@
 			]
 		},
 		'chart-generation': {
-			includeArr: [
-				'Supporting Democracy',
-				'Honoring the flag',
-				'Connecting across differences',
-			],
-			highlightArr: [
-				'Supporting Democracy',
-				'Honoring the flag',
-				'Connecting across differences',
-			],
+			includeArr: ['Supporting Democracy', 'Honoring the flag', 'Connecting across differences'],
+			highlightArr: ['Supporting Democracy', 'Honoring the flag', 'Connecting across differences'],
 			view: 'generation',
 			series: [
 				{ label: 'Gen Z', color: getCSSVar('--color-theme-blue') },
@@ -347,7 +333,7 @@
 		width,
 		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
-			top: interactiveMode ? 30 :60,
+			top: interactiveMode ? 30 : 60,
 			right: interactiveMode ? 50 : 150,
 			bottom: 0,
 			left: guessMode ? 150 : 450
@@ -420,7 +406,6 @@
 
 	const mapColorScale = scaleSequential().interpolator(interpolateYlGn).domain([0, 100]);
 	// const mapColorScale = createCustomColorScale([getCSSVar('--color-theme-light'), getCSSVar('--color-theme-green')]);
-
 </script>
 
 <div
@@ -444,11 +429,13 @@
 					duties: new Set(transformedData.state.map((d) => d.duty_label))
 				}}
 			/>
-			{#if activeView == 'state' && selectedStateView == 'map'}
-				<GradientLegend colorScale={mapColorScale} />
-			{:else}
-				<GroupLegend options={options.find((o) => o.value === activeView)} {activeView} />
-			{/if}
+			<div class="dashboard-legend">
+				{#if activeView == 'state' && selectedStateView == 'map'}
+					<GradientLegend colorScale={mapColorScale} />
+				{:else}
+					<GroupLegend options={options.find((o) => o.value === activeView)} {activeView} />
+				{/if}
+			</div>
 		</div>
 	{/if}
 
@@ -521,11 +508,15 @@
 		justify-content: center;
 		position: relative;
 		height: 100%;
-	
+
 		width: 100%;
 		max-width: 1400px;
 		margin: 0 auto;
 		background-color: var(--bg-color);
+
+		.dashboard-legend {
+			margin-left: 40px;
+		}
 
 		&.intro {
 		}
@@ -593,8 +584,6 @@
 		font-size: 14px;
 		font-family: sans-serif;
 	}
-
-
 
 	svg {
 		transition: height 0.5s ease;

@@ -32,8 +32,6 @@
 		return 0;
 	});
 
-
-
 	onMount(() => {
 		gsap.registerPlugin(ScrollTrigger);
 
@@ -69,8 +67,6 @@
 			}
 		};
 	});
-
-	$inspect(progress);
 
 	// Watch for progress changes and update animations
 	$effect(() => {
@@ -120,8 +116,8 @@
 					counterAnimation = gsap.to(counterObj, {
 						value: 93,
 						duration: 3,
-						ease: "power2.out",
-						onUpdate: function() {
+						ease: 'power2.out',
+						onUpdate: function () {
 							animatedNumber = Math.round(counterObj.value);
 						}
 					});
@@ -149,14 +145,10 @@
 			</div>
 		</div>
 
-
-
-	<div class="big-number-container">
-		<div class="big-number">{animatedNumber}%</div>
+		<div class="big-number-container">
+			<div class="big-number">{animatedNumber}%</div>
+		</div>
 	</div>
-
-	</div>
-
 </div>
 
 <style lang="scss">

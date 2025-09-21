@@ -46,6 +46,7 @@
 			.legend-dot {
 				width: 18px;
 				height: 18px;
+				border: none;
 			}
 		}
 	}
