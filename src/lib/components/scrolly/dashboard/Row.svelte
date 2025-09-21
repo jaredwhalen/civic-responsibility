@@ -28,7 +28,6 @@
 		hoveredSeries = $bindable()
 	} = $props();
 
-
 	let isDragging = $state(false);
 	let tippyInstances = $state([]);
 	let svgEl = $state(null);
@@ -99,6 +98,24 @@
 
 	// $inspect(hoveredSeries);
 
+	// Function to get circle color
+	function getCircleColor(s) {
+		const defaultColor = '#bbbbbb';
+			? getCSSVar('--color-theme-red')
+			: pollCorrectMode
+				? s.label === 'Your guess'
+					? getCSSVar('--color-theme-red')
+					: getCSSVar('--color-theme-green')
+				: active
+					? customSeries
+						? customSeries.find((d) => d.label === s.label)?.color || defaultColor
+						: options
+							? options?.series?.find((d) => d.label.toLowerCase() === s.label.toLowerCase())
+									?.color || defaultColor
+							: getCSSVar('--color-theme-blue')
+					: defaultColor;
+	}
+
 	// Function to create tippy instances
 	function createTippyInstances() {
 		// Clean up existing instances first - destroy any tippy instances on our elements
@@ -160,6 +177,20 @@
 	});
 
 	onMount(() => {
+		// Clear any existing tooltips
+
+		tippyInstances.forEach((instance) => {
+			if (instance && typeof instance.destroy === 'function') {
+				try {
+					instance.destroy();
+				} catch (e) {
+					// Silently ignore errors from destroyed instances
+				}
+			}
+		});
+
+		tippyInstances = [];
+
 		// Initial tippy creation
 		createTippyInstances();
 
@@ -240,21 +271,7 @@
 			Math.abs(xScale(series[0].value) - xScale(series[1].value)) < 10}
 
 		{#if shouldShowGuess}
-			{@const defaultColor = '#bbbbbb'}
-			{@const color = guessMode
-				? getCSSVar('--color-theme-red')
-				: pollCorrectMode
-					? s.label === 'Your guess'
-						? getCSSVar('--color-theme-red')
-						: getCSSVar('--color-theme-green')
-					: active
-						? customSeries
-							? customSeries.find((d) => d.label === s.label)?.color || defaultColor
-							: options
-								? options?.series?.find((d) => d.label.toLowerCase() === s.label.toLowerCase())
-										?.color || defaultColor
-								: getCSSVar('--color-theme-blue')
-						: defaultColor}
+			{@const color = getCircleColor(s)}
 
 			{@const textOffset = guessMode || pollCorrectMode ? -30 : -30}
 
@@ -263,6 +280,7 @@
 				cy="0"
 				r={inIntro ? 12 : 6}
 				fill={color}
+				opacity={interactiveMode ? (hoveredSeries == s.label ? 1 : 0.75) : 1}
 				onmousedown={handleMouseDown}
 				style={guessMode ? 'cursor: grab;' : ''}
 				class:interactive={guessMode}
@@ -312,6 +330,25 @@
 			/>
 		{/if}
 	{/each}
+
+	<!-- Hover layer - renders on top with no interactivity (only in normal mode) -->
+	{#if hoveredSeries && !guessMode && !pollCorrectMode}
+		{#each series as s}
+			{#if s.label === hoveredSeries}
+				<circle
+					cx={xScale(s.value)}
+					cy="0"
+					r={inIntro ? 12 : 6}
+					fill={getCircleColor(s)}
+					opacity={1}
+					style="pointer-events: none;"
+					style:stroke="#000"
+					style:stroke-width="2"
+					class="hover-layer"
+				/>
+			{/if}
+		{/each}
+	{/if}
 </g>
 
 <style lang="scss">
@@ -320,7 +357,6 @@
 	}
 
 	.row.interactive {
-
 		.duty-label {
 			font-size: 1rem;
 		}
