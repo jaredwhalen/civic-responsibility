@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { gsap } from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+	import VennDiagram from './VennDiagram.svelte';
 	import Blobs from './Blobs.svelte';
 
 	let stepElement;
@@ -12,8 +13,9 @@
 	// Reactive calculations based on scroll progress
 	let textOpacity = $derived(progress >= 25 ? 1 : 0); // Text appears at 25% scroll
 	let textY = $derived(progress >= 25 ? 0 : -50); // Text starts above and moves to center
-	let artOpacity = $derived(progress >= 45 ? Math.min(1, (progress - 45) * 0.04) : 0); // 2% per 1% progress
-	let artProgress = $derived(progress >= 45 ? Math.min(1, (progress - 45) * 0.02) : 0); // 2% per 1% progress for art animation
+	let artStart = 25;
+	let artOpacity = $derived(progress >= artStart ? Math.min(1, (progress - artStart) * 0.04) : 0); // 2% per 1% progress
+	let artProgress = $derived(progress >= artStart ? Math.min(1, (progress - artStart) * 0.02) : 0); // 2% per 1% progress for art animation
 	let letterSpacing = $derived(artProgress * 0.5); // Letter spacing increases with art progress
 
 	onMount(() => {
@@ -57,6 +59,9 @@
 			});
 		}
 	});
+
+	let artHeight = $state();
+	let artWidth = $state();
 </script>
 
 <div class="step-1" bind:this={stepElement}>
@@ -69,8 +74,16 @@
 		</div>
 	</div>
 
-	<div class="art-content" bind:this={artElement}>
-		<Blobs offset={artProgress} />
+	<div
+		class="art-content"
+		bind:this={artElement}
+		bind:clientHeight={artHeight}
+		bind:clientWidth={artWidth}
+	>
+		{#if artHeight && artWidth}
+			<!-- <VennDiagram offset={artProgress} height={artHeight} width={artWidth} /> -->
+			<Blobs offset={artProgress} height={artHeight} width={artWidth} />
+		{/if}
 	</div>
 </div>
 
@@ -80,7 +93,6 @@
 	.step-1 {
 		height: 150vh;
 		position: relative;
-		display: flex;
 		align-items: center;
 		width: 100%;
 
@@ -96,6 +108,11 @@
 			padding: 2rem;
 			text-align: center;
 			z-index: 10;
+			margin-bottom: 10rem;
+			color: var(--color-theme-light);
+			* {
+				font-size: 4.5rem;
+			}
 			// text-shadow: 0 0 5px rgba(255, 255, 255, 1);
 		}
 
@@ -131,7 +148,7 @@
 			top: 50vh;
 			transform: translateY(-50%);
 			width: 100%;
-			height: 500px; // Match the SVG height
+			height: 800px; // Match the SVG height
 			z-index: 1; // Lower z-index to appear behind text
 			pointer-events: none; // Allow clicks to pass through to text
 		}

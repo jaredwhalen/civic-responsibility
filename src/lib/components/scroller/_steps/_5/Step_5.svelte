@@ -129,14 +129,14 @@
 
 	// Reactive calculations based on scroll progress
 	// First section: "Some answers we expected" (0-50% of total progress)
-	let text1Opacity = $derived(progress >= 20 ? 1 : 0); // Text appears at 20% scroll
-	let text1Y = $derived(progress >= 20 ? 0 : -30); // Text starts above and moves to center
-	let comments1Progress = $derived(progress >= 10 ? Math.min(1, (progress - 10) / 40) : 0); // Comments animate from 10% to 50%
+	let text1Opacity = $derived(progress >= 10 ? 1 : 0); 
+	let text1Y = $derived(progress >= 10 ? 0 : -30); 
+	let comments1Progress = $derived(progress >= 15 ? Math.min(1, (progress - 15) / 25) : 0);
 
 	// Second section: "Others surprised us" (50-100% of total progress)
-	let text2Opacity = $derived(progress >= 60 ? 1 : 0); // Text appears at 60% scroll
-	let text2Y = $derived(progress >= 60 ? 0 : -30); // Text starts above and moves to center
-	let comments2Progress = $derived(progress >= 50 ? Math.min(1, (progress - 50) / 40) : 0); // Comments animate from 50% to 90%
+	let text2Opacity = $derived(progress >= 55 ? 1 : 0);
+	let text2Y = $derived(progress >= 55 ? 0 : -30);
+	let comments2Progress = $derived(progress >= 60 ? Math.min(1, (progress - 60) / 20) : 0);
 
 	onMount(() => {
 		gsap.registerPlugin(ScrollTrigger);
@@ -192,7 +192,7 @@
 		</div>
 
 		<div class="comments-container" bind:this={commentsElement1}>
-			<Comments commentData={expectedAnswers} {progress} startProgress={10} endProgress={50} />
+			<Comments commentData={expectedAnswers} progress={comments1Progress} startProgress={0} endProgress={1} />
 		</div>
 	</div>
 
@@ -205,9 +205,9 @@
 		<div class="comments-container" bind:this={commentsElement2}>
 			<Comments
 				commentData={surprisingAnswers}
-				{progress}
-				startProgress={50}
-				endProgress={90}
+				progress={comments2Progress}
+				startProgress={0}
+				endProgress={1}
 				direction="right"
 			/>
 		</div>

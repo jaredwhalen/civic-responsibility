@@ -12,12 +12,13 @@
 
 <div class="scroller">
 	{#if section == 'intro'}
-		<div class="light-bg">
+		<div class="dark-bg">
 			<Step_1 />
 			<Step_2 />
 		</div>
+	
 		<Step_3 />
-		<div class="dark-bg">
+		<div class="dark-bg reverse">
 			<Step_4 />
 			<Step_5 />
 		</div>
@@ -67,5 +68,9 @@
 
 	.dark-bg {
 		background: linear-gradient(135deg, var(--color-theme-blue), #111);
+
+		&.reverse {
+			background: linear-gradient(135deg, #111, var(--color-theme-blue));
+		}
 	}
 </style>

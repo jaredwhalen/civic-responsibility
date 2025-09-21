@@ -1,0 +1,50 @@
+@font-face {
+    font-family: 'Sailec';
+    src: url('sailec_thin-webfont.woff2') format('woff2'),
+        url('sailec_thin-webfont.woff') format('woff');
+    font-weight: 100;
+    /* Thin */
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Sailec';
+    src: url('sailec_light-webfont.woff2') format('woff2'),
+        url('sailec_light-webfont.woff') format('woff');
+    font-weight: 300;
+    /* Light */
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Sailec';
+    src: url('sailec_regular_italic-webfont.woff2') format('woff2'),
+        url('sailec_regular_italic-webfont.woff') format('woff');
+    font-weight: 400;
+    /* Regular */
+    font-style: italic;
+    /* Italic version */
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Sailec';
+    src: url('sailec_medium-webfont.woff2') format('woff2'),
+        url('sailec_medium-webfont.woff') format('woff');
+    font-weight: 500;
+    /* Medium */
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Sailec';
+    src: url('sailec_bold-webfont.woff2') format('woff2'),
+        url('sailec_bold-webfont.woff') format('woff');
+    font-weight: 700;
+    /* Bold */
+    font-style: normal;
+    font-display: swap;
+}

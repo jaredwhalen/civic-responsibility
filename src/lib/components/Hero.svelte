@@ -14,7 +14,6 @@
 	let isMounted = $state(false);
 
 	onMount(() => {
-		console.log('Hero mounted');
 		isMounted = true;
 	});
 </script>

@@ -4,7 +4,13 @@
 	import { getCSSVar } from '$lib/helpers/getCSSVar';
 	import Bubble from './Bubble.svelte';
 
-	let { commentData, direction = 'left', progress = 0, startProgress = 0, endProgress = 1 } = $props();
+	let {
+		commentData,
+		direction = 'left',
+		progress = 0,
+		startProgress = 0,
+		endProgress = 1
+	} = $props();
 	let commentElements = [];
 
 	// Calculate individual comment progress based on overall progress
@@ -23,7 +29,6 @@
 					opacity: 0,
 					y: 100
 				});
-				console.log(`Set initial state for comment ${index}`);
 			}
 		});
 	});
@@ -31,19 +36,17 @@
 	// Animate comments based on progress
 	$effect(() => {
 		const currentProgress = commentProgress();
-		
+
 		commentElements.forEach((element, index) => {
 			if (element) {
 				// Stagger the animation based on index
-				const individualProgress = Math.max(0, Math.min(1, (currentProgress - (index * 0.1)) / 0.3));
-				
+				const individualProgress = Math.max(0, Math.min(1, (currentProgress - index * 0.1) / 0.3));
+
 				// Scale and opacity animation
-				const scale = 0.3 + (individualProgress * 0.7); // Scale from 0.3 to 1
+				const scale = 0.3 + individualProgress * 0.7; // Scale from 0.3 to 1
 				const opacity = individualProgress;
 				const y = (1 - individualProgress) * 100; // Start 100px below, move to 0
-				
-				console.log(`Comment ${index}: progress=${individualProgress}, opacity=${opacity}, scale=${scale}`);
-				
+
 				gsap.to(element, {
 					scale: scale,
 					opacity: opacity,

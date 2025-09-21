@@ -55,7 +55,11 @@
 	// Store correct answer when in poll-correct mode
 	$effect(() => {
 		if (pollCorrectMode && currentViewData.length > 0) {
-			$userResponse.correctAnswer = currentViewData[0].series[1].value; // Correct answer is the second series
+			// Only update if the correct answer has actually changed to avoid reactive loops
+			const newCorrectAnswer = currentViewData[0].series[1].value;
+			if ($userResponse.correctAnswer !== newCorrectAnswer) {
+				$userResponse.correctAnswer = newCorrectAnswer;
+			}
 		}
 	});
 
@@ -159,15 +163,11 @@
 		'chart-party-disagree': {
 			includeArr: [
 				'Loving America',
-				'Fighting for people’s rights',
 				'Supporting equality',
-				'Being self-reliant'
 			],
 			highlightArr: [
 				'Loving America',
-				'Fighting for people’s rights',
 				'Supporting equality',
-				'Being self-reliant'
 			],
 			view: 'pid',
 			series: [
@@ -180,13 +180,11 @@
 				'Supporting Democracy',
 				'Honoring the flag',
 				'Connecting across differences',
-				'Working hard'
 			],
 			highlightArr: [
 				'Supporting Democracy',
 				'Honoring the flag',
 				'Connecting across differences',
-				'Working hard'
 			],
 			view: 'generation',
 			series: [
@@ -423,7 +421,6 @@
 	const mapColorScale = scaleSequential().interpolator(interpolateYlGn).domain([0, 100]);
 	// const mapColorScale = createCustomColorScale([getCSSVar('--color-theme-light'), getCSSVar('--color-theme-green')]);
 
-	$inspect(selectedStateMapViewOption);
 </script>
 
 <div

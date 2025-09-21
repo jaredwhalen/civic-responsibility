@@ -28,6 +28,8 @@
 		hoveredSeries = $bindable()
 	} = $props();
 
+	$inspect(series);
+
 	let isDragging = $state(false);
 	let tippyInstances = $state([]);
 	let svgEl = $state(null);
@@ -134,7 +136,7 @@
 
 	// Reactive effect to recreate tooltips when data changes
 	$effect(() => {
-		if (options && interactiveMode && series.length > 0) {
+		if (options || series.length > 0) {
 			// Watch for changes in series values to trigger tooltip recreation
 			series.forEach(s => s.value);
 			// Use a small delay to ensure DOM is updated

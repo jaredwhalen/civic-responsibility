@@ -124,6 +124,7 @@
 		align-items: center;
 		justify-content: center;
 		width: 100%;
+		color: var(--color-theme-light);
 
 		z-index: 2;
 
@@ -168,7 +169,7 @@
 							border-radius: 2px;
 						}
 
-						color: var(--color-theme-blue);
+						color: var(--color-theme-blue-light);
 					}
 
 					// Show underline when word is visible
