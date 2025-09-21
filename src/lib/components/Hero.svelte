@@ -14,7 +14,6 @@
 	let isMounted = $state(false);
 
 	onMount(() => {
-		console.log('Hero mounted');
 		isMounted = true;
 	});
 </script>
@@ -33,9 +32,9 @@
 		<!-- <h1 class="hero-title">{@html heroText}</h1> -->
 		{#if isMounted}
 			<div class="hero-title">
-				<h1 transition:slide={{ axis: 'y', duration: 500, delay: 150 }}>What do we</h1>
-				<h1 transition:slide={{ axis: 'y', duration: 500, delay: 300 }}>owe each other</h1>
-				<h1 transition:slide={{ axis: 'y', duration: 500, delay: 450 }}>as Americans?</h1>
+				<h1 transition:slide={{ axis: 'y', duration: 1000, delay: 150 }}>What do we</h1>
+				<h1 transition:slide={{ axis: 'y', duration: 1000, delay: 300 }}>owe each other</h1>
+				<h1 transition:slide={{ axis: 'y', duration: 1000, delay: 450 }}>as Americans?</h1>
 
 				<!-- <span class="scroll-indicator">↓ Scroll down </span> -->
 			</div>
@@ -182,7 +181,7 @@
 						transform: scaleX(0);
 						transform-origin: left;
 						animation: highlightGrow 0.5s ease-out forwards;
-						animation-delay: 500ms; // Start after first text appears
+						animation-delay: 1000ms; // Start after first text appears
 						// box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 					}
 

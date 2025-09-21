@@ -2,36 +2,35 @@
 	let { options, activeView } = $props();
 </script>
 
-<div class="legend">
-	{#if options?.series && options.series.length > 1}
+{#if options?.series && options.series.length > 1}
+	<div class="legend">
 		<!-- <div class="legend-title">Legend</div> -->
 		<div class="legend-items">
 			{#each options.series as series}
 				{#if series.label != 'Other'}
-				<div class="legend-item">
-					<div class="legend-dot" style="background-color: {series.color}"></div>
-					<span class="legend-label">{series.label}</span>
-				</div>
-				{:else}
-				<div class="legend-item">
-					<div class="legend-dots-cluster">
-						<div class="legend-dot-small" style="background-color: {series.color}"></div>
-						<div class="legend-dot-small" style="background-color: {series.color}"></div>
-						<div class="legend-dot-small" style="background-color: {series.color}"></div>
+					<div class="legend-item">
+						<div class="legend-dot" style="background-color: {series.color}"></div>
+						<span class="legend-label">{series.label}</span>
 					</div>
-					<span class="legend-label">All other groups</span>
-				</div>
+				{:else}
+					<div class="legend-item">
+						<div class="legend-dots-cluster">
+							<div class="legend-dot-small" style="background-color: {series.color}"></div>
+							<div class="legend-dot-small" style="background-color: {series.color}"></div>
+							<div class="legend-dot-small" style="background-color: {series.color}"></div>
+						</div>
+						<span class="legend-label">All other groups</span>
+					</div>
 				{/if}
 			{/each}
 		</div>
-	{/if}
-</div>
+	</div>
+{/if}
 
 <style lang="scss">
 	.legend {
 		margin-left: 40px;
-		margin-bottom: 20px;
-        height: 25px;
+		// height: 25px;
 		.legend-title {
 			font-size: 14px;
 			font-weight: 800;

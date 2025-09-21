@@ -89,7 +89,7 @@
 			max-width: 500px;
 			margin-left: 4rem;
 			padding: $spacing-xl;
-			border: 1px solid #999;
+			// border: 1px solid #999;
 			font-size: 1.7rem;
 			line-height: 1.5;
 			font-weight: 400;
@@ -103,7 +103,6 @@
 			}
 
 			p {
-				display: inline;
 				transition: background-color 0.75s ease;
 				padding: 0.25rem 0px;
 			}
@@ -152,6 +151,10 @@
 		.slide {
 			.slide-inner {
 				p {
+					font-size: 2.8rem;
+					text-align: center;
+					display: inline-block;
+					max-width: 900px;
 					span {
 						&.underline {
 							position: relative;

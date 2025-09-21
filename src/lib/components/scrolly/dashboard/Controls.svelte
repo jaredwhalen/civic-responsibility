@@ -198,7 +198,7 @@
 	style="height: {isMounted && !isDismounting ? containerHeight + 'px' : '0px'}"
 >
 	<div class="controls-content">
-		<button onclick={handleDismount} data-button="back">← Exit dashboard</button>
+		<!-- <button onclick={handleDismount} data-button="back">← Exit dashboard</button> -->
 		<div class="dashboard-controls">
 			<div class="dashboard-controls-inner">
 				<div class="dashboard-controls-inner-title">

@@ -1,8 +1,37 @@
 <script>
-	import { fade } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
 	import { userResponse } from '$lib/stores/userResponse.js';
+	import GroupLegend from './dashboard/GroupLegend.svelte';
+	import { getCSSVar } from '$lib/helpers/getCSSVar';
 
 	const { content } = $props();
+
+	const components = {
+		GroupLegend: GroupLegend
+	};
+
+	const options = $derived([
+		{
+			label: 'Generation',
+			value: 'generation',
+			series: [
+				{ label: 'Gen Z', color: getCSSVar('--color-theme-blue') },
+				{ label: 'Millennials', color: getCSSVar('--color-theme-green') },
+				{ label: 'Gen X', color: getCSSVar('--color-theme-yellow') },
+				{ label: 'Baby Boomers', color: getCSSVar('--color-theme-red') }
+			]
+		},
+		{
+			label: 'Political Identification',
+			value: 'pid',
+			series: [
+				{ label: 'Democrat', color: getCSSVar('--color-theme-dem-blue') },
+				{ label: 'Republican', color: getCSSVar('--color-theme-gop-red') }
+			]
+		}
+	]);
+
+	let ActiveComponent = $derived(content.component ? components[content.component.id] : null);
 
 	// Template function to replace placeholders with variable values
 	function processTemplate(text) {
@@ -25,6 +54,12 @@
 			let el = document.querySelector('.show-on-interaction');
 			if (content && el && $userResponse.userSubmitted === true) {
 				el.style.display = $userResponse.userSubmitted ? 'inline' : 'none';
+
+				let userGuess = $userResponse.guess.toFixed(0);
+				// If user guess is 87, replace content with "Good job!"
+				if (userGuess == 87) {
+					el.textContent = "That's right!";
+				}
 			}
 		}
 	});
@@ -34,8 +69,8 @@
 	<div
 		class="text-footer"
 		class:hide={content.hideFooter}
-		out:fade={{ duration: 250 }}
-		in:fade={{ delay: 500 }}
+		in:fly={{ y: -50, duration: 400, delay: 200 }}
+		out:fly={{ y: 50, duration: 300 }}
 	>
 		<div class="text-footer__content text-block content">
 			{@html content.text
@@ -43,6 +78,12 @@
 				.map((p) => `<p>${processTemplate(p)}</p>`)
 				.join('')}
 		</div>
+
+		{#if ActiveComponent}
+			<div class="text-footer__component">
+				<ActiveComponent options={options.find((o) => o.value === content.component.series)} />
+			</div>
+		{/if}
 	</div>
 {/key}
 
@@ -51,13 +92,16 @@
 		.text-footer {
 			width: 100%;
 			position: absolute;
-			bottom: 10%;
+			top: 10%;
 			display: flex;
 			justify-content: center;
-			align-items: center;
 			z-index: 1000;
 			transition: opacity 0.3s ease;
-
+			flex-direction: column;
+			max-width: 1000px;
+			margin: 0 auto;
+			left: 0;
+			right: 0;
 			&.hide {
 				opacity: 0;
 			}
@@ -68,14 +112,14 @@
 
 			&__content {
 				width: 100%;
-				max-width: 1000px;
+
 				padding: $spacing-xl;
-				font-size: 1.7rem;
+				font-size: 2.8rem;
 				line-height: 1.5;
 				font-weight: 400;
 				font-family: $font-family-body;
-				background-color: rgb(236, 241, 250);
-				border: 1px solid #999;
+				// background-color: rgb(236, 241, 250);
+				// border: 1px solid #999;
 
 				// Mobile responsive adjustments
 				@include mq('mobile', 'max') {
@@ -88,6 +132,38 @@
 					display: inline;
 					transition: background-color 0.75s ease;
 					padding: 0.25rem 0px;
+
+					// span {
+					// 	&.underline {
+					// 		position: relative;
+					// 		z-index: 1;
+					// 		width: fit-content;
+					// 		display: inline-block;
+					// 		&::after {
+					// 			content: '';
+					// 			display: block;
+					// 			width: 100%;
+					// 			height: 30px;
+					// 			position: absolute;
+					// 			bottom: 0px;
+					// 			z-index: -1;
+					// 		}
+
+					// 		&.democrat {
+					// 			&::after {
+					// 				background-color: var(--color-theme-dem-blue);
+					// 				opacity: 0.75;
+					// 			}
+					// 		}
+
+					// 		&.republican {
+					// 			&::after {
+					// 				background-color: var(--color-theme-gop-red);
+					// 				opacity: 0.75;
+					// 			}
+					// 		}
+					// 	}
+					// }
 				}
 			}
 		}
