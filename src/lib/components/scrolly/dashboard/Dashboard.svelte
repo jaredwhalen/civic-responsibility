@@ -340,17 +340,17 @@
 	});
 
 	let width = $state(0);
-	const baseRowHeight = 28;
-	const minRowHeight = 20;
+	const baseRowHeight = interactiveMode ? 28 : 45;
+	const minRowHeight = interactiveMode ? 20 : 40;
 
 	const dimensions = $derived({
 		width,
 		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
 			top: interactiveMode ? 30 :60,
-			right: 50,
+			right: interactiveMode ? 50 : 150,
 			bottom: 0,
-			left: guessMode ? 50 : 300
+			left: guessMode ? 150 : 450
 		}
 	});
 

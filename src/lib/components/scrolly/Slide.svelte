@@ -213,9 +213,10 @@
 
 		span.instructions {
 			display: block;
-			font-size: 1rem;
+			font-size: 1.4rem;
 			font-family: $font-family-sans;
-			margin-top: 20px;
+			font-weight: 300;
+			// margin-top: 20px;
 
 			// Mobile responsive instructions
 			@include mq('mobile', 'max') {
@@ -225,6 +226,7 @@
 
 			.dot {
 				color: $color-theme-red;
+				// font-size: 2rem;
 			}
 		}
 	}

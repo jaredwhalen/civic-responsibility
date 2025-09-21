@@ -22,7 +22,7 @@
 				/>
 
 				<g class="tick" transform="translate({xScale(tickValue)}, {(inIntro ? tickSize * 1.5 : tickSize) / 2})">
-					<text y="20" text-anchor="middle">{tickValue}%</text>
+					<text y="30" text-anchor="middle">{tickValue}%</text>
 				</g>
 			{/each}
 		</g>

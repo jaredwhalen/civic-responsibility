@@ -1,9 +1,9 @@
 <script>
-	let { options, activeView } = $props();
+	let { options, activeView, variant = 'default' } = $props();
 </script>
 
 {#if options?.series && options.series.length > 1}
-	<div class="legend">
+	<div class="legend" class:large-font={variant === 'large-font'}>
 		<!-- <div class="legend-title">Legend</div> -->
 		<div class="legend-items">
 			{#each options.series as series}
@@ -29,13 +29,24 @@
 
 <style lang="scss">
 	.legend {
-		margin-left: 40px;
+		// margin-left: 40px;
 		// height: 25px;
 		.legend-title {
 			font-size: 14px;
 			font-weight: 800;
 			color: #666;
 			font-family: sans-serif;
+		}
+
+		&.large-font {
+			.legend-label {
+				font-size: 2rem;
+			}
+
+			.legend-dot {
+				width: 18px;
+				height: 18px;
+			}
 		}
 	}
 

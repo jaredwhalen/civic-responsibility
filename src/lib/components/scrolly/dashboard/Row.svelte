@@ -103,13 +103,15 @@
 	// Function to create tippy instances
 	function createTippyInstances() {
 		// Clean up existing instances first - destroy any tippy instances on our elements
-		const existingCircles = document.querySelectorAll(`[data-row-index="${index}"][data-tippy-content]`);
+		const existingCircles = document.querySelectorAll(
+			`[data-row-index="${index}"][data-tippy-content]`
+		);
 		existingCircles.forEach((circle) => {
 			if (circle._tippy) {
 				circle._tippy.destroy();
 			}
 		});
-		
+
 		// Also clean up our tracked instances
 		tippyInstances.forEach((instance) => {
 			if (instance && instance.destroy) {
@@ -138,7 +140,7 @@
 	$effect(() => {
 		if (options || series.length > 0) {
 			// Watch for changes in series values to trigger tooltip recreation
-			series.forEach(s => s.value);
+			series.forEach((s) => s.value);
 			// Use a small delay to ensure DOM is updated
 			setTimeout(createTippyInstances, 0);
 		}
@@ -241,7 +243,7 @@
 				cx={xScale(s.value)}
 				cy="0"
 				r={inIntro ? 12 : 6}
-				fill="{color}90"
+				fill="{color}"
 				onmousedown={handleMouseDown}
 				style={guessMode ? 'cursor: grab;' : ''}
 				class:interactive={guessMode}
@@ -300,10 +302,11 @@
 
 	.duty-label {
 		font-family: $font-family-sans;
-		font-size: 1rem;
+		font-size: 1.6rem;
 		transition: opacity 0.5s ease;
+		font-weight: 300;
 		&.highlight {
-			font-weight: 600;
+			font-weight: 700;
 		}
 	}
 

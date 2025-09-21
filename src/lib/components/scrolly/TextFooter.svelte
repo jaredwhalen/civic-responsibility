@@ -81,7 +81,7 @@
 
 		{#if ActiveComponent}
 			<div class="text-footer__component">
-				<ActiveComponent options={options.find((o) => o.value === content.component.series)} />
+				<ActiveComponent options={options.find((o) => o.value === content.component.series)} variant={content?.component?.variant} />
 			</div>
 		{/if}
 	</div>
@@ -92,7 +92,7 @@
 		.text-footer {
 			width: 100%;
 			position: absolute;
-			top: 10%;
+			top: 15%;
 			display: flex;
 			justify-content: center;
 			z-index: 1000;
@@ -113,7 +113,7 @@
 			&__content {
 				width: 100%;
 
-				padding: $spacing-xl;
+		
 				font-size: 2.8rem;
 				line-height: 1.5;
 				font-weight: 400;

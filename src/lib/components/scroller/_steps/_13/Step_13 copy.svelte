@@ -6,13 +6,20 @@
 
 	let stepElement;
 	let textElement;
+	let pieChartElement;
 	let progress = $state(0);
-	let animatedNumber = $state(0);
-	let counterAnimation;
+
+	// Donut chart data - just 93%
+	const donutData = {
+		value: 93,
+		color: getCSSVar('--color-theme-blue-light'),
+		backgroundColor: '#bbb'
+	};
 
 	// Reactive calculations based on scroll progress
 	let firstLineProgress = $derived(Math.max(0, Math.min(1, (progress - 15) / 20))); // 15-35% scroll
 	let secondLineProgress = $derived(Math.max(0, Math.min(1, (progress - 25) / 25))); // 25-50% scroll
+	let pieChartAnimationProgress = $derived(Math.max(0, Math.min(1, (progress - 35) / 30))); // 35-65% scroll for donut fill/scale
 
 	// Overall opacity for the entire content block (text + chart)
 	let overallContentOpacity = $derived(() => {
@@ -32,13 +39,15 @@
 		return 0;
 	});
 
-
+	// Pie chart scale should still be tied to its own animation progress
+	let pieChartScale = $derived(0.8 + pieChartAnimationProgress * 0.2); // Scale from 0.8 to 1.0
 
 	onMount(() => {
 		gsap.registerPlugin(ScrollTrigger);
 
 		// Set initial states
 		gsap.set(textElement, { opacity: 0 });
+		gsap.set(pieChartElement, { scale: 0.8, opacity: 0 });
 
 		// Set initial states for both lines
 		const firstLine = textElement?.querySelector('.first-line');
@@ -64,13 +73,8 @@
 
 		return () => {
 			trigger.kill();
-			if (counterAnimation) {
-				counterAnimation.kill();
-			}
 		};
 	});
-
-	$inspect(progress);
 
 	// Watch for progress changes and update animations
 	$effect(() => {
@@ -111,28 +115,15 @@
 					ease: 'none'
 				});
 			});
+		}
 
-			// Handle counter animation based on progress
-			if (progress > 25) {
-				// Start animation if not already running
-				if (!counterAnimation || !counterAnimation.isActive()) {
-					const counterObj = { value: animatedNumber };
-					counterAnimation = gsap.to(counterObj, {
-						value: 93,
-						duration: 3,
-						ease: "power2.out",
-						onUpdate: function() {
-							animatedNumber = Math.round(counterObj.value);
-						}
-					});
-				}
-			} else {
-				// Reset when progress is below 5%
-				if (counterAnimation) {
-					counterAnimation.kill();
-				}
-				animatedNumber = 0;
-			}
+		if (pieChartElement) {
+			gsap.to(pieChartElement, {
+				scale: pieChartScale,
+				opacity: overallContentOpacity, // Use overall opacity
+				duration: 0.1,
+				ease: 'none'
+			});
 		}
 	});
 </script>
@@ -149,14 +140,50 @@
 			</div>
 		</div>
 
+		<div class="pie-chart-container" bind:this={pieChartElement}>
+			<div class="pie-chart">
+				<svg viewBox="0 0 200 200" class="pie-svg">
+					<!-- Background circle (donut hole) -->
+					<circle
+						cx="100"
+						cy="100"
+						r="80"
+						fill="none"
+						stroke={donutData.backgroundColor}
+						stroke-width="20"
+					/>
 
+					<!-- Animated donut segment using stroke-dasharray -->
+					<circle
+						cx="100"
+						cy="100"
+						r="80"
+						fill="none"
+						stroke={donutData.color}
+						stroke-width="20"
+						stroke-linecap="butt"
+						stroke-dasharray="502.65"
+						stroke-dashoffset={502.65 - 502.65 * pieChartAnimationProgress * (donutData.value / 100)}
+						transform="rotate(-90 100 100)"
+					/>
+				</svg>
 
-	<div class="big-number-container">
-		<div class="big-number">{animatedNumber}%</div>
+				<!-- Center percentage -->
+				<div class="center-percentage">
+					<span class="percentage-number">93%</span>
+				</div>
+
+				<!-- Chart label -->
+				<div class="chart-label">
+					<div class="label-line"></div>
+					<div class="label-text">
+						Percentage of Americans who say, "Now more than ever, it is important to honor our civic
+						responsibilities"
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
-
-	</div>
-
 </div>
 
 <style lang="scss">
@@ -172,7 +199,7 @@
 		width: 100%;
 		background: var(--bg-color);
 		gap: 4rem;
-		margin-top: -1px;
+        margin-top: -1px;
 
 		.sticky-container {
 			position: sticky;
@@ -221,17 +248,56 @@
 				}
 			}
 		}
-	}
 
-	.big-number-container {
-		// position: absolute;
-		padding-bottom: 10rem;
-		.big-number {
-			font-size: 30vh;
-			line-height: 1;
-			font-weight: 600;
-			color: var(--color-theme-blue-light);
-			font-family: $font-family-mono;
+		.pie-chart-container {
+			z-index: 5;
+			will-change: transform, opacity;
+			padding-bottom: 5rem;
+		}
+
+		.pie-chart {
+			position: relative;
+			width: 300px;
+
+			.pie-svg {
+				width: 100%;
+				height: 100%;
+				filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+			}
+
+			.center-percentage {
+				position: absolute;
+				top: calc(50% - 50px);
+				left: 50%;
+				transform: translate(-50%, -50%);
+				text-align: center;
+
+				.percentage-number {
+					font-size: 4.5rem;
+					font-weight: bold;
+					color: var(--color-theme-blue-light);
+					font-family: $font-family-sans;
+				}
+			}
+
+			.chart-label {
+				text-align: center;
+
+				.label-line {
+					width: 2px;
+					height: 20px;
+					background: #4a6b3a;
+					margin: 0 auto 10px;
+				}
+
+				.label-text {
+					font-size: 0.9rem;
+					font-weight: 500;
+					line-height: 1.4;
+					max-width: 300px;
+					margin: 0 auto;
+				}
+			}
 		}
 	}
 </style>
