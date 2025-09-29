@@ -41,7 +41,7 @@
 		}
 
 		text {
-			font-family: $font-family-mono;
+			font-family: $font-family-body;
 			font-size: 1rem;
 			fill: #888;
 		}
