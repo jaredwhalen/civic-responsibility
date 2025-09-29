@@ -144,12 +144,12 @@
 			highlightArr: ['Defending freedom']
 		},
 		'chart-constitution': {
-			includeArr: ['Defending freedom', 'Following the Constitution'],
-			highlightArr: ['Following the Constitution']
+			includeArr: ['Voting', 'Following the Constitution', 'Paying your taxes'],
+			highlightArr: ['Voting', 'Following the Constitution', 'Paying your taxes']
 		},
 		'chart-charity': {
-			includeArr: ['Defending freedom', 'Following the Constitution', 'Donating to charity'],
-			highlightArr: ['Donating to charity']
+			includeArr: ['Defending freedom', 'Joining the military', 'Welcoming refugees'],
+			highlightArr: ['Defending freedom', 'Joining the military', 'Welcoming refugees'],
 		},
 		'chart-party-agree': {
 			includeArr: ['Defending freedom', 'Voting', 'Helping your community'],
