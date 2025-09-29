@@ -2,8 +2,9 @@
 	let { children, color = '#00aabb', direction = 'left' } = $props();
 </script>
 
-<div class="speech-bubble {direction}" style:--color={color}>
+<div class="speech-bubble {direction} {direction}_border" style:--color={color}>
 	{@render children?.()}
+
 </div>
 
 <style lang="scss">
@@ -13,10 +14,27 @@
 		border-radius: 0.4em;
 		color: #000;
 		padding: 1rem;
-		max-width: 320px;
+
 		width: 100%;
 		font-size: 1.5rem;
 		opacity: 0.5;
+
+		text-align: center;
+
+		&::before {
+			background: none;
+			border: 2px solid var(--color);
+			border-radius: 0.6em;
+			content: '';
+			display: block;
+			position: absolute;
+			top: -4px;
+			left: -4px;
+			right: -4px;
+			bottom: -4px;
+			pointer-events: none;
+			opacity: 0.5;
+		}
 
 		&.right {
 			text-align: right;
@@ -34,17 +52,20 @@
 			border: 20px solid transparent;
 			border-bottom: 0;
 			border-top-color: var(--color);
+
 		}
 
 		&.left::after {
-			left: 30%;
+			left: 20%;
 			border-left: 0;
 		}
 
 		&.right::after {
-			left: calc(70% + 20px);
+			left: calc(80%);
 
 			border-right: 0;
 		}
+
+
 	}
 </style>

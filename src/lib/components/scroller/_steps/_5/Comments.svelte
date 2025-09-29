@@ -2,11 +2,11 @@
 	import { onMount } from 'svelte';
 	import { gsap } from 'gsap';
 	import { getCSSVar } from '$lib/helpers/getCSSVar';
+	import Quote from './Quote.svelte';
 	import Bubble from './Bubble.svelte';
 
 	let {
 		commentData,
-		direction = 'left',
 		progress = 0,
 		startProgress = 0,
 		endProgress = 1
@@ -24,8 +24,10 @@
 	$effect(() => {
 		commentElements.forEach((element, index) => {
 			if (element) {
+				const comment = commentData[index];
+				const initialScale = comment.position.scale || 0.3;
 				gsap.set(element, {
-					scale: 0.3,
+					scale: initialScale * 0.5, // Start at half the target scale
 					opacity: 0,
 					y: 100
 				});
@@ -39,11 +41,15 @@
 
 		commentElements.forEach((element, index) => {
 			if (element) {
+				const comment = commentData[index];
+				const targetScale = comment.position.scale || 1.0;
+				
 				// Stagger the animation based on index
 				const individualProgress = Math.max(0, Math.min(1, (currentProgress - index * 0.1) / 0.3));
 
-				// Scale and opacity animation
-				const scale = 0.3 + individualProgress * 0.7; // Scale from 0.3 to 1
+				// Scale and opacity animation using comment's scale property
+				const initialScale = targetScale * 0.5; // Half of target scale
+				const scale = initialScale + individualProgress * (targetScale - initialScale);
 				const opacity = individualProgress;
 				const y = (1 - individualProgress) * 100; // Start 100px below, move to 0
 
@@ -60,15 +66,20 @@
 </script>
 
 {#each commentData as comment, index}
+	{console.log(comment.position)}
 	<div
 		class="comment-item"
 		bind:this={commentElements[index]}
 		style="
         top: {comment.position.top}; 
-        left: {comment.position.left}; 
+        left: {comment.position.left};
       "
 	>
-		<Bubble color={comment.position.color || getCSSVar('--color-theme-light')} {direction}>
+		<!-- <Quote color={comment.position.color || getCSSVar('--color-theme-light')} {direction}>
+			{comment.text}
+		</Quote> -->
+
+		<Bubble color={comment.position.color || getCSSVar('--color-theme-light')} direction={comment.position.direction || 'left'}>
 			{comment.text}
 		</Bubble>
 	</div>

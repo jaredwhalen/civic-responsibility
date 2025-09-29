@@ -8,28 +8,29 @@
 	// Data for both sections
 	const expectedAnswers = [
 		{
-			text: 'Obeying the law',
+			text: 'Honoring the Constitution',
 			position: {
-				top: '15%',
+				top: '5%',
 				left: '10%',
 				color: `${getCSSVar('--color-theme-yellow')}`,
-				scale: 1.7
+				scale: 1
 			}
 		},
 		{
 			text: 'Practicing freedom of speech',
 			position: {
-				top: '45%',
+				top: '40%',
 				left: '15%',
 				color: `${getCSSVar('--color-theme-yellow')}`,
-				scale: 1.2
+				scale: 1.2,
+				direction: "right"
 			}
 		},
 		{
-			text: 'Honoring the Constitution',
+			text: 'Obeying the law',
 			position: {
-				top: '20%',
-				left: '75%',
+				top: '30%',
+				left: '65%',
 				color: `${getCSSVar('--color-theme-yellow')}`,
 				scale: 1.4
 			}
@@ -40,13 +41,14 @@
 				top: '100%',
 				left: '15%',
 				color: `${getCSSVar('--color-theme-yellow')}`,
-				scale: 1.7
+				scale: 1.7,
+				direction: "right"
 			}
 		},
 		{
 			text: 'Serving on a jury',
 			position: {
-				top: '65%',
+				top: '80%',
 				left: '50%',
 				color: `${getCSSVar('--color-theme-yellow')}`,
 				scale: 1
@@ -55,10 +57,11 @@
 		{
 			text: 'Voting',
 			position: {
-				top: '90%',
+				top: '100%',
 				left: '80%',
 				color: `${getCSSVar('--color-theme-yellow')}`,
-				scale: 1.3
+				scale: 1.3,
+				direction: "right"
 			}
 		}
 	];
@@ -70,25 +73,27 @@
 				top: '15%',
 				left: '10%',
 				color: `${getCSSVar('--color-theme-blue-light')}`,
-				scale: 1
+				scale: 1,
+				direction: "right"
 			}
 		},
 		{
 			text: 'Protecting the environment',
 			position: {
-				top: '10%',
-				left: '75%',
+				top: '30%',
+				left: '45%',
 				color: `${getCSSVar('--color-theme-blue-light')}`,
 				scale: 1.2
 			}
 		},
 		{
-			text: 'Being grateful for your opportunities',
+			text: "Helping one's community",
 			position: {
 				top: '55%',
 				left: '70%',
 				color: `${getCSSVar('--color-theme-blue-light')}`,
-				scale: 1.4
+				scale: 1,
+				direction: "right"
 			}
 		},
 		{
@@ -104,18 +109,19 @@
 			text: "Making one's voice heard",
 			position: {
 				top: '95%',
-				left: '30%',
+				left: '10%',
 				color: `${getCSSVar('--color-theme-blue-light')}`,
 				scale: 1.1
 			}
 		},
 		{
-			text: "Helping one's community",
+			text: 'Being grateful for your opportunities',
 			position: {
-				top: '35%',
+				top: '85%',
 				left: '50%',
 				color: `${getCSSVar('--color-theme-blue-light')}`,
-				scale: 1
+				scale: 1,
+				direction: "right"
 			}
 		}
 	];
@@ -129,8 +135,8 @@
 
 	// Reactive calculations based on scroll progress
 	// First section: "Some answers we expected" (0-50% of total progress)
-	let text1Opacity = $derived(progress >= 10 ? 1 : 0); 
-	let text1Y = $derived(progress >= 10 ? 0 : -30); 
+	let text1Opacity = $derived(progress >= 10 ? 1 : 0);
+	let text1Y = $derived(progress >= 10 ? 0 : -30);
 	let comments1Progress = $derived(progress >= 15 ? Math.min(1, (progress - 15) / 25) : 0);
 
 	// Second section: "Others surprised us" (50-100% of total progress)
@@ -192,7 +198,12 @@
 		</div>
 
 		<div class="comments-container" bind:this={commentsElement1}>
-			<Comments commentData={expectedAnswers} progress={comments1Progress} startProgress={0} endProgress={1} />
+			<Comments
+				commentData={expectedAnswers}
+				progress={comments1Progress}
+				startProgress={0}
+				endProgress={1}
+			/>
 		</div>
 	</div>
 
@@ -208,7 +219,6 @@
 				progress={comments2Progress}
 				startProgress={0}
 				endProgress={1}
-				direction="right"
 			/>
 		</div>
 	</div>
