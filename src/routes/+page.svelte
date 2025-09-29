@@ -1,5 +1,4 @@
 <script>
-	import '$lib/fonts/stylesheet.css';
 	import { base } from '$app/paths';
 	import Hero from '$lib/components/Hero.svelte';
 	import Footer from '$lib/components/Footer.svelte';
