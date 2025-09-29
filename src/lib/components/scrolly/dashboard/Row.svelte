@@ -56,7 +56,6 @@
 		}
 
 		$userResponse.guess = clampedValue;
-		$userResponse.userSubmitted = true;
 	}
 
 	function handleMouseUp() {
@@ -80,7 +79,7 @@
 
 	// Animate line growth and text in poll correct mode
 	$effect(() => {
-		if (pollCorrectMode && series.length === 2 && $userResponse.userSubmitted) {
+		if (pollCorrectMode && series.length === 2) {
 			// Start line at guess position
 			lineX2 = xScale(series[0].value);
 			showText = false;
@@ -245,7 +244,7 @@
 		</text>
 	{/key}
 
-	{#if pollCorrectMode && series.length === 2 && $userResponse.userSubmitted}
+	{#if pollCorrectMode && series.length === 2}
 		<!-- Draw line between guess and correct answer -->
 		<line
 			class="correct-line"
@@ -264,56 +263,52 @@
 		const bMatches = options?.series?.find((d) => d.label.toLowerCase() === b.label.toLowerCase());
 		return aMatches ? 1 : bMatches ? -1 : 0;
 	}) as s, i}
-		{@const shouldShowGuess =
-			!pollCorrectMode || s.label !== 'Your guess' || $userResponse.userSubmitted}
 		{@const shouldHideGuessLabel =
 			pollCorrectMode &&
 			series.length === 2 &&
-			Math.abs(xScale(series[0].value) - xScale(series[1].value)) < 10}
+			Math.abs(xScale(series[0].value) - xScale(series[1].value)) < 75}
 
-		{#if shouldShowGuess}
-			{@const color = getCircleColor(s)}
+		{@const color = getCircleColor(s)}
 
-			{@const textOffset = guessMode || pollCorrectMode ? -30 : -30}
+		{@const textOffset = guessMode || pollCorrectMode ? -30 : -30}
 
-			<circle
-				cx={xScale(s.value)}
-				cy="0"
-				r={inIntro ? 12 : 6}
-				fill={color}
-				opacity={interactiveMode ? (hoveredSeries == s.label ? 1 : 0.75) : 1}
-				onmousedown={handleMouseDown}
-				style={guessMode ? 'cursor: grab;' : ''}
-				class:interactive={guessMode}
-				data-row-index={index}
-				data-tippy-content={!guessMode
-					? `<b>${s.label ? (s.label.includes('duties') ? 'U.S. average:' : s.label + ':') : ''}</b> ${s.value ? `${s.value.toFixed(1)}%` : ''}`
-					: ''}
-				onmouseover={() => {
-					hoveredSeries = s.label;
-				}}
-				onmouseout={() => {
-					hoveredSeries = null;
-				}}
-				style:stroke={hoveredSeries == s.label ? '#000' : color}
-				style:stroke-width={hoveredSeries == s.label ? '2' : '1'}
-				class:isDragging
-			/>
+		<circle
+			cx={xScale(s.value)}
+			cy="0"
+			r={inIntro ? 12 : 6}
+			fill={color}
+			opacity={interactiveMode ? (hoveredSeries == s.label ? 1 : 0.75) : 1}
+			onmousedown={handleMouseDown}
+			style={guessMode ? 'cursor: grab;' : ''}
+			class:interactive={guessMode}
+			data-row-index={index}
+			data-tippy-content={!guessMode
+				? `<b>${s.label ? (s.label.includes('duties') ? 'U.S. average:' : s.label + ':') : ''}</b> ${s.value ? `${s.value.toFixed(1)}%` : ''}`
+				: ''}
+			onmouseover={() => {
+				hoveredSeries = s.label;
+			}}
+			onmouseout={() => {
+				hoveredSeries = null;
+			}}
+			style:stroke={hoveredSeries == s.label ? '#000' : color}
+			style:stroke-width={hoveredSeries == s.label ? '2' : '1'}
+			class:isDragging
+		/>
 
-			{#if guessMode || pollCorrectMode}
-				{#if !shouldHideGuessLabel || s.label !== 'Your guess'}
-					<text
-						x={xScale(s.value)}
-						y={textOffset}
-						text-anchor="middle"
-						class="guess-mode-text"
-						class:show={showText}
-						font-weight="600"
-						fill="#333"
-					>
-						{s.value.toFixed(0)}%
-					</text>
-				{/if}
+		{#if guessMode || pollCorrectMode}
+			{#if !shouldHideGuessLabel || s.label !== 'Your guess'}
+				<text
+					x={xScale(s.value)}
+					y={textOffset}
+					text-anchor="middle"
+					class="guess-mode-text"
+					class:show={showText}
+					font-weight="600"
+					fill="#333"
+				>
+					{s.value.toFixed(0)}%
+				</text>
 			{/if}
 		{/if}
 
