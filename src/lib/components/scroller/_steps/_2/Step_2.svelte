@@ -137,6 +137,7 @@
 			text-align: center;
 			z-index: 2;
 			max-width: 900px;
+			padding-bottom: 10rem;
 			// color: white;
 
 			.text-body {
