@@ -110,6 +110,7 @@
 			z-index: 10;
 			margin-bottom: 10rem;
 			color: var(--color-theme-light);
+			opacity: 0;
 			* {
 				font-size: 4.5rem;
 			}
@@ -148,9 +149,10 @@
 			top: 50vh;
 			transform: translateY(-50%);
 			width: 100%;
-			height: 800px; // Match the SVG height
+			height: 500px; // Match the SVG height
 			z-index: 1; // Lower z-index to appear behind text
 			pointer-events: none; // Allow clicks to pass through to text
+			opacity: 0;
 		}
 	}
 </style>

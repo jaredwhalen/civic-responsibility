@@ -13,7 +13,7 @@
 	/** @type {Props} */
 	let { offset = 0, height, width } = $props();
 
-	const start = 0;
+	const start = 0.1;
 	const end = 0.9;
 
 	// 21 evenly spaced bins from -5 to 5
@@ -29,7 +29,7 @@
 		bins = 21,
 		sigma = 1.0, // standard deviation of both curves
 		separationStart = 0.5, // initial separation between centers
-		separationEnd = 3.0 // final separation between centers
+		separationEnd = 5.0 // final separation between centers
 	} = {}) {
 		// Standard normal PDF
 		const pdf = (x, mu, sig) =>
@@ -75,7 +75,7 @@
 		bins: 21, // keep your 21-bin shape
 		sigma: 1.0, // standard deviation (width) of both curves
 		separationStart: 0.5, // initial separation between centers
-		separationEnd: 3.0 // final separation between centers
+		separationEnd: 4.0 // final separation between centers
 	});
 
 	onMount(async () => {
