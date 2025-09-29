@@ -97,7 +97,7 @@
 			.background-image {
 				width: 100%;
 				height: 100%;
-				background-image: url('/assets/images/declaration-of-independence.jpg');
+				background-image: url('/assets/images/dreamstime_xl_58534238.jpg');
 				background-size: cover;
 				background-position: center;
 				background-repeat: no-repeat;
