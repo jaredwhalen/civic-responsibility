@@ -53,7 +53,7 @@
 		if (typeof document !== 'undefined') {
 			let el = document.querySelector('.show-on-interaction');
 			if (content && el && $userResponse.userSubmitted === true) {
-				el.style.display = $userResponse.userSubmitted ? 'inline' : 'none';
+				// el.style.display = $userResponse.userSubmitted ? 'inline' : 'none';
 
 				let userGuess = $userResponse.guess.toFixed(0);
 				// If user guess is 87, replace content with "Good job!"
@@ -102,6 +102,7 @@
 			margin: 0 auto;
 			left: 0;
 			right: 0;
+			text-align: center;
 			&.hide {
 				opacity: 0;
 			}
@@ -133,44 +134,22 @@
 					transition: background-color 0.75s ease;
 					padding: 0.25rem 0px;
 
-					// span {
-					// 	&.underline {
-					// 		position: relative;
-					// 		z-index: 1;
-					// 		width: fit-content;
-					// 		display: inline-block;
-					// 		&::after {
-					// 			content: '';
-					// 			display: block;
-					// 			width: 100%;
-					// 			height: 30px;
-					// 			position: absolute;
-					// 			bottom: 0px;
-					// 			z-index: -1;
-					// 		}
-
-					// 		&.democrat {
-					// 			&::after {
-					// 				background-color: var(--color-theme-dem-blue);
-					// 				opacity: 0.75;
-					// 			}
-					// 		}
-
-					// 		&.republican {
-					// 			&::after {
-					// 				background-color: var(--color-theme-gop-red);
-					// 				opacity: 0.75;
-					// 			}
-					// 		}
-					// 	}
-					// }
+					span {
+						&.underline {
+							position: relative;
+							z-index: 1;
+							width: fit-content;
+							display: inline-block;
+							font-weight: 600;
+						}
+					}
 				}
 			}
 		}
 
-		// Global style for show-on-interaction elements
-		.show-on-interaction {
-			display: var(--show-on-interaction-display, none);
-		}
+		// // Global style for show-on-interaction elements
+		// .show-on-interaction {
+		// 	display: var(--show-on-interaction-display, none);
+		// }
 	}
 </style>
