@@ -7,7 +7,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN R -q -e "install.packages(c('plumber','dplyr','tidyr','jsonlite','rlang'), repos='https://cloud.r-project.org')"
 
 WORKDIR /app
-COPY . .   # copies files from civic-api/
+
+# Explicit copies
+COPY api.R /app/
+COPY service.R /app/
+COPY entrypoint.R /app/
+COPY CR_Data_Names.csv /app/
 
 ENV PORT=8000
 ENV CSV_PATH=/app/CR_Data_Names.csv

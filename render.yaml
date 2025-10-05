@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: civic-api
+    env: docker
+    rootDir: civic-api
+    plan: free
+    healthCheckPath: /healthz
+    autoDeploy: true
