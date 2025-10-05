@@ -147,6 +147,7 @@
 
 		<div class="big-number-container">
 			<div class="big-number">{animatedNumber}%</div>
+			<div class="agree-text">agree</div>
 		</div>
 	</div>
 </div>
@@ -224,6 +225,15 @@
 			font-weight: 600;
 			color: var(--color-theme-blue-light);
 			font-family: $font-family-mono;
+		}
+
+		.agree-text {
+			font-size: 2rem;
+			font-weight: 600;
+			color: var(--color-theme-blue-light);
+			font-family: $font-family-sans;
+			text-align: right;
+			margin-top: -3rem;
 		}
 	}
 </style>
