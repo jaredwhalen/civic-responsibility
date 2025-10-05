@@ -1,0 +1,174 @@
+---
+title: "Data_ML"
+output: html_document
+date: "2025-08-20"
+---
+
+
+```{r Get Started}
+
+#Set up packages
+
+library(tidyverse)
+library(tidyr)
+library(ppcor)
+library(reshape2)
+library(rlang)
+library(vegan)
+library(factoextra)
+library(dplyr)
+
+
+
+select <- dplyr::select
+
+```
+
+
+```{r Data Org}
+#Import Data
+
+Data_Raw <- read.csv("CR_Data_Names.csv")
+
+
+Data_Clean <- Data_Raw %>%
+  mutate(pid3 = trimws(pid3))  # Remove leading & trailing spaces
+
+
+# Rename duties_full_list_X to duties_X
+names(Data_Clean) <- gsub("^duties_full_list_", "duties_", names(Data_Clean))
+
+
+# Select just the civic duty columns
+duty_vars <- grep("^duties_\\d+$", names(Data_Clean), value = TRUE)
+
+# Recode all duty items as 1 (Civic obligation) and 0 (Not a civic obligation)
+Data_Clean <- Data_Clean %>%
+  mutate(across(all_of(duty_vars), ~ case_when(
+    .x == "Civic responsibility" ~ 1,
+    .x == "Not a civic responsibility" ~ 0,
+    TRUE ~ NA_real_
+  )))
+
+```
+
+
+```{r Names code (optional)}
+# First, create a named vector with the descriptive labels
+temp <- c(
+  "Voting",
+  "Obeying the law",
+  "Paying your taxes",
+  "Reporting for jury duty",
+  "Staying informed of current events",
+  "Doing community service",
+  "Respecting people's differences",
+  "Protecting the environment",
+  "Caring for future generations",
+  "Following the Constitution",
+  "Being patriotic",
+  "Working hard",
+  "Making your voice heard",
+  "Fighting for people’s rights",
+  "Supporting your family",
+  "Supporting democracy",
+  "Protesting unfairness",
+  "Donating to charity",
+  "Defending freedom",
+  "Practicing freedom of speech",
+  "Helping your community",
+  "Joining the military",
+  "Supporting equality",
+  "Loving America",
+  "Making the most of your opportunities",
+  "Connecting across differences",
+  "Being grateful for your opportunities as an American",
+  "Honoring the flag",
+  "Welcoming refugees",
+  "Being self-reliant"
+)
+
+# Assign names matching your plotting variable names
+names(temp) <- paste0("duties_", 1:30)
+
+```
+
+
+
+
+```{r Binarize}
+
+Data_Clean <- Data_Clean %>%
+  mutate(urban_binary = case_when(
+    urban == "Urban" ~ "Urban",
+    urban %in% c("Suburban", "Rural") ~ "Suburban/Rural",
+    TRUE ~ NA_character_
+  ))
+
+
+Data_Clean <- Data_Clean %>%
+  mutate(ideology_tri = case_when(
+    ideology %in% c("Liberal", "Slightly liberal", "Very liberal") ~ "Liberal",
+    ideology %in% c("Moderate") ~ "Moderate",
+    ideology %in% c("Conservative", "Slightly conservative", "Very conservative") ~ "Conservative",
+    TRUE ~ NA_character_
+  ))
+
+
+
+Data_Clean <- Data_Clean %>%
+  mutate(age_binary = case_when(
+    age > 50 ~ "old",
+    age <= 50 ~ "young",
+    TRUE ~ NA_character_
+  ))
+
+```
+
+```{r Model}
+
+predict_groups <- function(new_data_row, df, duty_cols, group_vars) {
+  predictions <- list()
+
+  for (group_var in group_vars) {
+    # Compute weighted prototypes for each group
+    prototype_df <- df %>%
+      filter(!is.na(.data[[group_var]])) %>%
+      group_by(.data[[group_var]]) %>%
+      summarise(across(all_of(duty_cols), ~ weighted.mean(.x, w = Weight, na.rm = TRUE)), .groups = "drop") %>%
+      rename(group = !!group_var)
+
+    # Compute Manhattan distance to each group prototype
+    distances <- prototype_df %>%
+      rowwise() %>%
+      mutate(dist = sum(abs(c_across(all_of(duty_cols)) - new_data_row))) %>%
+      ungroup()
+
+    # Identify the closest group
+    predicted_group <- distances$group[which.min(distances$dist)]
+    predictions[[group_var]] <- predicted_group
+  }
+
+  return(predictions)
+}
+
+
+
+```
+
+
+```{r Test}
+
+# Define variables
+duty_cols <- paste0("duties_", 1:30)
+group_vars <- c("urban_binary", "ideology_tri", "age_binary")
+
+# Example: Test out with the first row from existing dataset
+new_participant <- Data_Clean[1, duty_cols]
+
+# Predict
+predicted_categories <- predict_groups(new_participant, Data_Clean, duty_cols, group_vars)
+print(predicted_categories)
+```
+
+
