@@ -1,18 +1,11 @@
-FROM rocker/r-ver:4.4.1
+FROM rocker/r2u:jammy
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libcurl4-openssl-dev libssl-dev ca-certificates curl && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN R -q -e "install.packages(c('plumber','dplyr','tidyr','jsonlite','rlang'), repos='https://cloud.r-project.org')"
+    r-cran-plumber r-cran-dplyr r-cran-tidyr r-cran-jsonlite r-cran-rlang \
+ && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-
-# Explicit copies
-COPY api.R /app/
-COPY service.R /app/
-COPY entrypoint.R /app/
-COPY CR_Data_Names.csv /app/
+COPY api.R service.R entrypoint.R CR_Data_Names.csv ./
 
 ENV PORT=8000
 ENV CSV_PATH=/app/CR_Data_Names.csv
