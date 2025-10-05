@@ -1,5 +1,5 @@
 <script>
-	import { fade, fly } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import smoothScroll from '$lib/helpers/smoothScroll.js';
 	import stateAbbreviations from '$lib/data/stateAbbreviations.json';
@@ -10,9 +10,10 @@
 		selectedStateMapViewOption = $bindable(),
 		selectedStateChartViewOptions = $bindable(),
 		searchOptions,
-		interactiveMode = $bindable()
+		interactiveMode = $bindable(),
+		isPinned = $bindable()
 	} = $props();
-	let selectedOption = $state('mean');
+	let selectedOption = $state('pid');
 
 	let isDropdownOpen = $state(false);
 	let buttonRefs = $state({});
@@ -50,6 +51,10 @@
 			value: 'mean'
 		},
 		{
+			label: 'Political Identification',
+			value: 'pid'
+		},
+		{
 			label: 'Gender',
 			value: 'gender'
 		},
@@ -61,10 +66,7 @@
 			label: 'Race/Ethnicity',
 			value: 'race'
 		},
-		{
-			label: 'Political Identification',
-			value: 'pid'
-		},
+
 		{
 			label: 'State',
 			value: 'state'
@@ -119,11 +121,7 @@
 
 	// Function to handle dismounting with animation
 	function handleDismount() {
-		isDismounting = true;
-		// Wait for animation to complete before actually changing interactiveMode
-		// setTimeout(() => {
-		interactiveMode = false;
-		// }, 0); // Match the CSS transition duration
+		isPinned = false;
 	}
 
 	function handleSelect(value) {
@@ -198,7 +196,7 @@
 	style="height: {isMounted && !isDismounting ? containerHeight + 'px' : '0px'}"
 >
 	<div class="controls-content">
-		<!-- <button onclick={handleDismount} data-button="back">← Exit dashboard</button> -->
+		<button onclick={handleDismount} data-button="back">← Exit dashboard</button>
 		<div class="dashboard-controls">
 			<div class="dashboard-controls-inner">
 				<div class="dashboard-controls-inner-title">
@@ -302,8 +300,6 @@
 	}
 
 	.controls-content {
-		margin-top: 20px;
-		margin-left: 20px;
 		position: relative;
 		z-index: 10000;
 	}
@@ -318,10 +314,9 @@
 		// margin: 1rem auto;
 
 		display: flex;
-		gap: 0rem;
+		gap: 1rem;
 
 		.dashboard-controls-inner {
-			margin: 0.5rem 1rem;
 			width: fit-content;
 
 			.dashboard-controls-inner-title {
@@ -334,9 +329,6 @@
 
 			.dashboard-controls-inner-options {
 				border-radius: 0.25rem;
-				box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-				background-color: #fff;
-				padding: 0.5rem;
 
 				display: flex;
 				justify-content: center;
@@ -345,9 +337,9 @@
 
 				.dashboard-controls-inner-option {
 					padding: 0.5rem 0.5rem;
-					border: none;
+					border: 1px solid #999;
 					border-radius: 0.25rem;
-					background: transparent;
+					background: var(--bg-color);
 					color: #666;
 					font-size: 14px;
 					font-weight: 500;
@@ -377,11 +369,18 @@
 			.dropdown-button {
 				width: 100%;
 				min-width: 185px;
-				height: 50px; // Fixed height instead of max-height
+				// height: 50px; // Fixed height instead of max-height
 				padding: 0.5rem 1rem; // Reduced padding to account for fixed height
 				border: none;
 				border-radius: 0.25rem;
-				background-color: #fff;
+				padding: 0.5rem 0.5rem;
+				border: 1px solid #999;
+				border-radius: 0.25rem;
+				background: var(--bg-color);
+				color: #666;
+				font-size: 14px;
+				font-weight: 500;
+
 				color: #666;
 				font-size: 14px;
 				font-weight: 500;
@@ -640,10 +639,11 @@
 	button[data-button='back'] {
 		background: none;
 		border: none;
-		color: #666;
+		color: #333;
 		font-size: 14px;
-		font-weight: 500;
+		font-weight: 800;
 		cursor: pointer;
 		transition: all 0.2s ease;
+		padding-bottom: 0.5rem;
 	}
 </style>

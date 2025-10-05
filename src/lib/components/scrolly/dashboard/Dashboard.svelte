@@ -27,7 +27,7 @@
 	import { get } from 'svelte/store';
 
 	let { activeId, interactiveMode = $bindable(), animateMount = true } = $props();
-	let activeView = $state('mean');
+	let activeView = $state(interactiveMode ? 'pid' : 'mean');
 	let selectedStateView = $state('map');
 	let selectedStateChartViewOptions = $state([]);
 	let selectedStateMapViewOption = $state(null);
@@ -36,7 +36,7 @@
 	let mapData = $derived(states.filter((d) => d.duty_label == selectedStateMapViewOption));
 	let hoveredSeries = $state(null);
 
-	let isMountedWithDelay = $state(false);
+	let isPinned = $state(false);
 
 	// onMount(() => {
 	// 	if (interactiveMode) {
@@ -49,6 +49,29 @@
 	$effect(() => {
 		if (activeId != '9999-dashboard') {
 			activeView = 'mean';
+		}
+	});
+
+	// Set default activeView based on interactiveMode
+	$effect(() => {
+		if (interactiveMode && activeId == '9999-dashboard') {
+			activeView = 'pid';
+		} else if (!interactiveMode) {
+			activeView = 'mean';
+		}
+	});
+
+	// Reset dashboard to default interactive mode settings when unpinned
+	$effect(() => {
+		if (interactiveMode && !isPinned) {
+			// Reset to default interactive mode settings
+			activeView = 'pid';
+			selectedStateView = 'map';
+			selectedStateChartViewOptions = [];
+			// Reset selectedStateMapViewOption to first state if available
+			if (states && states.length > 0) {
+				selectedStateMapViewOption = states[0].state;
+			}
 		}
 	});
 
@@ -70,6 +93,20 @@
 		}
 	});
 
+	// Prevent body scrolling when dashboard is pinned
+	$effect(() => {
+		if (interactiveMode && isPinned) {
+			document.body.style.overflow = 'hidden';
+		} else {
+			document.body.style.overflow = '';
+		}
+
+		// Cleanup on component destroy
+		return () => {
+			document.body.style.overflow = '';
+		};
+	});
+
 	// Initialize selectedStateChartViewOptions when switching to chart view
 	$effect(() => {
 		if (selectedStateView === 'chart') {
@@ -84,6 +121,15 @@
 			series: [
 				{ label: 'Male', color: getCSSVar('--color-theme-blue') },
 				{ label: 'Female', color: getCSSVar('--color-theme-green') }
+			]
+		},
+		{
+			label: 'Political Identification',
+			value: 'pid',
+			series: [
+				{ label: 'Democrat', color: getCSSVar('--color-theme-dem-blue') },
+				{ label: 'Republican', color: getCSSVar('--color-theme-gop-red') },
+				{ label: 'Independent', color: getCSSVar('#dddddd') }
 			]
 		},
 		{
@@ -105,15 +151,6 @@
 				{ label: 'Hispanic', color: getCSSVar('--color-theme-yellow') },
 				{ label: 'Asian', color: getCSSVar('--color-theme-red') },
 				{ label: 'Other', color: '#dddddd' }
-			]
-		},
-		{
-			label: 'Political Identification',
-			value: 'pid',
-			series: [
-				{ label: 'Democrat', color: getCSSVar('--color-theme-dem-blue') },
-				{ label: 'Republican', color: getCSSVar('--color-theme-gop-red') },
-				{ label: 'Independent', color: getCSSVar('#dddddd') }
 			]
 		},
 		{
@@ -150,7 +187,7 @@
 		},
 		'chart-charity': {
 			includeArr: ['Defending freedom', 'Joining the military', 'Welcoming refugees'],
-			highlightArr: ['Defending freedom', 'Joining the military', 'Welcoming refugees'],
+			highlightArr: ['Defending freedom', 'Joining the military', 'Welcoming refugees']
 		},
 		'chart-party-agree': {
 			includeArr: ['Defending freedom', 'Voting', 'Helping your community'],
@@ -329,16 +366,17 @@
 	});
 
 	let width = $state(0);
-	const baseRowHeight = interactiveMode ? 28 : 45;
+	const baseRowHeight = interactiveMode ? 35 : 45;
 	const minRowHeight = interactiveMode ? 20 : 40;
 
-	const dimensions = $derived({
+	// Base dimensions without rowHeight to avoid circular dependency
+	const baseDimensions = $derived({
 		width,
 		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
-			top: interactiveMode ? 30 : 60,
+			top: interactiveMode ? baseRowHeight : 60,
 			right: interactiveMode ? 50 : 150,
-			bottom: 0,
+			bottom: interactiveMode ? baseRowHeight : 0,
 			left: guessMode ? 150 : 450
 		}
 	});
@@ -353,12 +391,14 @@
 
 	// Calculate dynamic row height based on available space
 	const rowHeight = $derived.by(() => {
-		// if (!dashboardHeight || !controlsHeight) return baseRowHeight;
+		if (!dashboardHeight || !controlsHeight) return baseRowHeight;
 
-		const availableHeight = dashboardHeight - axisHeight;
+		const availableHeight = dashboardHeight - axisHeight - controlsHeight;
 
 		const requiredHeight =
-			currentViewData.length * baseRowHeight + dimensions.margins.top + dimensions.margins.bottom;
+			currentViewData.length * baseRowHeight +
+			baseDimensions.margins.top +
+			baseDimensions.margins.bottom;
 
 		if (requiredHeight <= availableHeight) {
 			return baseRowHeight;
@@ -367,40 +407,59 @@
 		// Calculate height needed per row
 		const calculatedHeight = Math.max(
 			minRowHeight,
-			(availableHeight - dimensions.margins.top - dimensions.margins.bottom) /
+			(availableHeight - baseDimensions.margins.top - baseDimensions.margins.bottom) /
 				currentViewData.length
 		);
 
 		return calculatedHeight;
 	});
+	$inspect(rowHeight);
 
-	// Update dimensions height when rowHeight changes
-	const adjustedDimensions = $derived({
-		...dimensions,
-		height: currentViewData.length * rowHeight + rowHeight * 2
+	// Calculate margins with rowHeight
+	const adjustedMargins = $derived({
+		...baseDimensions.margins,
+		top: interactiveMode ? rowHeight : 60,
+		bottom: 0
 	});
 
-	let chartContainerHeight = $derived(
-		interactiveMode && isMountedWithDelay
-			? adjustedDimensions.height < dashboardHeight
-				? adjustedDimensions.height -
-					axisHeight +
-					dimensions.margins.top +
-					dimensions.margins.bottom
-				: dashboardHeight - controlsHeight - (selectedStateView == 'map' ? 0 : axisHeight)
-			: adjustedDimensions.height - axisHeight + dimensions.margins.top + dimensions.margins.bottom
+	// Final dimensions with rowHeight in margins and adjusted height
+	// Add extra space for the last row to align with axis baseline
+	const adjustedDimensions = $derived({
+		...baseDimensions,
+		height: (currentViewData.length + 1) * rowHeight + adjustedMargins.top + adjustedMargins.bottom,
+		margins: adjustedMargins
+	});
+
+	// Calculate chart container height for pinned mode
+	const chartContainerHeight = $derived(
+		interactiveMode && isPinned
+			? `calc(100vh - ${controlsHeight || 200}px - ${selectedStateView == 'map' ? 0 : axisHeight}px)`
+			: adjustedDimensions.height
 	);
 
-	let chartContainerHeightMaxHeight = $derived(
-		dashboardHeight -
-			(interactiveMode ? controlsHeight : 0) -
-			(selectedStateView == 'map' ? 0 : axisHeight)
+	let renderedChartContainerHeight = $state(0);
+	let dashboardElement = $state(null);
+
+	// Scroll to overlay when exiting pinned view
+	$effect(() => {
+		if (interactiveMode && !isPinned && dashboardElement) {
+			// Use requestAnimationFrame to ensure DOM is updated
+			requestAnimationFrame(() => {
+				dashboardElement.scrollIntoView({ behavior: 'instant', block: 'start' });
+			});
+		}
+	});
+
+	// Check if SVG is larger than container and needs scrolling
+	const needsScrolling = $derived(
+		interactiveMode && isPinned && adjustedDimensions.height > renderedChartContainerHeight + rowHeight
 	);
+
 
 	const xScale = $derived(
 		scaleLinear()
 			.domain([0, 100])
-			.range([dimensions.margins.left, width - dimensions.margins.right])
+			.range([baseDimensions.margins.left, width - baseDimensions.margins.right])
 	);
 
 	const createCustomColorScale = (colors) => {
@@ -408,25 +467,27 @@
 	};
 
 	const mapColorScale = scaleSequential().interpolator(interpolateYlGn).domain([0, 100]);
-	// const mapColorScale = createCustomColorScale([getCSSVar('--color-theme-light'), getCSSVar('--color-theme-green')]);
 </script>
 
 <div
-	class="dashboard {showAll ? 'show-all' : ''} {chartContainerHeight >= dashboardHeight
-		? 'overflow'
-		: ''}"
+	class="dashboard"
 	class:intro={!interactiveMode}
+	class:interactive={interactiveMode}
+	class:pinned={interactiveMode && isPinned}
+	style:--controls-height="{controlsHeight}px"
+	bind:this={dashboardElement}
 	bind:clientWidth={width}
 	bind:clientHeight={dashboardHeight}
 >
-	{#if interactiveMode}
-		<div bind:clientHeight={controlsHeight}>
+	{#if interactiveMode && isPinned}
+		<div bind:clientHeight={controlsHeight} class="controls-wrapper pinned">
 			<Controls
 				bind:activeView
 				bind:selectedStateView
 				bind:selectedStateMapViewOption
 				bind:selectedStateChartViewOptions
 				bind:interactiveMode
+				bind:isPinned
 				searchOptions={{
 					states: new Set(states.map((d) => d.state)),
 					duties: new Set(transformedData.state.map((d) => d.duty_label))
@@ -443,6 +504,12 @@
 	{/if}
 
 	<div class="dashboard-content">
+		{#if interactiveMode && !isPinned}
+			<div class="overlay">
+				<button class="explore-button" onclick={() => (isPinned = true)}>Explore the data</button>
+			</div>
+		{/if}
+
 		{#if interactiveMode && activeView == 'state' && selectedStateView == 'map'}
 			<div class="map-container">
 				<MapViz
@@ -454,18 +521,20 @@
 			</div>
 		{/if}
 		<div
-			class="chart-container {interactiveMode && isMountedWithDelay ? 'interactive-mode' : ''}"
-			style:--chart-height="{chartContainerHeight}px"
-			style:--chart-max-height="{chartContainerHeightMaxHeight}px"
+			class="chart-container {interactiveMode ? 'interactive-mode' : ''} {needsScrolling
+				? 'needs-scrolling'
+				: ''}"
+			style:--chart-height={chartContainerHeight}
+			bind:clientHeight={renderedChartContainerHeight}
 		>
 			<svg {width} height={adjustedDimensions.height}>
 				<g class="rows">
 					{#each sortedViewData as row, i (row.duty_label)}
 						<Row
 							{...row}
-							y={i * rowHeight + dimensions.margins.top}
+							y={i * rowHeight + adjustedDimensions.margins.top + rowHeight / 2}
 							{xScale}
-							{dimensions}
+							dimensions={adjustedDimensions}
 							{rowHeight}
 							{guessMode}
 							{pollCorrectMode}
@@ -477,7 +546,7 @@
 								: false}
 							options={options.find((o) => o.value === activeView)}
 							customSeries={currentDataMap[activeId]?.series}
-							circleTransition={activeView == 'state' || (interactiveMode && !isMountedWithDelay)
+							circleTransition={activeView == 'state' || interactiveMode
 								? 'fill 0.5s ease-out,'
 								: 'fill 0.5s ease-out, cx 0.5s ease-out'}
 							{interactiveMode}
@@ -489,17 +558,26 @@
 				</g>
 			</svg>
 
-			{#if showAll && activeView != 'state'}
+			{#if needsScrolling && activeView != 'state'}
 				<div
 					class="bottom-gradient"
-					style="position: {interactiveMode && isMountedWithDelay ? 'sticky' : 'absolute'}"
+					style="position: {interactiveMode ? 'sticky' : 'absolute'}"
 				></div>
 			{/if}
 			<!-- Bottom gradient overlay -->
 		</div>
 
 		{#if activeView != 'state' || selectedStateView != 'map'}
-			<Axis {width} {dimensions} {axisHeight} {tickSize} {xScale} inIntro={!interactiveMode} />
+			<div class="axis-wrapper" class:sticky={interactiveMode}>
+				<Axis
+					{width}
+					dimensions={adjustedDimensions}
+					{axisHeight}
+					{tickSize}
+					{xScale}
+					inIntro={!interactiveMode}
+				/>
+			</div>
 		{/if}
 	</div>
 </div>
@@ -511,38 +589,184 @@
 		flex-direction: column;
 		justify-content: center;
 		position: relative;
-		height: 100%;
+		// height: 100%;
+		height: 100svh;
 
 		width: 100%;
-		max-width: 1400px;
+		// max-width: 1400px;
 		margin: 0 auto;
 		background-color: var(--bg-color);
 
-		.dashboard-legend {
-			margin-left: 40px;
+		&.interactive {
+			height: 100vh;
+			overflow: hidden;
 		}
 
-		&.intro {
+		&.pinned {
+			position: fixed;
+			top: 0px;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			z-index: 10000;
+			display: flex;
+			flex-direction: column;
+
+			.dashboard-content {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				overflow: hidden;
+
+				.chart-container {
+					flex: 1;
+					margin-top: var(--controls-height);
+
+					&.needs-scrolling {
+						overflow: auto;
+					}
+				}
+			}
 		}
 
-		&.show-all {
-			min-height: 100vh;
+		.overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+
+			z-index: 10000;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			gap: 2rem;
+
+			&::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient(
+					135deg,
+					var(--color-theme-blue) 0%,
+					var(--color-theme-blue-light) 100%
+				);
+				opacity: 0.9;
+			}
+
+			.explore-button {
+				background-color: transparent;
+				border: 3px solid white;
+				color: white;
+				z-index: 20000;
+				font-size: 2rem;
+				font-weight: 600;
+				padding: 1.5rem 3rem;
+				border-radius: 12px;
+				transition: all 0.3s ease;
+				cursor: pointer;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+
+				&:hover {
+					transform: scale(1.05);
+					background-color: white;
+					color: var(--color-theme-blue);
+				}
+			}
+
+			.overlay-text {
+				z-index: 20000;
+				color: white;
+				text-align: center;
+				max-width: 600px;
+
+				h3 {
+					font-size: 2.5rem;
+					font-weight: 700;
+					margin: 0 0 1rem 0;
+					text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+				}
+
+				p {
+					font-size: 1.2rem;
+					margin: 0;
+					opacity: 0.9;
+					line-height: 1.6;
+				}
+			}
 		}
-		&.show-all.overflow {
+		&.interactive {
 			justify-content: flex-start;
 		}
-	}
 
-	.dashboard-content {
-		position: relative;
-		overflow-y: hidden;
+		.dashboard-legend {
+			// margin-left: 40px;
+			margin-top: 0.5rem;
+		}
+
+		.controls-wrapper {
+			width: 100%;
+			top: 0;
+			position: sticky;
+			z-index: 1000;
+			padding: 1rem;
+
+			box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+			background-color: #fff;
+
+			&.pinned {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				z-index: 10001;
+			}
+
+			.unpin-button {
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+				background: none;
+				border: 2px solid var(--color-theme-blue);
+				color: var(--color-theme-blue);
+				padding: 0.5rem 1rem;
+				border-radius: 8px;
+				cursor: pointer;
+				font-size: 0.9rem;
+				font-weight: 500;
+				transition: all 0.2s ease;
+
+				&:hover {
+					background-color: var(--color-theme-blue);
+					color: white;
+				}
+
+				svg {
+					width: 16px;
+					height: 16px;
+				}
+			}
+		}
+		.axis-wrapper {
+			background-color: var(--bg-color);
+			&.sticky {
+				position: sticky;
+				bottom: 0;
+				z-index: 1000;
+			}
+		}
 	}
 
 	.map-container {
 		width: 100%;
-		height: 100%;
+		height: calc(100svh - var(--controls-height));
 		transition: all 0.5s ease;
-
+		margin-top: var(--controls-height);
 		background-color: var(--bg-color);
 
 		position: absolute;
@@ -560,24 +784,27 @@
 	.chart-container {
 		height: var(--chart-height);
 		max-height: var(--chart-max-height);
-		overflow: hidden;
-		transition: all 0.5s ease;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		position: relative;
+		overflow: auto;
+		// transition: all 0.5s ease;
+		// display: flex;
+		// flex-direction: column;
+		// justify-content: center;
+		// position: relative;
 
 		&.interactive-mode {
-			overflow-y: scroll;
-			display: block;
+			overflow: hidden;
+		}
+
+		&.needs-scrolling {
+			overflow: auto;
 		}
 
 		.bottom-gradient {
 			bottom: -1px;
 			left: 0;
 			right: 0;
-			height: 20px;
-			// background: linear-gradient(to bottom, transparent, $color-theme-light);
+			height: 40px;
+			background: linear-gradient(to bottom, transparent, $color-theme-light);
 			pointer-events: none;
 			z-index: 10;
 		}

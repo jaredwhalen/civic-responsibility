@@ -121,7 +121,7 @@
 
 	<CTA />
 
-	<Dashboard activeId="9999-dashboard" interactiveMode={true} animateMount={false} />
+	<Dashboard activeId="9999-dashboard" interactiveMode={true} />
 
 	<Footer />
 </main>

@@ -20,9 +20,6 @@
 
 <style lang="scss">
 	.legend {
-	
-		margin-bottom: 20px;
-
 		width: 100%;
 		max-width: 250px;
 

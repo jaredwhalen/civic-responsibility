@@ -18,7 +18,8 @@
 	let containerWidth = $state(0);
 	let containerHeight = $state(0);
 
-	let width = $derived(Math.min(containerWidth, containerHeight * 1.67));
+	// Ensure map fits within container with some padding
+	let width = $derived(Math.min(containerWidth - 40, containerHeight * 1.67 - 40));
 	let height = $derived(width / 1.67);
 
 	let paths = $state([]);
@@ -92,6 +93,9 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		overflow: hidden;
+		max-width: 100%;
+		max-height: 100%;
 	}
 
 	svg {
