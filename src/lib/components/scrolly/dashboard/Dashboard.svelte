@@ -141,7 +141,8 @@
 		},
 		'poll-correct': {
 			includeArr: ['Defending freedom'],
-			highlightArr: ['Defending freedom']
+			highlightArr: ['Defending freedom'],
+			showGapLine: true
 		},
 		'chart-constitution': {
 			includeArr: ['Voting', 'Following the Constitution', 'Paying your taxes'],
@@ -167,7 +168,8 @@
 			series: [
 				{ label: 'Democrat', color: getCSSVar('--color-theme-dem-blue') },
 				{ label: 'Republican', color: getCSSVar('--color-theme-gop-red') }
-			]
+			],
+			showGapLine: true
 		},
 		'chart-generation': {
 			includeArr: ['Supporting Democracy', 'Honoring the flag', 'Connecting across differences'],
@@ -178,7 +180,8 @@
 				{ label: 'Millennials', color: getCSSVar('--color-theme-green') },
 				{ label: 'Gen X', color: getCSSVar('--color-theme-yellow') },
 				{ label: 'Baby Boomers', color: getCSSVar('--color-theme-red') }
-			]
+			],
+			showGapLine: true
 		},
 		'10-chart-majority': {
 			includeArr: [
@@ -480,6 +483,7 @@
 							{interactiveMode}
 							inIntro={!interactiveMode}
 							bind:hoveredSeries
+							showGapLine={currentDataMap[activeId]?.showGapLine}
 						/>
 					{/each}
 				</g>

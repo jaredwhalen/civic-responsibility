@@ -25,6 +25,7 @@
 		circleTransition = 'all 0.5s ease-out',
 		interactiveMode,
 		inIntro,
+		showGapLine = false,
 		hoveredSeries = $bindable()
 	} = $props();
 
@@ -96,6 +97,21 @@
 	});
 
 	// $inspect(hoveredSeries);
+
+	// Calculate gap line coordinates when showGapLine is true
+	let gapLineCoords = $state(null);
+	
+	$effect(() => {
+		if (showGapLine && series.length > 1) {
+			const sortedSeries = [...series].sort((a, b) => a.value - b.value);
+			gapLineCoords = {
+				x1: xScale(sortedSeries[0].value),
+				x2: xScale(sortedSeries[sortedSeries.length - 1].value)
+			};
+		} else {
+			gapLineCoords = null;
+		}
+	});
 
 	// Function to get circle color
 	function getCircleColor(s) {
@@ -244,17 +260,18 @@
 		</text>
 	{/key}
 
-	{#if pollCorrectMode && series.length === 2}
-		<!-- Draw line between guess and correct answer -->
+
+	{#if showGapLine && gapLineCoords}
+		<!-- Draw line connecting all circles (from first to last on X axis) -->
 		<line
-			class="correct-line"
-			x1={xScale(series[0].value)}
+			class="gap-line"
+			x1={gapLineCoords.x1}
 			y1="0"
-			x2={lineX2}
+			x2={gapLineCoords.x2}
 			y2="0"
-			stroke="#333"
+			stroke="#000"
 			stroke-width="4"
-			opacity="0.6"
+			opacity="0.4"
 		/>
 	{/if}
 
@@ -390,14 +407,23 @@
 		opacity: 0;
 	}
 
-	.correct-line {
+	.gap-line {
 		stroke-dasharray: 1000;
-		stroke-dashoffset: 1000;
-		animation: drawLine 1s ease-out forwards;
-		animation-delay: 0.5s;
+        stroke-dashoffset: 1000;
+        animation: drawLine 1s ease-out forwards;
+        animation-delay: 0.5s;
 	}
 
 	@keyframes drawLine {
+		to {
+			stroke-dashoffset: 0;
+		}
+	}
+
+	@keyframes drawGapLine {
+		from {
+			stroke-dashoffset: 20;
+		}
 		to {
 			stroke-dashoffset: 0;
 		}
