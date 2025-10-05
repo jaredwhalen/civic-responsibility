@@ -232,7 +232,7 @@
 
 	:global {
 		body {
-			background: #f7f3ee;
+			background: var(--bg-color);
 		}
 
 		.background-container {
