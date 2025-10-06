@@ -413,7 +413,6 @@
 
 		return calculatedHeight;
 	});
-	$inspect(rowHeight);
 
 	// Calculate margins with rowHeight
 	const adjustedMargins = $derived({
@@ -452,9 +451,10 @@
 
 	// Check if SVG is larger than container and needs scrolling
 	const needsScrolling = $derived(
-		interactiveMode && isPinned && adjustedDimensions.height > renderedChartContainerHeight + rowHeight
+		interactiveMode &&
+			isPinned &&
+			adjustedDimensions.height > renderedChartContainerHeight + rowHeight
 	);
-
 
 	const xScale = $derived(
 		scaleLinear()
@@ -505,7 +505,7 @@
 
 	<div class="dashboard-content">
 		{#if interactiveMode && !isPinned}
-			<div class="overlay">
+			<div class="overlay" transition:fade={{ duration: 500 }}>
 				<button class="explore-button" onclick={() => (isPinned = true)}>Explore the data</button>
 			</div>
 		{/if}
