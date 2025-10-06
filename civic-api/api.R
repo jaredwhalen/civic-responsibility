@@ -2,6 +2,15 @@
 library(plumber)
 source("service.R")
 
+# Add CORS headers
+#* @filter cors
+cors <- function(res) {
+  res$setHeader("Access-Control-Allow-Origin", "*")
+  res$setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+  res$setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization")
+  plumber::forward()
+}
+
 #* Health check
 #* @get /healthz
 function() list(ok = TRUE)
