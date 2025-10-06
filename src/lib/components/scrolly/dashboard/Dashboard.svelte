@@ -584,34 +584,33 @@
 
 <style lang="scss">
 	.dashboard {
-		font-family: sans-serif;
+		// Base styles
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		position: relative;
-		// height: 100%;
-		height: 100svh;
-
 		width: 100%;
-		// max-width: 1400px;
+		height: 100svh;
 		margin: 0 auto;
 		background-color: var(--bg-color);
 		transition: all 0.5s ease;
+		font-family: sans-serif;
 
+		// Interactive mode styles
 		&.interactive {
 			height: 100vh;
 			overflow: hidden;
+			justify-content: flex-start;
 		}
 
+		// Pinned mode styles
 		&.pinned {
 			position: fixed;
-			top: 0px;
+			top: 0;
 			left: 0;
 			width: 100vw;
 			height: 100vh;
 			z-index: 1000;
-			display: flex;
-			flex-direction: column;
 			border: 10px solid var(--color-theme-blue);
 
 			.dashboard-content {
@@ -631,13 +630,18 @@
 			}
 		}
 
+		// Dashboard content
+		.dashboard-content {
+			// Content styles here if needed
+		}
+
+		// Overlay for interactive mode
 		.overlay {
 			position: absolute;
 			top: 0;
 			left: 0;
 			width: 100%;
 			height: 100%;
-
 			z-index: 10000;
 			display: flex;
 			flex-direction: column;
@@ -657,7 +661,7 @@
 					var(--color-theme-blue) 0%,
 					var(--color-theme-blue-light) 100%
 				);
-				opacity: 0.9;
+				opacity: 0.75;
 			}
 
 			.explore-button {
@@ -671,7 +675,6 @@
 				border-radius: 12px;
 				transition: all 0.3s ease;
 				cursor: pointer;
-				text-transform: uppercase;
 				letter-spacing: 1px;
 
 				&:hover {
@@ -702,26 +705,20 @@
 				}
 			}
 		}
-		&.interactive {
-			justify-content: flex-start;
-		}
 
+		// Dashboard legend
 		.dashboard-legend {
-			// margin-left: 40px;
 			margin-top: 0.5rem;
 		}
 
+		// Controls wrapper
 		.controls-wrapper {
 			width: calc(100% - 20px);
 			margin: 0 auto;
-			top: 0;
 			position: sticky;
+			top: 0;
 			z-index: 1000;
 			padding: 1rem;
-			// border-top: 10px solid var(--color-theme-blue);
-			// border-left: 10px solid var(--color-theme-blue);
-			// border-right: 10px solid var(--color-theme-blue);
-
 			box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 			background-color: #fff;
 
@@ -758,8 +755,11 @@
 				}
 			}
 		}
+
+		// Axis wrapper
 		.axis-wrapper {
 			background-color: var(--bg-color);
+
 			&.sticky {
 				position: sticky;
 				bottom: 0;
@@ -768,34 +768,29 @@
 		}
 	}
 
+	// Map container
 	.map-container {
-		width: 100%;
-		height: calc(100svh - var(--controls-height));
-		transition: all 0.5s ease;
-		margin-top: var(--controls-height);
-		background-color: var(--bg-color);
-
 		position: absolute;
 		top: 0;
 		left: 0;
+		width: 100%;
+		height: calc(100svh - var(--controls-height));
+		margin-top: var(--controls-height);
+		background-color: var(--bg-color);
 		z-index: 10;
-		// pointer-events: none;
-		// opacity: 0;
+		transition: all 0.5s ease;
+
 		&.visible {
 			opacity: 1;
 			pointer-events: auto;
 		}
 	}
 
+	// Chart container
 	.chart-container {
 		height: var(--chart-height);
 		max-height: var(--chart-max-height);
 		overflow: auto;
-		// transition: all 0.5s ease;
-		// display: flex;
-		// flex-direction: column;
-		// justify-content: center;
-		// position: relative;
 
 		&.interactive-mode {
 			overflow: hidden;
@@ -806,6 +801,7 @@
 		}
 
 		.bottom-gradient {
+			position: absolute;
 			bottom: -1px;
 			left: 0;
 			right: 0;
@@ -816,17 +812,15 @@
 		}
 	}
 
+	// Global SVG styles
 	:global(svg) {
 		display: block;
 		font-size: 14px;
 		font-family: sans-serif;
 	}
 
+	// Local SVG styles
 	svg {
 		transition: height 0.5s ease;
 	}
-
-	// svg * {
-	// 	transition: all 0.5s ease;
-	// }
 </style>

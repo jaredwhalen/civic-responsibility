@@ -302,7 +302,7 @@
 			class:interactive={guessMode}
 			data-row-index={index}
 			data-tippy-content={!guessMode
-				? `<b>${s.label ? (s.label.includes('duties') ? 'U.S. average:' : s.label + ':') : ''}</b> ${s.value ? `${s.value.toFixed(1)}%` : ''}`
+				? `<b>${s.label ? (s.label.includes('duties') ? 'U.S. average:' : s.label + ':') : ''}</b> ${s.value ? `${s.value.toFixed(0)}%` : ''}`
 				: ''}
 			onmouseover={() => {
 				hoveredSeries = s.label;
