@@ -19,6 +19,8 @@
 		sortedDuties.filter((duty) => Number(duty.mean) > 50).length
 	);
 
+	$inspect(results);
+
 	const iconSize = 30;
 </script>
 
@@ -43,7 +45,7 @@
 
 		{#if results.predictions.ideology_tri}
 			{@const ideology = results.predictions.ideology_tri}
-			{@const ideologyPercent = (ideology.alignment[0] * 100).toFixed(0)}
+			{@const ideologyPercent = (ideology.match[0] * 100).toFixed(0)}
 			<div class="results-row flex">
 				<div class="icon-container"><Vote color="#fff" size={iconSize} /></div>
 				<div class="content-container">
@@ -63,7 +65,7 @@
 
 		{#if results.predictions.urban_binary}
 			{@const urban = results.predictions.urban_binary}
-			{@const urbanPercent = (urban.alignment[0] * 100).toFixed(0)}
+			{@const urbanPercent = (urban.match[0] * 100).toFixed(0)}
 			<div class="results-row flex">
 				<div class="icon-container"><House color="#fff" size={iconSize} /></div>
 				<div class="content-container">
@@ -83,7 +85,7 @@
 
 		{#if results.predictions.age_binary}
 			{@const age = results.predictions.age_binary}
-			{@const agePercent = (age.alignment[0] * 100).toFixed(0)}
+			{@const agePercent = (age.match[0] * 100).toFixed(0)}
 			<div class="results-row flex">
 				<div class="icon-container"><Cake color="#fff" size={iconSize} /></div>
 				<div class="content-container">
