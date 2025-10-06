@@ -48,7 +48,7 @@
 		{
 			text: 'Serving on a jury',
 			position: {
-				top: '80%',
+				top: '65%',
 				left: '50%',
 				color: `${getCSSVar('--color-theme-yellow')}`,
 				scale: 1
