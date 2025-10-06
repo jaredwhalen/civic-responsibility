@@ -37,7 +37,7 @@ select <- dplyr::select
       TRUE ~ suppressWarnings(as.numeric(.x))
     )))
 
-  # Binarize (moved here to match original flow)
+  # Binarize
   Data_Clean <- Data_Clean %>%
     mutate(
       urban_binary = case_when(
@@ -68,7 +68,7 @@ select <- dplyr::select
 }
 
 # ─────────────────────────────────────────────────────────
-# Model  (same function name as original, now also returns `match`)
+# Model  (now also returns `match`)
 #   - `match` = 1 - mean(|prototype - new_data_row|), over all 30 items
 #   - Disallows skips: caller must pass 30 numeric 0/1s
 # ─────────────────────────────────────────────────────────
@@ -83,7 +83,7 @@ predict_groups <- function(new_data_row, df, duty_cols, group_vars) {
   }
 
   for (group_var in group_vars) {
-    # Compute weighted prototypes for each group (same as original)
+    # Compute weighted prototypes for each group
     prototype_df <- df %>%
       filter(!is.na(.data[[group_var]])) %>%
       group_by(.data[[group_var]]) %>%
