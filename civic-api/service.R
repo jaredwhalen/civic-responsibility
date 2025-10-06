@@ -1,65 +1,58 @@
-# service.R
+# service.R (minimal output, no skips)
 suppressPackageStartupMessages({
   library(dplyr)
-  library(tidyr)
   library(jsonlite)
   library(rlang)
 })
 
-# --- Parse JSON payload into a named numeric vector duties_1..duties_30 (NAs allowed for skips) ---
+# ───────── Parse input (no skips allowed) ─────────
 # Accepts:
-#   {"duties":[1,0,null,...]}                    # array (null/blanks allowed)
-#   {"duties":{"duties_1":1,"duties_7":null}}    # named object (missing keys allowed)
-#   {"duties_1":1,"duties_2":"", ...}            # bare top-level named object
+#   {"duties":[0/1 x30]}  OR
+#   {"duties":{"duties_1":0/1, ..., "duties_30":0/1}}  OR
+#   {"duties_1":..., ..., "duties_30":...}
+# Returns: numeric vector length 30, values in {0,1}
 .parse_new_participant <- function(json_str) {
   x <- tryCatch(jsonlite::fromJSON(json_str, simplifyVector = FALSE),
                 error = function(e) NULL)
   if (is.null(x)) stop("Invalid JSON.")
-
   d <- if (!is.null(x$duties)) x$duties else x
 
   keys <- paste0("duties_", 1:30)
-  v <- rep(NA_real_, 30); names(v) <- keys
 
-  as_num <- function(val) {
-    if (is.null(val)) return(NA_real_)
-    if (is.character(val) && (val == "" || tolower(val) == "na")) return(NA_real_)
-    suppressWarnings(as.numeric(val))
-  }
+  # Flatten
+  u <- unlist(d, use.names = TRUE)
 
-  if (is.list(d) && !is.null(names(d))) {
-    # Named object: fill explicit keys
-    for (nm in names(d)) {
-      m <- regmatches(nm, regexec("^duties_(\\d+)$", nm))[[1]]
-      if (length(m) == 2) {
-        idx <- as.integer(m[2])
-        if (!is.na(idx) && idx >= 1 && idx <= 30) v[idx] <- as_num(d[[nm]])
-      }
-    }
-  } else if (is.list(d) && is.null(names(d))) {
-    # Array: positionally map 1..length(d)
-    n <- min(length(d), 30L)
-    for (i in seq_len(n)) v[i] <- as_num(d[[i]])
+  # Named object with duties_*
+  if (!is.null(names(u)) && all(keys %in% names(u)) && length(u) >= 30) {
+    v <- as.numeric(u[keys])
+  } else if (length(u) == 30 && is.null(names(u))) {
+    # Bare array of length 30
+    v <- as.numeric(u)
+    names(v) <- keys
+  } else if (all(keys %in% names(x))) {
+    v <- as.numeric(unlist(x[keys]))
+    names(v) <- keys
   } else {
-    stop("Expected 'duties' as array or object (or top-level duties_* keys).")
+    stop("Expected 30 answers: array of length 30 or named duties_1..duties_30.")
   }
 
-  if (all(is.na(v))) stop("No answers provided (all 30 duties are missing).")
+  if (any(is.na(v))) stop("All 30 duty values must be numeric 0/1 (no skips).")
+  if (!all(v %in% c(0, 1))) stop("All 30 duty values must be 0 or 1.")
   v
 }
 
-# --- Load & prepare training data ---
+# ───────── Prepare training data (one-time) ─────────
 .prepare_training <- function(csv_path) {
   if (!file.exists(csv_path)) stop(paste0("CSV not found: ", csv_path))
   raw <- suppressWarnings(read.csv(csv_path, stringsAsFactors = FALSE))
 
+  # Clean column names / recode duties to 0/1
   if ("pid3" %in% names(raw)) raw$pid3 <- trimws(raw$pid3)
   names(raw) <- gsub("^duties_full_list_", "duties_", names(raw))
-
   duty_cols <- paste0("duties_", 1:30)
   missing_cols <- setdiff(duty_cols, names(raw))
   if (length(missing_cols)) {
-    stop(paste0("Training CSV is missing columns: ", paste(missing_cols, collapse = ", ")))
+    stop(paste0("Training CSV is missing: ", paste(missing_cols, collapse = ", ")))
   }
 
   clean <- raw %>%
@@ -92,78 +85,85 @@ suppressPackageStartupMessages({
   list(data = clean, duty_cols = duty_cols)
 }
 
-# --- Core predictor: handles skipped items via answered-only average distance ---
-.predict_groups_with_probs <- function(new_vec, df, duty_cols, group_vars, temperature = 1) {
-  nd <- as.numeric(new_vec); names(nd) <- names(new_vec)
+# Build weighted-mean prototype table for a grouping variable
+.build_prototype <- function(df, duty_cols, group_var) {
+  df %>%
+    filter(!is.na(.data[[group_var]])) %>%
+    group_by(.data[[group_var]]) %>%
+    summarise(
+      across(all_of(duty_cols), ~ weighted.mean(.x, w = Weight, na.rm = TRUE)),
+      .groups = "drop"
+    ) %>%
+    rename(group = !!sym(group_var))
+}
 
-  answered_idx <- which(!is.na(nd[duty_cols]))
-  k <- length(answered_idx)
-  if (k == 0) stop("No answered items found in payload.")
-  used_cols <- duty_cols[answered_idx]
+# ───────── In-memory cache (reloads if CSV changes) ─────────
+.cache <- new.env(parent = emptyenv())
 
+get_training <- function(csv_path) {
+  finfo <- file.info(csv_path)
+  if (is.na(finfo$mtime)) stop("CSV not found: ", csv_path)
+
+  if (is.null(.cache$csv_path) ||
+      !identical(.cache$csv_path, csv_path) ||
+      is.null(.cache$mtime) ||
+      .cache$mtime < finfo$mtime) {
+
+    prep <- .prepare_training(csv_path)
+    df <- prep$data
+    duty_cols <- prep$duty_cols
+    group_vars <- c("urban_binary", "ideology_tri", "age_binary")
+
+    protos <- lapply(group_vars, function(g) .build_prototype(df, duty_cols, g))
+    names(protos) <- group_vars
+
+    .cache$csv_path   <- csv_path
+    .cache$mtime      <- finfo$mtime
+    .cache$duty_cols  <- duty_cols
+    .cache$group_vars <- group_vars
+    .cache$protos     <- protos
+  }
+  .cache
+}
+
+# ───────── Prediction (minimal output) ─────────
+# match = 1 - mean(|prototype - answers|) over all 30 items  ∈ [0,1]
+.predict_minimal <- function(answers_vec, cache) {
+  nd <- as.numeric(answers_vec); names(nd) <- names(answers_vec)
+  duty_cols  <- cache$duty_cols
+  group_vars <- cache$group_vars
   out <- list()
 
   for (group_var in group_vars) {
-    prototype_df <- df %>%
-      dplyr::filter(!is.na(.data[[group_var]])) %>%
-      dplyr::group_by(.data[[group_var]]) %>%
-      dplyr::summarise(
-        dplyr::across(dplyr::all_of(duty_cols), ~ stats::weighted.mean(.x, w = Weight, na.rm = TRUE)),
-        .groups = "drop"
+    proto <- cache$protos[[group_var]]
+
+    scores <- proto %>%
+      rowwise() %>%
+      mutate(
+        avg_dist = mean(abs(c_across(all_of(duty_cols)) - nd[duty_cols]), na.rm = TRUE),
+        match    = 1 - avg_dist
       ) %>%
-      dplyr::rename(group = !!rlang::sym(group_var))
+      ungroup() %>%
+      select(group, match)
 
-    # Sum of absolute diffs over answered items; normalize by k (avg distance in [0,1])
-    distances <- prototype_df %>%
-      dplyr::rowwise() %>%
-      dplyr::mutate(
-        dist_sum   = sum(abs(dplyr::c_across(dplyr::all_of(used_cols)) - nd[used_cols]), na.rm = TRUE),
-        dist       = dist_sum / k,         # average distance
-        similarity = 1 - dist,             # [0,1], higher = closer
-        alignment  = similarity
-      ) %>%
-      dplyr::ungroup() %>%
-      dplyr::select(group, dist_sum, dist, similarity, alignment)
-
-    # Softmax over negative average distance
-    logits <- -distances$dist / temperature
-    logits <- logits - max(logits, na.rm = TRUE)
-    distances$prob <- as.numeric(exp(logits) / sum(exp(logits)))
-
-    winner <- distances %>% dplyr::slice_min(dist, n = 1, with_ties = FALSE)
+    winner <- scores %>% slice_max(match, n = 1, with_ties = FALSE)
 
     out[[group_var]] <- list(
-      predicted   = unname(winner$group),
-      dist        = round(as.numeric(winner$dist), 4),
-      dist_sum    = round(as.numeric(winner$dist_sum), 4),
-      prob        = round(as.numeric(winner$prob), 4),
-      similarity  = round(as.numeric(winner$similarity), 4),
-      alignment   = round(as.numeric(winner$alignment), 3),
-      answered    = k,
-      coverage    = round(k / length(duty_cols), 3)
+      predicted = unname(winner$group),
+      match     = round(as.numeric(winner$match), 3)  # 0..1 ; UI can show as %
     )
   }
-
   out
 }
 
-# --- Public function used by api.R ---
-predict_service <- function(csv_path, payload_json, temperature = 1) {
-  # Parser returns numeric vector with NAs for skips
+# ───────── Public entry used by api.R ─────────
+predict_service <- function(csv_path, payload_json, temperature = 1) { # temperature unused now
+  # Parse strict 30× 0/1 input (no skips)
   np <- .parse_new_participant(payload_json)
 
-  # Optional: require a minimum number answered (env var MIN_ANSWERED, default 1)
-  min_answered <- as.integer(Sys.getenv("MIN_ANSWERED", "1"))
-  k <- sum(!is.na(np))
-  if (k < min_answered) {
-    stop(sprintf("Too few answered items: %d (minimum %d).", k, min_answered))
-  }
+  # Load/calc cached artifacts
+  cache <- get_training(csv_path)
 
-  prep <- .prepare_training(csv_path)
-  df <- prep$data
-  duty_cols <- prep$duty_cols
-  group_vars <- c("urban_binary", "ideology_tri", "age_binary")
-
-  preds <- .predict_groups_with_probs(np, df, duty_cols, group_vars, temperature = temperature)
-  list(predictions = preds)
+  # Predict
+  list(predictions = .predict_minimal(np, cache))
 }
