@@ -14,6 +14,7 @@
 	import TextFooter from '$lib/components/scrolly/TextFooter.svelte';
 	import CTA from '$lib/components/CTA.svelte';
 	import Dashboard from '$lib/components/scrolly/dashboard/Dashboard.svelte';
+	import Quiz from '$lib/components/quiz/Quiz.svelte';
 	const { meta, content } = copy;
 
 	let count2 = $state(0);
@@ -25,8 +26,9 @@
 	let bottom2 = 1;
 
 	let interactiveMode = $state(false);
-	let shouldShowOverlay = $state(false);
-	let showExpandedModal = $state(false);
+
+
+	let showQuiz = $state(false);
 
 	// Derived variables for each Scrolly component
 
@@ -119,9 +121,12 @@
 
 	<GSAPScroller section="outro" />
 
-	<CTA />
+	<CTA bind:showQuiz />
 
 	<Dashboard activeId="9999-dashboard" interactiveMode={true} />
+	{#if showQuiz}
+		<Quiz bind:showQuiz />
+	{/if}
 
 	<Footer />
 </main>

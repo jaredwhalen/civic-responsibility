@@ -4,7 +4,7 @@
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import smoothScroll from '$lib/helpers/smoothScroll.js';
 	
-	let { interactiveMode = $bindable() } = $props();
+	let { interactiveMode = $bindable(), showQuiz = $bindable() } = $props();
 	let ctaElement;
 	let textElement;
 	let exploreButton;
@@ -132,7 +132,7 @@
 				Use the <span class="animated-underline" bind:this={underlineElement}>dashboard below</span> to explore how the data breaks down along demographic lines, gender, location, and more.
 			</div>
 			<div class="text-block">
-				Or take our <button data-button="quiz" bind:this={quizButton}>interactive quiz</button> to see how your beliefs compare
+				Or take our <button data-button="quiz" bind:this={quizButton} onclick={() => showQuiz = true}>interactive quiz</button> to see how your beliefs compare
 				to those of other Americans.
 			</div>
 		</div>
