@@ -4,7 +4,7 @@
 	let { responses = $bindable(), results } = $props();
 
 	// Debugging variable for auto-answering
-	let debugAutoAnswer = $state(true);
+	let debugAutoAnswer = $state(false);
 
 	let profiles = [
 		[1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1],
