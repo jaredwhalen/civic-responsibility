@@ -139,7 +139,7 @@
 			`[data-row-index="${index}"][data-tippy-content]`
 		);
 		existingCircles.forEach((circle) => {
-			if (circle._tippy && typeof circle._tippy.destroy === 'function') {
+			if (circle._tippy && typeof circle._tippy.destroy === 'function' && !circle._tippy.state.isDestroyed) {
 				try {
 					circle._tippy.destroy();
 				} catch (e) {
@@ -151,7 +151,7 @@
 
 		// Also clean up our tracked instances
 		tippyInstances.forEach((instance) => {
-			if (instance && typeof instance.destroy === 'function') {
+			if (instance && typeof instance.destroy === 'function' && !instance.state.isDestroyed) {
 				try {
 					instance.destroy();
 				} catch (e) {
@@ -165,6 +165,7 @@
 		if (!guessMode) {
 			// Use a more specific selector for this component instance
 			const circles = document.querySelectorAll(`[data-row-index="${index}"][data-tippy-content]`);
+	
 			circles.forEach((circle) => {
 				try {
 					const instance = tippy(circle, {
@@ -192,11 +193,11 @@
 		}
 	});
 
+
 	onMount(() => {
 		// Clear any existing tooltips
-
 		tippyInstances.forEach((instance) => {
-			if (instance && typeof instance.destroy === 'function') {
+			if (instance && typeof instance.destroy === 'function' && !instance.state.isDestroyed) {
 				try {
 					instance.destroy();
 				} catch (e) {
@@ -204,6 +205,7 @@
 				}
 			}
 		});
+		
 
 		tippyInstances = [];
 
@@ -213,7 +215,7 @@
 		// Cleanup function
 		return () => {
 			tippyInstances.forEach((instance) => {
-				if (instance && typeof instance.destroy === 'function') {
+				if (instance && typeof instance.destroy === 'function' && !instance.state.isDestroyed) {
 					try {
 						instance.destroy();
 					} catch (e) {
