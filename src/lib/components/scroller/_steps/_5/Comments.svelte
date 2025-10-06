@@ -66,7 +66,6 @@
 </script>
 
 {#each commentData as comment, index}
-	{console.log(comment.position)}
 	<div
 		class="comment-item"
 		bind:this={commentElements[index]}
