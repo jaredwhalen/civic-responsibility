@@ -30,6 +30,7 @@
 
 	let showQuiz = $state(false);
 
+
 	// Derived variables for each Scrolly component
 
 	const activeSlide2 = $derived(content.scrolly.slidesFixed[index2]);
