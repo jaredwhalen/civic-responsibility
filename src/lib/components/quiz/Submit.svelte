@@ -60,12 +60,22 @@
 			// Scroll to results container to show results with 20px offset
 			setTimeout(() => {
 				const resultsContainer = document.querySelector('.results-container');
-				const quizModal = document.querySelector('.quiz-modal');
-				if (resultsContainer && quizModal) {
-					const containerRect = resultsContainer.getBoundingClientRect();
-					const modalRect = quizModal.getBoundingClientRect();
-					const targetY = resultsContainer.offsetTop - 20;
-					quizContainer.scrollTo({ top: targetY, behavior: 'smooth' });
+				const quizContainer = document.querySelector('.quiz-container');
+				
+				if (resultsContainer && quizContainer) {
+					// Check if we're in modal mode (has overflow-y: auto) or standalone mode
+					const isModal = quizContainer.classList.contains('modal');
+					
+					if (isModal) {
+						// Modal mode: scroll within the container
+						const targetY = resultsContainer.offsetTop - 20;
+						quizContainer.scrollTo({ top: targetY, behavior: 'smooth' });
+					} else {
+						// Standalone mode: scroll the window to the results
+						const rect = resultsContainer.getBoundingClientRect();
+						const targetY = window.scrollY + rect.top - 20;
+						window.scrollTo({ top: targetY, behavior: 'smooth' });
+					}
 				}
 			}, 100);
 		} catch (err) {

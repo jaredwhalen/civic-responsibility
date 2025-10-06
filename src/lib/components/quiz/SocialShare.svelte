@@ -3,6 +3,10 @@
 	import { browser } from '$app/environment';
 
 	let { results } = $props();
+	
+	// Toast notification state
+	let showToast = $state(false);
+	let toastTimeout = $state(null);
 
 	// Generate the social media text based on results
 	const socialText = $derived.by(() => {
@@ -42,7 +46,6 @@
 	const shareOnX = () => {
 		if (!browser) return;
 		const url = `https://x.com/intent/post?text=${encodeURIComponent(socialText + ' ' + shareUrl)}`;
-		console.log(url);
 		window.open(url, '_blank', 'width=550,height=420');
 	};
 
@@ -62,11 +65,24 @@
 		if (!browser) return;
 		try {
 			await navigator.clipboard.writeText(socialText + ' ' + shareUrl);
-			// You could add a toast notification here if desired
-			console.log('Text copied to clipboard');
+			showCopiedMessage();
 		} catch (err) {
 			console.error('Failed to copy text: ', err);
 		}
+	};
+
+	const showCopiedMessage = () => {
+		showToast = true;
+		
+		// Clear any existing timeout
+		if (toastTimeout) {
+			clearTimeout(toastTimeout);
+		}
+		
+		// Hide message after 2 seconds
+		toastTimeout = setTimeout(() => {
+			showToast = false;
+		}, 2000);
 	};
 
 	const iconSize = 24;
@@ -108,14 +124,19 @@
 			<Linkedin size={iconSize} />
 		</button>
 
-		<button
-			class="social-button copy"
-			onclick={copyToClipboard}
-			aria-label="Copy to clipboard"
-			title="Copy to clipboard"
-		>
-			<Copy size={iconSize} />
-		</button>
+		<div class="copy-button-wrapper">
+			<button
+				class="social-button copy"
+				onclick={copyToClipboard}
+				aria-label="Copy to clipboard"
+				title="Copy to clipboard"
+			>
+				<Copy size={iconSize} />
+			</button>
+			{#if showToast}
+				<span class="copied-message">Copied!</span>
+			{/if}
+		</div>
 	</div>
 </div>
 
@@ -200,6 +221,27 @@
 				background-color: #545b62;
 			}
 		}
+	}
+
+	.copy-button-wrapper {
+		position: relative;
+		display: inline-block;
+	}
+
+	.copied-message {
+		position: absolute;
+		left: 100%;
+		top: 50%;
+		transform: translateY(-50%);
+		margin-left: 8px;
+		background-color: var(--color-theme-blue);
+		color: white;
+		padding: 4px 8px;
+		border-radius: 4px;
+		font-size: 12px;
+		font-weight: 500;
+		white-space: nowrap;
+		z-index: 10;
 	}
 
 	.share-note {
