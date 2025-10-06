@@ -402,7 +402,8 @@
 	}
 
 	circle:not(.isDragging) {
-		transition: var(--circle-transition);
+		// transition: var(--circle-transition);
+		transition: all 0.5s var(--delay, 0s) cubic-bezier(0.25, 0.1, 0.25, 1);
 	}
 
 	.hide {
