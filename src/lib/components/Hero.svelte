@@ -37,6 +37,7 @@
 			</div>
 		{/if}
 	</div>
+	
 </section>
 
 <style lang="scss">

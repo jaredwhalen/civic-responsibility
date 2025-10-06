@@ -27,9 +27,7 @@
 
 	let interactiveMode = $state(false);
 
-
 	let showQuiz = $state(false);
-
 
 	// Derived variables for each Scrolly component
 
@@ -45,82 +43,23 @@
 	/>
 </svelte:head>
 
+<div class="header-bg"></div>
 
-	<Hero
-		videoSrc={content.hero.video || '/assets/videos/web-bg.mp4'}
-		poster={content.hero.poster || '/assets/videos/placeholder.jpg'}
-		heroText={content.hero.text}
-	/>
-
-	<GSAPScroller section="intro" />
-
-	<Scroller
-		top={top2}
-		threshold={threshold2}
-		bottom={bottom2}
-		bind:count={count2}
-		bind:index={index2}
-		bind:offset={offset2}
-		bind:progress={progress2}
-		interactiveBg={Boolean(activeSlide2.interactiveBg)}
-		role="region"
-		aria-label="Second interactive content scroll area"
-	>
-		{#snippet background()}
-			<div
-				class="background-container"
-				data-theme={activeSlide2.theme || 'default'}
-				role="presentation"
-				aria-hidden="true"
-			>
-				<Background
-					count={count2}
-					index={index2}
-					offset={offset2}
-					progress={progress2}
-					activeId={activeSlide2.id}
-					showDashboard={Boolean(activeSlide2.showDashboard)}
-					{interactiveMode}
-				/>
-			</div>
-
-			<TextFooter content={activeSlide2} />
-		{/snippet}
-
-		{#snippet foreground()}
-			<div
-				class="foreground-container {interactiveMode ? 'interactive-mode' : ''}"
-				data-theme={activeSlide2.theme || 'default'}
-				role="main"
-				aria-label="Second content slides"
-			>
-				{#each content.scrolly.slidesFixed as slide, slideIndex}
-					<Slide
-						content={slide}
-						cls="slide-{slideIndex} {slide.cls}"
-						index={slideIndex}
-						bind:interactiveMode
-						aria-label="Slide {slideIndex + 1} of {content.scrolly.slidesFixed.length}"
-						noText={slide.noFgText}
-					/>
-				{/each}
-			</div>
-		{/snippet}
-	</Scroller>
-
-	<GSAPScroller section="outro" />
-
-	<CTA bind:showQuiz />
-
-	<Dashboard activeId="9999-dashboard" interactiveMode={true} />
-	{#if showQuiz}
-		<Quiz bind:showQuiz />
-	{/if}
-
+<Quiz />
 
 <style lang="scss">
 	@import '$lib/styles/mixins.scss';
 
+	.header-bg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: var(--header-height, 80px);
+		background-color: var(--color-theme-blue-light);
+		z-index: 10;
+
+	}
 	// Accessibility utilities
 	.visually-hidden {
 		position: absolute !important;
@@ -133,5 +72,4 @@
 		white-space: nowrap !important;
 		border: 0 !important;
 	}
-
 </style>

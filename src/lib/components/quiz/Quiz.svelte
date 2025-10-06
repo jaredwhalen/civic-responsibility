@@ -1,5 +1,6 @@
 <script>
 	import { fade } from 'svelte/transition';
+	import { goto } from '$app/navigation';
 	import Form from './Form.svelte';
 	import Submit from './Submit.svelte';
 	import Results from './Results.svelte';
@@ -11,8 +12,15 @@
 	let responses = $state({});
 	let submittedUserYesCount = $state(0);
 
+	// Determine if this is standalone mode (no showQuiz prop) or modal mode
+	const isStandalone = $derived(showQuiz === undefined);
+
 	function hideQuiz() {
-		showQuiz = false;
+		if (!isStandalone) {
+			showQuiz = false;
+		} else {
+			window.location.href = '/';
+		}
 	}
 
 	function handleResults(newResults) {
@@ -41,10 +49,15 @@
 	});
 </script>
 
-<div class="quiz-modal" transition:fade={{ duration: 300 }}>
+<div
+	class="quiz-container {isStandalone ? 'standalone' : 'modal'}"
+	transition:fade={{ duration: 300 }}
+>
 	<div class="quiz-content">
 		<div class="quiz-header">
-			<button class="back-button" onclick={hideQuiz} data-button="back">← Back</button>
+			<button class="back-button" onclick={hideQuiz} data-button="back">
+				{!isStandalone ? '← Back' : '← Go to full story'}
+			</button>
 			<h2>How does your "civic profile" compare with other Americans?</h2>
 			<p>
 				Take the quiz below to find out. For each behavior, indicate whether or not you consider it
@@ -94,16 +107,26 @@
 </div>
 
 <style lang="scss">
-	.quiz-modal {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-		z-index: 10000;
+	.quiz-container {
 		background-color: var(--bg-color);
-		overflow-y: auto;
-		border: 10px solid var(--color-theme-blue-light);
+
+		&.modal {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			z-index: 10000;
+			overflow-y: auto;
+			border: 10px solid var(--color-theme-blue-light);
+		}
+
+		&.standalone {
+			position: relative;
+			width: 100%;
+			min-height: 100vh;
+			z-index: 1;
+		}
 	}
 
 	.quiz-content {
@@ -112,16 +135,31 @@
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
-		min-height: 100vh;
+
+		.quiz-container.modal & {
+			min-height: 100vh;
+		}
+
+		.quiz-container.standalone & {
+			min-height: calc(100vh - 160px); // Account for header and footer
+			padding-bottom: 2rem;
+		}
 	}
 
 	.quiz-header {
 		position: relative;
 		padding: 2rem;
-		margin-top: 100px;
 		display: flex;
 		flex-direction: column;
 		gap: 2rem;
+
+		.quiz-container.modal & {
+			margin-top: 100px;
+		}
+
+		.quiz-container.standalone & {
+			margin-top: 120px; // Account for header
+		}
 
 		.back-button {
 			background: none;
