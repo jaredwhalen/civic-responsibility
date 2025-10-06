@@ -49,12 +49,12 @@
 			}
 
 			const data = await response.json();
+            console.log('Data at submission:', data);
             
 			// Calculate and pass the user's yes count along with results
 			const userYesCount = Object.values(responses).filter((response) => response === true).length;
             const totalAnswered = Object.values(responses).filter((response) => response !== null).length;
-			console.log('Responses at submission:', responses);
-			console.log('User yes count:', userYesCount);
+
 			onResults({ ...data, userYesCount, totalAnswered: totalAnswered });
 
 			// Scroll to results container to show results with 20px offset

@@ -1,66 +1,44 @@
-# service.R (minimal output, no skips)
+# service.R  — API-friendly script shaped like the original Rmd
+
+# ─────────────────────────────────────────────────────────
+# Get Started  (same section name as original)
+# ─────────────────────────────────────────────────────────
 suppressPackageStartupMessages({
   library(dplyr)
+  library(tidyr)
   library(jsonlite)
   library(rlang)
 })
 
-# ───────── Parse input (no skips allowed) ─────────
-# Accepts:
-#   {"duties":[0/1 x30]}  OR
-#   {"duties":{"duties_1":0/1, ..., "duties_30":0/1}}  OR
-#   {"duties_1":..., ..., "duties_30":...}
-# Returns: numeric vector length 30, values in {0,1}
-.parse_new_participant <- function(json_str) {
-  x <- tryCatch(jsonlite::fromJSON(json_str, simplifyVector = FALSE),
-                error = function(e) NULL)
-  if (is.null(x)) stop("Invalid JSON.")
-  d <- if (!is.null(x$duties)) x$duties else x
+select <- dplyr::select
 
-  keys <- paste0("duties_", 1:30)
+# ─────────────────────────────────────────────────────────
+# Data Org  (same variable names as original)
+# ─────────────────────────────────────────────────────────
+.load_and_clean <- function(csv_path) {
 
-  # Flatten
-  u <- unlist(d, use.names = TRUE)
+  # Import Data
+  Data_Raw <- read.csv(csv_path, stringsAsFactors = FALSE)
 
-  # Named object with duties_*
-  if (!is.null(names(u)) && all(keys %in% names(u)) && length(u) >= 30) {
-    v <- as.numeric(u[keys])
-  } else if (length(u) == 30 && is.null(names(u))) {
-    # Bare array of length 30
-    v <- as.numeric(u)
-    names(v) <- keys
-  } else if (all(keys %in% names(x))) {
-    v <- as.numeric(unlist(x[keys]))
-    names(v) <- keys
-  } else {
-    stop("Expected 30 answers: array of length 30 or named duties_1..duties_30.")
-  }
+  Data_Clean <- Data_Raw %>%
+    mutate(pid3 = trimws(pid3))  # Remove leading & trailing spaces
 
-  if (any(is.na(v))) stop("All 30 duty values must be numeric 0/1 (no skips).")
-  if (!all(v %in% c(0, 1))) stop("All 30 duty values must be 0 or 1.")
-  v
-}
+  # Rename duties_full_list_X to duties_X
+  names(Data_Clean) <- gsub("^duties_full_list_", "duties_", names(Data_Clean))
 
-# ───────── Prepare training data (one-time) ─────────
-.prepare_training <- function(csv_path) {
-  if (!file.exists(csv_path)) stop(paste0("CSV not found: ", csv_path))
-  raw <- suppressWarnings(read.csv(csv_path, stringsAsFactors = FALSE))
+  # Select just the civic duty columns
+  duty_vars <- grep("^duties_\\d+$", names(Data_Clean), value = TRUE)
 
-  # Clean column names / recode duties to 0/1
-  if ("pid3" %in% names(raw)) raw$pid3 <- trimws(raw$pid3)
-  names(raw) <- gsub("^duties_full_list_", "duties_", names(raw))
-  duty_cols <- paste0("duties_", 1:30)
-  missing_cols <- setdiff(duty_cols, names(raw))
-  if (length(missing_cols)) {
-    stop(paste0("Training CSV is missing: ", paste(missing_cols, collapse = ", ")))
-  }
-
-  clean <- raw %>%
-    mutate(across(all_of(duty_cols), ~ case_when(
-      .x %in% c("Civic responsibility", "Civic Responsibility") ~ 1,
-      .x %in% c("Not a civic responsibility", "Not a Civic Responsibility") ~ 0,
+  # Recode all duty items as 1 (Civic obligation) and 0 (Not a civic obligation)
+  Data_Clean <- Data_Clean %>%
+    mutate(across(all_of(duty_vars), ~ case_when(
+      .x == "Civic responsibility" ~ 1,
+      .x == "Not a civic responsibility" ~ 0,
       TRUE ~ suppressWarnings(as.numeric(.x))
-    ))) %>%
+    )))
+
+  # Binarize (moved here to match original flow)
+  Data_Clean <- Data_Clean %>%
     mutate(
       urban_binary = case_when(
         urban == "Urban" ~ "Urban",
@@ -69,7 +47,7 @@ suppressPackageStartupMessages({
       ),
       ideology_tri = case_when(
         ideology %in% c("Liberal", "Slightly liberal", "Very liberal") ~ "Liberal",
-        ideology == "Moderate" ~ "Moderate",
+        ideology %in% c("Moderate") ~ "Moderate",
         ideology %in% c("Conservative", "Slightly conservative", "Very conservative") ~ "Conservative",
         TRUE ~ NA_character_
       ),
@@ -80,27 +58,95 @@ suppressPackageStartupMessages({
       )
     )
 
-  if (!("Weight" %in% names(clean))) clean$Weight <- 1
+  if (!("Weight" %in% names(Data_Clean))) Data_Clean$Weight <- 1
 
-  list(data = clean, duty_cols = duty_cols)
+  list(
+    Data_Clean = Data_Clean,
+    duty_cols = paste0("duties_", 1:30),
+    group_vars = c("urban_binary", "ideology_tri", "age_binary")
+  )
 }
 
-# Build weighted-mean prototype table for a grouping variable
-.build_prototype <- function(df, duty_cols, group_var) {
-  df %>%
-    filter(!is.na(.data[[group_var]])) %>%
-    group_by(.data[[group_var]]) %>%
-    summarise(
-      across(all_of(duty_cols), ~ weighted.mean(.x, w = Weight, na.rm = TRUE)),
-      .groups = "drop"
-    ) %>%
-    rename(group = !!sym(group_var))
+# ─────────────────────────────────────────────────────────
+# Model  (same function name as original, now also returns `match`)
+#   - `match` = 1 - mean(|prototype - new_data_row|), over all 30 items
+#   - Disallows skips: caller must pass 30 numeric 0/1s
+# ─────────────────────────────────────────────────────────
+predict_groups <- function(new_data_row, df, duty_cols, group_vars) {
+  predictions <- list()
+
+  # Ensure vector of length 30 numeric 0/1
+  if (is.data.frame(new_data_row)) new_data_row <- unlist(new_data_row[1, ], use.names = TRUE)
+  new_data_row <- as.numeric(new_data_row)
+  if (length(new_data_row) != length(duty_cols) || any(is.na(new_data_row)) || !all(new_data_row %in% c(0,1))) {
+    stop("new_data_row must be 30 numeric 0/1 values (no skips).")
+  }
+
+  for (group_var in group_vars) {
+    # Compute weighted prototypes for each group (same as original)
+    prototype_df <- df %>%
+      filter(!is.na(.data[[group_var]])) %>%
+      group_by(.data[[group_var]]) %>%
+      summarise(across(all_of(duty_cols), ~ weighted.mean(.x, w = Weight, na.rm = TRUE)), .groups = "drop") %>%
+      rename(group = !!sym(group_var))
+
+    # Compute mean Manhattan distance & match to each group prototype
+    distances <- prototype_df %>%
+      rowwise() %>%
+      mutate(
+        dist_mean = mean(abs(c_across(all_of(duty_cols)) - new_data_row)), # scaled 0..1
+        match = 1 - dist_mean
+      ) %>%
+      ungroup()
+
+    # Identify the closest group
+    best <- distances %>% slice_min(dist_mean, n = 1, with_ties = FALSE)
+    predictions[[group_var]] <- list(
+      predicted = unname(best$group),
+      match = round(as.numeric(best$match), 3)   # 0..1; multiply by 100 in UI
+    )
+  }
+
+  return(predictions)
 }
 
-# ───────── In-memory cache (reloads if CSV changes) ─────────
+# ─────────────────────────────────────────────────────────
+# API helper: parse participant JSON
+# Accepts:
+#   {"duties":[0/1 x30]}  OR
+#   {"duties":{"duties_1":0/1,...,"duties_30":0/1}}  OR
+#   {"duties_1":..., ..., "duties_30":...}
+# ─────────────────────────────────────────────────────────
+.parse_new_participant_strict <- function(json_str) {
+  x <- tryCatch(fromJSON(json_str, simplifyVector = FALSE), error = function(e) NULL)
+  if (is.null(x)) stop("Invalid JSON.")
+
+  d <- if (!is.null(x$duties)) x$duties else x
+  keys <- paste0("duties_", 1:30)
+  u <- unlist(d, use.names = TRUE)
+
+  if (!is.null(names(u)) && all(keys %in% names(u)) && length(u) >= 30) {
+    v <- as.numeric(u[keys])
+  } else if (length(u) == 30 && is.null(names(u))) {
+    v <- as.numeric(u); names(v) <- keys
+  } else if (all(keys %in% names(x))) {
+    v <- as.numeric(unlist(x[keys])); names(v) <- keys
+  } else {
+    stop("Expected 30 answers: array of length 30 or named duties_1..duties_30.")
+  }
+
+  if (any(is.na(v)) || !all(v %in% c(0,1))) {
+    stop("All 30 duty values must be numeric 0/1 (no skips).")
+  }
+  v
+}
+
+# ─────────────────────────────────────────────────────────
+# Cache: keep cleaned data in-memory for speed
+# ─────────────────────────────────────────────────────────
 .cache <- new.env(parent = emptyenv())
 
-get_training <- function(csv_path) {
+.get_prepared <- function(csv_path) {
   finfo <- file.info(csv_path)
   if (is.na(finfo$mtime)) stop("CSV not found: ", csv_path)
 
@@ -109,61 +155,36 @@ get_training <- function(csv_path) {
       is.null(.cache$mtime) ||
       .cache$mtime < finfo$mtime) {
 
-    prep <- .prepare_training(csv_path)
-    df <- prep$data
-    duty_cols <- prep$duty_cols
-    group_vars <- c("urban_binary", "ideology_tri", "age_binary")
-
-    protos <- lapply(group_vars, function(g) .build_prototype(df, duty_cols, g))
-    names(protos) <- group_vars
-
-    .cache$csv_path   <- csv_path
-    .cache$mtime      <- finfo$mtime
-    .cache$duty_cols  <- duty_cols
-    .cache$group_vars <- group_vars
-    .cache$protos     <- protos
+    prepared <- .load_and_clean(csv_path)
+    .cache$csv_path  <- csv_path
+    .cache$mtime     <- finfo$mtime
+    .cache$Data_Clean <- prepared$Data_Clean
+    .cache$duty_cols  <- prepared$duty_cols
+    .cache$group_vars <- prepared$group_vars
   }
-  .cache
+  list(
+    Data_Clean = .cache$Data_Clean,
+    duty_cols  = .cache$duty_cols,
+    group_vars = .cache$group_vars
+  )
 }
 
-# ───────── Prediction (minimal output) ─────────
-# match = 1 - mean(|prototype - answers|) over all 30 items  ∈ [0,1]
-.predict_minimal <- function(answers_vec, cache) {
-  nd <- as.numeric(answers_vec); names(nd) <- names(answers_vec)
-  duty_cols  <- cache$duty_cols
-  group_vars <- cache$group_vars
-  out <- list()
+# ─────────────────────────────────────────────────────────
+# API entry (used by api.R)
+# ─────────────────────────────────────────────────────────
+predict_service <- function(csv_path, payload_json, temperature = 1) {
+  # Parse participant
+  new_participant <- .parse_new_participant_strict(payload_json)
 
-  for (group_var in group_vars) {
-    proto <- cache$protos[[group_var]]
+  # Prepare training data (cached)
+  prep <- .get_prepared(csv_path)
+  Data_Clean <- prep$Data_Clean
+  duty_cols  <- prep$duty_cols
+  group_vars <- prep$group_vars
 
-    scores <- proto %>%
-      rowwise() %>%
-      mutate(
-        avg_dist = mean(abs(c_across(all_of(duty_cols)) - nd[duty_cols]), na.rm = TRUE),
-        match    = 1 - avg_dist
-      ) %>%
-      ungroup() %>%
-      select(group, match)
+  # Predict (same function name as original, augmented with match)
+  preds <- predict_groups(new_participant, Data_Clean, duty_cols, group_vars)
 
-    winner <- scores %>% slice_max(match, n = 1, with_ties = FALSE)
-
-    out[[group_var]] <- list(
-      predicted = unname(winner$group),
-      match     = round(as.numeric(winner$match), 3)  # 0..1 ; UI can show as %
-    )
-  }
-  out
+  list(predictions = preds)
 }
 
-# ───────── Public entry used by api.R ─────────
-predict_service <- function(csv_path, payload_json, temperature = 1) { # temperature unused now
-  # Parse strict 30× 0/1 input (no skips)
-  np <- .parse_new_participant(payload_json)
-
-  # Load/calc cached artifacts
-  cache <- get_training(csv_path)
-
-  # Predict
-  list(predictions = .predict_minimal(np, cache))
-}
