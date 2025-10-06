@@ -600,7 +600,7 @@
 		&.interactive {
 			height: 100vh;
 			overflow: hidden;
-			justify-content: flex-start;
+			justify-content: center;
 		}
 
 		// Pinned mode styles

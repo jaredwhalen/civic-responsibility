@@ -115,7 +115,7 @@
 				width: 100%;
 
 		
-				font-size: 2.8rem;
+				font-size: 2rem;
 				line-height: 1.5;
 				font-weight: 400;
 				font-family: $font-family-body;

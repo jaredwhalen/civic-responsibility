@@ -39,14 +39,19 @@
 		}
 
 		&.large-font {
+			margin-top: 1rem;
 			.legend-label {
-				font-size: 2rem;
+				font-size: 1.4rem;
 			}
 
 			.legend-dot {
 				width: 18px;
 				height: 18px;
 				border: none;
+			}
+
+			.legend-items {
+				justify-content: center;
 			}
 		}
 	}
