@@ -6,37 +6,45 @@ suppressPackageStartupMessages({
   library(rlang)
 })
 
-# --- Parse JSON payload into a named numeric vector duties_1..duties_30 ---
+# --- Parse JSON payload into a named numeric vector duties_1..duties_30 (with NAs allowed) ---
 .parse_new_participant <- function(json_str) {
-  x <- tryCatch(fromJSON(json_str, simplifyVector = TRUE), error = function(e) NULL)
+  x <- tryCatch(jsonlite::fromJSON(json_str, simplifyVector = FALSE),
+                error = function(e) NULL)
   if (is.null(x)) stop("Invalid JSON.")
 
-  # Case A: bare array of 30 numbers
-  if (is.numeric(x) && length(x) == 30) {
-    names(x) <- paste0("duties_", 1:30)
-    return(x)
+  d <- if (!is.null(x$duties)) x$duties else x
+
+  keys <- paste0("duties_", 1:30)
+  v <- rep(NA_real_, 30); names(v) <- keys
+
+  as_num <- function(val) {
+    if (is.null(val)) return(NA_real_)
+    if (is.character(val) && (val == "" || tolower(val) == "na")) return(NA_real_)
+    suppressWarnings(as.numeric(val))
   }
 
-  # Case B: { duties: [ ...30 numbers... ] } OR { duties: { duties_1:..., ... } }
-  if (is.list(x) && !is.null(x$duties)) {
-    d <- x$duties
-    if (is.numeric(d) && length(d) == 30) {
-      names(d) <- paste0("duties_", 1:30)
-      return(d)
+  if (is.list(d) && !is.null(names(d))) {
+    # Named object: fill by explicit key
+    for (nm in names(d)) {
+      m <- regmatches(nm, regexec("^duties_(\\d+)$", nm))[[1]]
+      if (length(m) == 2) {
+        idx <- as.integer(m[2])
+        if (!is.na(idx) && idx >= 1 && idx <= 30) v[idx] <- as_num(d[[nm]])
+      }
     }
-    if (is.numeric(d) && !is.null(names(d))) {
-      return(d[paste0("duties_", 1:30)])
-    }
+  } else if (is.list(d) && is.null(names(d))) {
+    # Array: positionally map 1..length(d)
+    n <- min(length(d), 30L)
+    for (i in seq_len(n)) v[i] <- as_num(d[[i]])
+  } else {
+    stop("Expected 'duties' as array or object (or top-level duties_* keys).")
   }
 
-  # Case C: bare named object { duties_1:..., ..., duties_30:... }
-  if (is.list(x) && !is.null(names(x)) && all(paste0("duties_", 1:30) %in% names(x))) {
-    v <- unlist(x[paste0("duties_", 1:30)])
-    return(v)
-  }
-
-  stop("JSON must include 30 duty values as array or named object (duties_1..duties_30).")
+  if (all(is.na(v))) stop("No answers provided (all 30 duties are missing).")
+  v
 }
+
+
 
 # --- Load & prepare training data once per request (simple & clear). ---
 # If needed, you can cache this in a global for speed.
@@ -83,46 +91,62 @@ suppressPackageStartupMessages({
   list(data = clean, duty_cols = duty_cols)
 }
 
-# --- Core predictor returning a list (plumber will JSON-serialize it) ---
+# --- Core predictor: handles skipped items (NAs) by using answered-only average distance ---
 .predict_groups_with_probs <- function(new_vec, df, duty_cols, group_vars, temperature = 1) {
-  nd <- as.numeric(new_vec)
-  names(nd) <- names(new_vec)
+  nd <- as.numeric(new_vec); names(nd) <- names(new_vec)
+
+  answered_idx <- which(!is.na(nd[duty_cols]))
+  k <- length(answered_idx)
+  if (k == 0) stop("No answered items found in payload.")
+  used_cols <- duty_cols[answered_idx]
+
   out <- list()
 
   for (group_var in group_vars) {
     prototype_df <- df %>%
-      filter(!is.na(.data[[group_var]])) %>%
-      group_by(.data[[group_var]]) %>%
-      summarise(across(all_of(duty_cols), ~ weighted.mean(.x, w = Weight, na.rm = TRUE)),
-                .groups = "drop") %>%
-      rename(group = !!sym(group_var))
+      dplyr::filter(!is.na(.data[[group_var]])) %>%
+      dplyr::group_by(.data[[group_var]]) %>%
+      dplyr::summarise(
+        dplyr::across(dplyr::all_of(duty_cols), ~ stats::weighted.mean(.x, w = Weight, na.rm = TRUE)),
+        .groups = "drop"
+      ) %>%
+      dplyr::rename(group = !!rlang::sym(group_var))
 
+    # Compute sum of absolute diffs only over answered items, then normalize by k
     distances <- prototype_df %>%
-      rowwise() %>%
-      mutate(dist = sum(abs(c_across(all_of(duty_cols)) - nd[duty_cols]), na.rm = TRUE)) %>%
-      ungroup() %>%
-      select(group, dist) %>%
-      mutate(
-        similarity = 1 / (1 + dist),
-        alignment  = 1 - (dist / length(duty_cols))
-      )
+      dplyr::rowwise() %>%
+      dplyr::mutate(
+        dist_sum = sum(abs(dplyr::c_across(dplyr::all_of(used_cols)) - nd[used_cols]), na.rm = TRUE),
+        dist     = dist_sum / k,                    # average distance in [0,1]
+        similarity = 1 - dist,                      # [0,1], higher is closer
+        alignment  = similarity
+      ) %>%
+      dplyr::ungroup() %>%
+      dplyr::select(group, dist_sum, dist, similarity, alignment)
 
+    # Softmax over negative average distance
     logits <- -distances$dist / temperature
     logits <- logits - max(logits, na.rm = TRUE)
     distances$prob <- as.numeric(exp(logits) / sum(exp(logits)))
 
-    winner <- distances %>% slice_min(dist, n = 1, with_ties = FALSE)
+    winner <- distances %>% dplyr::slice_min(dist, n = 1, with_ties = FALSE)
 
     out[[group_var]] <- list(
-      predicted  = unname(winner$group),
-      dist       = round(as.numeric(winner$dist), 4),
-      prob       = round(as.numeric(winner$prob), 4),
-      similarity = round(as.numeric(winner$similarity), 4),
-      alignment  = round(as.numeric(winner$alignment), 3)
+      predicted   = unname(winner$group),
+      # 'dist' is now the average distance over answered items
+      dist        = round(as.numeric(winner$dist), 4),
+      dist_sum    = round(as.numeric(winner$dist_sum), 4),
+      prob        = round(as.numeric(winner$prob), 4),
+      similarity  = round(as.numeric(winner$similarity), 4),
+      alignment   = round(as.numeric(winner$alignment), 3),
+      answered    = k,
+      coverage    = round(k / length(duty_cols), 3)
     )
   }
+
   out
 }
+
 
 # --- Public function used by api.R ---
 predict_service <- function(csv_path, payload_json, temperature = 1) {

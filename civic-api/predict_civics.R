@@ -34,33 +34,44 @@ if (is.null(json_str) || nchar(trimws(json_str)) == 0) {
 }
 
 # ---- Parse Input JSON ----
-parse_new_participant <- function(json_str) {
-  x <- tryCatch(fromJSON(json_str, simplifyVector = TRUE), error = function(e) NULL)
+# --- Parse JSON payload into a named numeric vector duties_1..duties_30 (with NAs allowed) ---
+.parse_new_participant <- function(json_str) {
+  x <- tryCatch(jsonlite::fromJSON(json_str, simplifyVector = FALSE),
+                error = function(e) NULL)
   if (is.null(x)) stop("Invalid JSON.")
-  
-  if (is.numeric(x) && length(x) == 30) {
-    names(x) <- paste0("duties_", 1:30)
-    return(x)
+
+  d <- if (!is.null(x$duties)) x$duties else x
+
+  keys <- paste0("duties_", 1:30)
+  v <- rep(NA_real_, 30); names(v) <- keys
+
+  as_num <- function(val) {
+    if (is.null(val)) return(NA_real_)
+    if (is.character(val) && (val == "" || tolower(val) == "na")) return(NA_real_)
+    suppressWarnings(as.numeric(val))
   }
-  
-  if (is.list(x) && !is.null(x$duties)) {
-    d <- x$duties
-    if (is.numeric(d) && length(d) == 30) {
-      names(d) <- paste0("duties_", 1:30)
-      return(d)
+
+  if (is.list(d) && !is.null(names(d))) {
+    # Named object: fill by explicit key
+    for (nm in names(d)) {
+      m <- regmatches(nm, regexec("^duties_(\\d+)$", nm))[[1]]
+      if (length(m) == 2) {
+        idx <- as.integer(m[2])
+        if (!is.na(idx) && idx >= 1 && idx <= 30) v[idx] <- as_num(d[[nm]])
+      }
     }
-    if (is.numeric(d) && !is.null(names(d))) {
-      return(d[paste0("duties_", 1:30)])
-    }
+  } else if (is.list(d) && is.null(names(d))) {
+    # Array: positionally map 1..length(d)
+    n <- min(length(d), 30L)
+    for (i in seq_len(n)) v[i] <- as_num(d[[i]])
+  } else {
+    stop("Expected 'duties' as array or object (or top-level duties_* keys).")
   }
-  
-  if (is.list(x) && !is.null(names(x)) && all(paste0("duties_", 1:30) %in% names(x))) {
-    v <- unlist(x[paste0("duties_", 1:30)])
-    return(v)
-  }
-  
-  stop("JSON must include 30 duty values as array or named object (duties_1..duties_30).")
+
+  if (all(is.na(v))) stop("No answers provided (all 30 duties are missing).")
+  v
 }
+
 
 new_participant_vec <- parse_new_participant(json_str)
 np <- suppressWarnings(as.numeric(new_participant_vec))
