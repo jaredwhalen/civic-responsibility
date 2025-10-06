@@ -439,15 +439,6 @@
 	let renderedChartContainerHeight = $state(0);
 	let dashboardElement = $state(null);
 
-	// Scroll to overlay when exiting pinned view
-	$effect(() => {
-		if (interactiveMode && !isPinned && dashboardElement) {
-			// Use requestAnimationFrame to ensure DOM is updated
-			requestAnimationFrame(() => {
-				dashboardElement.scrollIntoView({ behavior: 'instant', block: 'start' });
-			});
-		}
-	});
 
 	// Check if SVG is larger than container and needs scrolling
 	const needsScrolling = $derived(
@@ -491,6 +482,14 @@
 				searchOptions={{
 					states: new Set(states.map((d) => d.state)),
 					duties: new Set(transformedData.state.map((d) => d.duty_label))
+				}}
+				onExit={() => {
+					// Scroll to dashboard element when exiting pinned view
+					setTimeout(() => {
+						if (dashboardElement) {
+							dashboardElement.scrollIntoView({ behavior: 'instant', block: 'start' });
+						}
+					}, 100);
 				}}
 			/>
 			<div class="dashboard-legend">

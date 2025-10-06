@@ -11,7 +11,8 @@
 		selectedStateChartViewOptions = $bindable(),
 		searchOptions,
 		interactiveMode = $bindable(),
-		isPinned = $bindable()
+		isPinned = $bindable(),
+		onExit = () => {}
 	} = $props();
 	let selectedOption = $state('pid');
 
@@ -122,6 +123,8 @@
 	// Function to handle dismounting with animation
 	function handleDismount() {
 		isPinned = false;
+		// Call the onExit callback to handle scroll after state update
+		onExit();
 	}
 
 	function handleSelect(value) {
