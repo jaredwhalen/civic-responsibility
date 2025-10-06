@@ -6,7 +6,11 @@ suppressPackageStartupMessages({
   library(rlang)
 })
 
-# --- Parse JSON payload into a named numeric vector duties_1..duties_30 (with NAs allowed) ---
+# --- Parse JSON payload into a named numeric vector duties_1..duties_30 (NAs allowed for skips) ---
+# Accepts:
+#   {"duties":[1,0,null,...]}                    # array (null/blanks allowed)
+#   {"duties":{"duties_1":1,"duties_7":null}}    # named object (missing keys allowed)
+#   {"duties_1":1,"duties_2":"", ...}            # bare top-level named object
 .parse_new_participant <- function(json_str) {
   x <- tryCatch(jsonlite::fromJSON(json_str, simplifyVector = FALSE),
                 error = function(e) NULL)
@@ -24,7 +28,7 @@ suppressPackageStartupMessages({
   }
 
   if (is.list(d) && !is.null(names(d))) {
-    # Named object: fill by explicit key
+    # Named object: fill explicit keys
     for (nm in names(d)) {
       m <- regmatches(nm, regexec("^duties_(\\d+)$", nm))[[1]]
       if (length(m) == 2) {
@@ -44,10 +48,7 @@ suppressPackageStartupMessages({
   v
 }
 
-
-
-# --- Load & prepare training data once per request (simple & clear). ---
-# If needed, you can cache this in a global for speed.
+# --- Load & prepare training data ---
 .prepare_training <- function(csv_path) {
   if (!file.exists(csv_path)) stop(paste0("CSV not found: ", csv_path))
   raw <- suppressWarnings(read.csv(csv_path, stringsAsFactors = FALSE))
@@ -91,7 +92,7 @@ suppressPackageStartupMessages({
   list(data = clean, duty_cols = duty_cols)
 }
 
-# --- Core predictor: handles skipped items (NAs) by using answered-only average distance ---
+# --- Core predictor: handles skipped items via answered-only average distance ---
 .predict_groups_with_probs <- function(new_vec, df, duty_cols, group_vars, temperature = 1) {
   nd <- as.numeric(new_vec); names(nd) <- names(new_vec)
 
@@ -112,13 +113,13 @@ suppressPackageStartupMessages({
       ) %>%
       dplyr::rename(group = !!rlang::sym(group_var))
 
-    # Compute sum of absolute diffs only over answered items, then normalize by k
+    # Sum of absolute diffs over answered items; normalize by k (avg distance in [0,1])
     distances <- prototype_df %>%
       dplyr::rowwise() %>%
       dplyr::mutate(
-        dist_sum = sum(abs(dplyr::c_across(dplyr::all_of(used_cols)) - nd[used_cols]), na.rm = TRUE),
-        dist     = dist_sum / k,                    # average distance in [0,1]
-        similarity = 1 - dist,                      # [0,1], higher is closer
+        dist_sum   = sum(abs(dplyr::c_across(dplyr::all_of(used_cols)) - nd[used_cols]), na.rm = TRUE),
+        dist       = dist_sum / k,         # average distance
+        similarity = 1 - dist,             # [0,1], higher = closer
         alignment  = similarity
       ) %>%
       dplyr::ungroup() %>%
@@ -133,7 +134,6 @@ suppressPackageStartupMessages({
 
     out[[group_var]] <- list(
       predicted   = unname(winner$group),
-      # 'dist' is now the average distance over answered items
       dist        = round(as.numeric(winner$dist), 4),
       dist_sum    = round(as.numeric(winner$dist_sum), 4),
       prob        = round(as.numeric(winner$prob), 4),
@@ -147,24 +147,23 @@ suppressPackageStartupMessages({
   out
 }
 
-
 # --- Public function used by api.R ---
 predict_service <- function(csv_path, payload_json, temperature = 1) {
-  # parse input
-  np_raw <- .parse_new_participant(payload_json)
-  np <- suppressWarnings(as.numeric(np_raw))
-  if (any(is.na(np))) stop("All duty values must be numeric (0/1).")
-  names(np) <- names(np_raw)
+  # Parser returns numeric vector with NAs for skips
+  np <- .parse_new_participant(payload_json)
 
-  # training data
+  # Optional: require a minimum number answered (env var MIN_ANSWERED, default 1)
+  min_answered <- as.integer(Sys.getenv("MIN_ANSWERED", "1"))
+  k <- sum(!is.na(np))
+  if (k < min_answered) {
+    stop(sprintf("Too few answered items: %d (minimum %d).", k, min_answered))
+  }
+
   prep <- .prepare_training(csv_path)
   df <- prep$data
   duty_cols <- prep$duty_cols
   group_vars <- c("urban_binary", "ideology_tri", "age_binary")
 
-  # predict
   preds <- .predict_groups_with_probs(np, df, duty_cols, group_vars, temperature = temperature)
-
-  # return list (plumber will JSON it)
   list(predictions = preds)
 }
