@@ -596,6 +596,7 @@
 		// max-width: 1400px;
 		margin: 0 auto;
 		background-color: var(--bg-color);
+		transition: all 0.5s ease;
 
 		&.interactive {
 			height: 100vh;
@@ -611,6 +612,7 @@
 			z-index: 1000;
 			display: flex;
 			flex-direction: column;
+			border: 10px solid var(--color-theme-blue);
 
 			.dashboard-content {
 				flex: 1;
@@ -710,20 +712,24 @@
 		}
 
 		.controls-wrapper {
-			width: 100%;
+			width: calc(100% - 20px);
+			margin: 0 auto;
 			top: 0;
 			position: sticky;
 			z-index: 1000;
 			padding: 1rem;
+			// border-top: 10px solid var(--color-theme-blue);
+			// border-left: 10px solid var(--color-theme-blue);
+			// border-right: 10px solid var(--color-theme-blue);
 
 			box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 			background-color: #fff;
 
 			&.pinned {
 				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100vw;
+				top: 10px;
+				left: 10px;
+				width: calc(100% - 20px);
 				z-index: 10001;
 			}
 
