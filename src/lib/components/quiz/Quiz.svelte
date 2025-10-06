@@ -28,8 +28,6 @@
 			results = newResults;
 			// Extract the user's yes count from the results object
 			submittedUserYesCount = newResults.userYesCount || 0;
-			console.log('Results received:', newResults);
-			console.log('Submitted user yes count set to:', submittedUserYesCount);
 		}
 	}
 

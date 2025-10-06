@@ -4,7 +4,7 @@
 	let { responses = $bindable(), results } = $props();
 
 	// Debugging variable for auto-answering
-	let debugAutoAnswer = $state(false);
+	let debugAutoAnswer = $state(true);
 
 	let profiles = [
 		[1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1],
@@ -19,7 +19,7 @@
 		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1]
 	];
 
-	let debugAnswers = $state(profiles[7]);
+	let debugAnswers = $state(profiles[3]);
 
 	// Sort duties by the number in the name (duties_1, duties_2, etc.)
 	const sortedDuties = $derived(

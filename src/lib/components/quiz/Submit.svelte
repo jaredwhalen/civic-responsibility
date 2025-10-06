@@ -49,7 +49,7 @@
 			}
 
 			const data = await response.json();
-            console.log('Data at submission:', data);
+      
             
 			// Calculate and pass the user's yes count along with results
 			const userYesCount = Object.values(responses).filter((response) => response === true).length;
@@ -65,7 +65,7 @@
 					const containerRect = resultsContainer.getBoundingClientRect();
 					const modalRect = quizModal.getBoundingClientRect();
 					const targetY = resultsContainer.offsetTop - 20;
-					quizModal.scrollTo({ top: targetY, behavior: 'smooth' });
+					quizContainer.scrollTo({ top: targetY, behavior: 'smooth' });
 				}
 			}, 100);
 		} catch (err) {
