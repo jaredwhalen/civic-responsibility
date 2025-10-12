@@ -121,7 +121,6 @@
 			.nav-button {
 				padding: 0.5rem 1rem;
 				border-radius: 6px;
-				border: none;
 				cursor: pointer;
 				font-size: 0.9rem;
 				font-weight: 600;
@@ -129,6 +128,7 @@
 				transition: all 0.3s ease;
 				white-space: nowrap;
 				display: inline-block;
+				@include glass-effect(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.3));
 
 				@include mq('mobile', 'max') {
 					padding: 0.4rem 0.8rem;
@@ -137,25 +137,15 @@
 
 				&:hover {
 					transform: translateY(-2px);
-					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 				}
 
 				&.dashboard-button {
-					background: var(--color-theme-light);
-					color: var(--color-theme-dark);
-
-					&:hover {
-						background: #f0f0f0;
-					}
+					color: var(--color-theme-light);
 				}
 
 				&.quiz-button {
-					background: var(--color-theme-blue-light);
-					color: var(--color-theme-blue);
-
-					&:hover {
-						background: #f0f0f0;
-					}
+					color: var(--color-theme-light);
 				}
 			}
 		}

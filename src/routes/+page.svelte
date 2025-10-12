@@ -42,14 +42,14 @@
 
 <CTA />
 
-<div class="dashboard-preview">
+<!-- <div class="dashboard-preview">
 	<div class="overlay" transition:fade={{ duration: 500 }}>
 		<button class="explore-button" onclick={() => (window.location.href = '/dashboard')}
 			>Explore the data</button
 		>
 	</div>
 	<Dashboard activeId="9999-dashboard" interactiveMode={true} />
-</div>
+</div> -->
 
 <style lang="scss">
 	@import '$lib/styles/mixins.scss';

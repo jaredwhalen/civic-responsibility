@@ -3,6 +3,7 @@
 	import { gsap } from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import smoothScroll from '$lib/helpers/smoothScroll.js';
+	import Dashboard from './dashboard/Dashboard.svelte';
 
 	let { interactiveMode = $bindable(), showQuiz = $bindable() } = $props();
 	let ctaElement;
@@ -85,6 +86,10 @@
 </script>
 
 <div class="cta-section" bind:this={ctaElement}>
+	<div class="cta-background">
+		<Dashboard activeId="9999-dashboard" interactiveMode={true} />
+	</div>
+	<div class="cta-overlay"></div>
 	<div class="cta-content">
 		<div class="cta-title" bind:this={textElement}>
 			<h2>Dive deeper into the data...</h2>
@@ -126,18 +131,65 @@
 	.cta-section {
 		width: 100%;
 		padding: 15vh 4rem;
-		background: linear-gradient(135deg, var(--color-theme-blue), #111);
+		// min-height: 100vh;
+		display: flex;
+		align-items: center;
 		position: relative;
-		z-index: 5;
+		isolation: isolate;
+	}
+
+	.cta-background {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: -2;
+		pointer-events: none;
+		
+		:global(*) {
+			pointer-events: none !important;
+		}
+	}
+
+	.cta-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: -1;
+		
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			// background: linear-gradient(135deg, var(--color-theme-blue), #111);
+			// opacity: 0.95;
+			// mix-blend-mode: multiply;
+
+			background: linear-gradient(
+				135deg,
+				var(--color-theme-blue) 0%,
+				var(--color-theme-blue-light) 100%
+			);
+			opacity: 0.75;
+		}
 	}
 
 	.cta-content {
 		max-width: 1200px;
+		width: 100%;
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: 3rem;
+		position: relative;
+		z-index: 10;
 	}
 
 	.cta-title {
@@ -150,6 +202,7 @@
 			font-weight: 600;
 			margin: 0;
 			line-height: 1.2;
+			text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 		}
 	}
 
@@ -166,15 +219,15 @@
 		flex-direction: column;
 		align-items: center;
 		text-align: center;
-		padding: 2rem;
-		background: rgba(255, 255, 255, 0.05);
-		border-radius: 16px;
-		border: 1px solid rgba(255, 255, 255, 0.1);
+		padding: 2.5rem;
+		@include glass-effect();
+		border-radius: 20px;
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 		transition: all 0.3s ease;
 
 		&:hover {
-			background: rgba(255, 255, 255, 0.08);
-			transform: translateY(-4px);
+			transform: translateY(-6px);
+			box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
 		}
 
 		.column-content {
@@ -189,6 +242,7 @@
 				font-weight: 600;
 				margin: 0;
 				color: var(--color-theme-light);
+				text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 			}
 
 			p {
@@ -196,6 +250,7 @@
 				line-height: 1.6;
 				margin: 0;
 				max-width: 300px;
+				opacity: 0.95;
 			}
 		}
 	}
@@ -221,31 +276,35 @@
 
 		&:hover {
 			transform: translateY(-2px);
-			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 		}
 
 		&[data-button='explore'] {
 			background: var(--color-theme-light);
 			color: var(--color-theme-dark);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
 			&:hover {
-				background: #f0f0f0;
+				background: #ffffff;
+				box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 			}
 		}
 
 		&[data-button='quiz'] {
 			background: var(--color-theme-blue-light);
 			color: var(--color-theme-blue);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
 			&:hover {
-				background: #e8f4fd;
+				// background: #ffffff;
+				box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 			}
 		}
 
 		&.report-button {
-			background: transparent;
+			@include glass-effect(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.6));
 			color: var(--color-theme-light);
-			border: 2px solid var(--color-theme-light);
+			border-width: 2px;
 			padding: 1rem 2.5rem;
 			font-size: 1.1rem;
 			min-width: 200px;
@@ -253,12 +312,26 @@
 			&:hover {
 				background: var(--color-theme-light);
 				color: var(--color-theme-dark);
+				border-color: var(--color-theme-light);
 			}
 		}
 	}
 
 	// Responsive design
 	@media (max-width: 768px) {
+		.cta-section {
+			padding: 10vh 2rem;
+			min-height: auto;
+		}
+
+		.cta-background {
+			position: absolute;
+		}
+
+		.cta-overlay {
+			position: absolute;
+		}
+
 		.cta-columns {
 			grid-template-columns: 1fr;
 			gap: 2rem;
@@ -268,12 +341,24 @@
 			font-size: 2rem;
 		}
 
-		.cta-column .column-content h3 {
-			font-size: 1.5rem;
+		.cta-column {
+			padding: 2rem;
+
+			.column-content h3 {
+				font-size: 1.5rem;
+			}
+
+			.column-content p {
+				font-size: 1rem;
+			}
 		}
 
-		.cta-column .column-content p {
-			font-size: 1rem;
+		button {
+			&.report-button {
+				padding: 0.875rem 2rem;
+				font-size: 1rem;
+				min-width: 180px;
+			}
 		}
 	}
 </style>

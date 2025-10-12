@@ -37,6 +37,7 @@
 	.scroller {
 		position: relative;
 		width: 100%;
+		z-index: 10;
 	}
 
 	// Global text classes for consistent typography

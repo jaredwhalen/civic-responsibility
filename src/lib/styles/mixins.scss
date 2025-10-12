@@ -218,6 +218,19 @@ $breakpoints: (
 	}
 }
 
+// Glass morphism effect
+@mixin glass-effect($background: rgba(255, 255, 255, 0.08), $border: rgba(255, 255, 255, 0.2), $blur: 10px) {
+	background: $background;
+	backdrop-filter: blur($blur);
+	-webkit-backdrop-filter: blur($blur);
+	border: 1px solid $border;
+	
+	&:hover {
+		background: rgba(255, 255, 255, 0.12);
+		border-color: rgba(255, 255, 255, 0.3);
+	}
+}
+
 // Utility classes
 @mixin sr-only {
 	position: absolute;
