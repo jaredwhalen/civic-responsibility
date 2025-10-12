@@ -76,7 +76,7 @@
 	<div class="text-content" bind:this={questionElement} style:min-height="{maxHeight}px">
 		<div class="text-body">
 			We asked 5,000 Americans from all 50 states: <b
-				>What are the responsibilities of being an American?</b
+				>What are our civic responsibilities as Americans?</b
 			>
 		</div>
 	</div>
@@ -118,7 +118,7 @@
 		z-index: 10;
 		max-width: 700px;
 		display: flex;
-		align-items: center;
+		// align-items: center;
 		justify-content: flex-end;
 		b {
 			color: var(--color-theme-blue-light);
@@ -135,14 +135,14 @@
 		z-index: 5;
 		max-width: 700px;
 		display: flex;
-		align-items: center;
+		// align-items: center;
 		justify-content: flex-start;
 
 			.dictionary-entry {
 				// background: var(--color-theme-blue-light);
 				// border: 2px solid var(--color-theme-blue);
 				border-radius: 12px;
-				padding: 2.5rem;
+				padding-right: 2.5rem;
 				// box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 				font-family: 'Georgia', serif;
 

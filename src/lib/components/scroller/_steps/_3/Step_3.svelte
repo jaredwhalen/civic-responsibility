@@ -71,8 +71,7 @@
 
 	<div class="text-overlay" bind:this={textElement}>
 		<div class="text-body">
-			As we approach America's 250th anniversary, it is important to remember our responsibilities
-			to each other.
+			As we approach America's 250th anniversary, it is important to remember the <b>civic responsibilities</b> we all share.
 		</div>
 	</div>
 </div>

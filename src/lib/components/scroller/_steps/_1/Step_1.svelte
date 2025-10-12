@@ -67,7 +67,7 @@
 <div class="step-1" bind:this={stepElement}>
 	<div class="text-content" bind:this={textElement}>
 		<div class="text-body">
-			Our country is increasingly<br /><span
+			Our country is growing more<br /><span
 				class="text-accent"
 				style="letter-spacing: {letterSpacing}em; --gradient-opacity: {artProgress}">polarized</span
 			>.
