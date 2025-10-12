@@ -1,0 +1,140 @@
+<script>
+	import { base } from '$app/paths';
+
+	let { headerHeight = $bindable() } = $props();
+</script>
+
+<header
+	class="main-header"
+	aria-label="Site navigation"
+	bind:clientHeight={headerHeight}
+>
+	<div class="header-left">
+		<a href={base + '/'}>
+			<img
+				class="logo"
+				src={base + '/assets/icons/Lockup_WhiteWhite.png'}
+				alt="More in Common logo"
+			/>
+		</a>
+	</div>
+
+	<div class="header-right">
+		<a href={base + '/dashboard'} class="nav-button dashboard-button">
+			View the data dashboard
+		</a>
+		<a href={base + '/quiz'} class="nav-button quiz-button">
+			What's your Civic Profile? Take our interactive quiz.
+		</a>
+	</div>
+</header>
+
+<style lang="scss">
+	.main-header {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: $spacing-sm $spacing-lg;
+		z-index: 2000;
+		pointer-events: none;
+		height: 80px;
+
+		// Mobile responsive adjustments
+		@include mq('mobile', 'max') {
+			height: 60px;
+			padding: $spacing-xs $spacing-md;
+		}
+
+		@include mq('small-mobile', 'max') {
+			height: 50px;
+			padding: $spacing-xs $spacing-sm;
+		}
+
+		.header-left {
+			pointer-events: auto;
+			display: flex;
+			align-items: center;
+
+			a {
+				display: block;
+				line-height: 0;
+			}
+
+			.logo {
+				height: auto;
+				width: 100%;
+				max-width: 300px;
+
+				// Mobile responsive logo sizing
+				@include mq('mobile', 'max') {
+					max-width: 200px;
+				}
+
+				@include mq('small-mobile', 'max') {
+					max-width: 150px;
+				}
+			}
+		}
+
+		.header-right {
+			pointer-events: auto;
+			display: flex;
+			gap: $spacing-md;
+			align-items: center;
+
+			// Hide buttons on smaller screens
+			@include mq('mobile', 'max') {
+				gap: $spacing-sm;
+			}
+
+			@include mq('small-mobile', 'max') {
+				display: none;
+			}
+
+			.nav-button {
+				padding: 0.5rem 1rem;
+				border-radius: 6px;
+				border: none;
+				cursor: pointer;
+				font-size: 0.9rem;
+				font-weight: 600;
+				text-decoration: none;
+				transition: all 0.3s ease;
+				white-space: nowrap;
+				display: inline-block;
+
+				@include mq('mobile', 'max') {
+					padding: 0.4rem 0.8rem;
+					font-size: 0.8rem;
+				}
+
+				&:hover {
+					transform: translateY(-2px);
+					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+				}
+
+				&.dashboard-button {
+					background: var(--color-theme-light);
+					color: var(--color-theme-dark);
+
+					&:hover {
+						background: #f0f0f0;
+					}
+				}
+
+				&.quiz-button {
+					background: var(--color-theme-blue-light);
+					color: var(--color-theme-blue);
+
+					&:hover {
+						background: #f0f0f0;
+					}
+				}
+			}
+		}
+	}
+</style>

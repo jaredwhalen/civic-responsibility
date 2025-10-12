@@ -8,7 +8,7 @@
 	import _4_answers_expected from './states/_4-answers-expected.svelte';
 	import _5_answers_surprising from './states/_5-answers-surprising.svelte';
 
-	import Dashboard from './dashboard/Dashboard.svelte';
+	import Dashboard from '../dashboard/Dashboard.svelte';
 
 	let {
 		count,

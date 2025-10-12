@@ -45,7 +45,7 @@
 
 <div class="header-bg"></div>
 
-<Quiz />
+<Dashboard activeId="9999-dashboard" interactiveMode={true} isPinned={true} />
 
 <style lang="scss">
 	@import '$lib/styles/mixins.scss';

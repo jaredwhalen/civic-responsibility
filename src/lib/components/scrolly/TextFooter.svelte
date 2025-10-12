@@ -1,7 +1,7 @@
 <script>
 	import { fly } from 'svelte/transition';
 	import { userResponse } from '$lib/stores/userResponse.js';
-	import GroupLegend from './dashboard/GroupLegend.svelte';
+	import GroupLegend from '../dashboard/GroupLegend.svelte';
 	import { getCSSVar } from '$lib/helpers/getCSSVar';
 
 	const { content } = $props();

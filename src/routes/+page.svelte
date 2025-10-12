@@ -1,5 +1,6 @@
 <script>
 	import { base } from '$app/paths';
+	import { goto } from '$app/navigation';
 	import Hero from '$lib/components/Hero.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import DebugPanel from '$lib/components/DebugPanel.svelte';
@@ -13,7 +14,7 @@
 	import Slide from '$lib/components/scrolly/Slide.svelte';
 	import TextFooter from '$lib/components/scrolly/TextFooter.svelte';
 	import CTA from '$lib/components/CTA.svelte';
-	import Dashboard from '$lib/components/scrolly/dashboard/Dashboard.svelte';
+	import Dashboard from '$lib/components/dashboard/Dashboard.svelte';
 	import Quiz from '$lib/components/quiz/Quiz.svelte';
 	const { meta, content } = copy;
 
@@ -27,9 +28,7 @@
 
 	let interactiveMode = $state(false);
 
-
 	let showQuiz = $state(false);
-
 
 	// Derived variables for each Scrolly component
 
@@ -45,78 +44,81 @@
 	/>
 </svelte:head>
 
+<Hero
+	videoSrc={content.hero.video || '/assets/videos/web-bg.mp4'}
+	poster={content.hero.poster || '/assets/videos/placeholder.jpg'}
+	heroText={content.hero.text}
+/>
 
-	<Hero
-		videoSrc={content.hero.video || '/assets/videos/web-bg.mp4'}
-		poster={content.hero.poster || '/assets/videos/placeholder.jpg'}
-		heroText={content.hero.text}
-	/>
+<GSAPScroller section="intro" />
 
-	<GSAPScroller section="intro" />
+<Scroller
+	top={top2}
+	threshold={threshold2}
+	bottom={bottom2}
+	bind:count={count2}
+	bind:index={index2}
+	bind:offset={offset2}
+	bind:progress={progress2}
+	interactiveBg={Boolean(activeSlide2.interactiveBg)}
+	role="region"
+	aria-label="Second interactive content scroll area"
+>
+	{#snippet background()}
+		<div
+			class="background-container"
+			data-theme={activeSlide2.theme || 'default'}
+			role="presentation"
+			aria-hidden="true"
+		>
+			<Background
+				count={count2}
+				index={index2}
+				offset={offset2}
+				progress={progress2}
+				activeId={activeSlide2.id}
+				showDashboard={Boolean(activeSlide2.showDashboard)}
+				{interactiveMode}
+			/>
+		</div>
 
-	<Scroller
-		top={top2}
-		threshold={threshold2}
-		bottom={bottom2}
-		bind:count={count2}
-		bind:index={index2}
-		bind:offset={offset2}
-		bind:progress={progress2}
-		interactiveBg={Boolean(activeSlide2.interactiveBg)}
-		role="region"
-		aria-label="Second interactive content scroll area"
-	>
-		{#snippet background()}
-			<div
-				class="background-container"
-				data-theme={activeSlide2.theme || 'default'}
-				role="presentation"
-				aria-hidden="true"
-			>
-				<Background
-					count={count2}
-					index={index2}
-					offset={offset2}
-					progress={progress2}
-					activeId={activeSlide2.id}
-					showDashboard={Boolean(activeSlide2.showDashboard)}
-					{interactiveMode}
+		<TextFooter content={activeSlide2} />
+	{/snippet}
+
+	{#snippet foreground()}
+		<div
+			class="foreground-container {interactiveMode ? 'interactive-mode' : ''}"
+			data-theme={activeSlide2.theme || 'default'}
+			role="main"
+			aria-label="Second content slides"
+		>
+			{#each content.scrolly.slidesFixed as slide, slideIndex}
+				<Slide
+					content={slide}
+					cls="slide-{slideIndex} {slide.cls}"
+					index={slideIndex}
+					bind:interactiveMode
+					aria-label="Slide {slideIndex + 1} of {content.scrolly.slidesFixed.length}"
+					noText={slide.noFgText}
 				/>
-			</div>
+			{/each}
+		</div>
+	{/snippet}
+</Scroller>
 
-			<TextFooter content={activeSlide2} />
-		{/snippet}
+<GSAPScroller section="outro" />
 
-		{#snippet foreground()}
-			<div
-				class="foreground-container {interactiveMode ? 'interactive-mode' : ''}"
-				data-theme={activeSlide2.theme || 'default'}
-				role="main"
-				aria-label="Second content slides"
-			>
-				{#each content.scrolly.slidesFixed as slide, slideIndex}
-					<Slide
-						content={slide}
-						cls="slide-{slideIndex} {slide.cls}"
-						index={slideIndex}
-						bind:interactiveMode
-						aria-label="Slide {slideIndex + 1} of {content.scrolly.slidesFixed.length}"
-						noText={slide.noFgText}
-					/>
-				{/each}
-			</div>
-		{/snippet}
-	</Scroller>
+<CTA bind:showQuiz />
 
-	<GSAPScroller section="outro" />
-
-	<CTA bind:showQuiz />
-
+<div class="dashboard-preview">
+	<div class="overlay" transition:fade={{ duration: 500 }}>
+		<button class="explore-button" onclick={() => window.location.href = '/dashboard'}>Explore the data</button>
+	</div>
 	<Dashboard activeId="9999-dashboard" interactiveMode={true} />
-	{#if showQuiz}
-		<Quiz bind:showQuiz />
-	{/if}
-
+</div>
+{#if showQuiz}
+	<Quiz bind:showQuiz />
+{/if}
 
 <style lang="scss">
 	@import '$lib/styles/mixins.scss';
@@ -134,4 +136,81 @@
 		border: 0 !important;
 	}
 
+
+	.dashboard-preview {
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+
+	// Overlay for interactive mode
+	.overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 10000;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 2rem;
+
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(
+				135deg,
+				var(--color-theme-blue) 0%,
+				var(--color-theme-blue-light) 100%
+			);
+			opacity: 0.75;
+		}
+
+		.explore-button {
+			background-color: transparent;
+			border: 3px solid white;
+			color: white;
+			z-index: 20000;
+			font-size: 2rem;
+			font-weight: 600;
+			padding: 1.5rem 3rem;
+			border-radius: 12px;
+			transition: all 0.3s ease;
+			cursor: pointer;
+			letter-spacing: 1px;
+
+			&:hover {
+				transform: scale(1.05);
+				background-color: white;
+				color: var(--color-theme-blue);
+			}
+		}
+
+		.overlay-text {
+			z-index: 20000;
+			color: white;
+			text-align: center;
+			max-width: 600px;
+
+			h3 {
+				font-size: 2.5rem;
+				font-weight: 700;
+				margin: 0 0 1rem 0;
+				text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+			}
+
+			p {
+				font-size: 1.2rem;
+				margin: 0;
+				opacity: 0.9;
+				line-height: 1.6;
+			}
+		}
+	}
 </style>

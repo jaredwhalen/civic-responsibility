@@ -26,7 +26,7 @@
 	import states from '$lib/data/csvs/mean_duties_weighted_by_state.csv';
 	import { get } from 'svelte/store';
 
-	let { activeId, interactiveMode = $bindable(), animateMount = true } = $props();
+	let { activeId, interactiveMode = $bindable(), animateMount = true, isPinned = false } = $props();
 	let activeView = $state(interactiveMode ? 'pid' : 'mean');
 	let selectedStateView = $state('map');
 	let selectedStateChartViewOptions = $state([]);
@@ -36,7 +36,7 @@
 	let mapData = $derived(states.filter((d) => d.duty_label == selectedStateMapViewOption));
 	let hoveredSeries = $state(null);
 
-	let isPinned = $state(false);
+	// let isPinned = $state(false);
 
 	// onMount(() => {
 	// 	if (interactiveMode) {
@@ -439,7 +439,6 @@
 	let renderedChartContainerHeight = $state(0);
 	let dashboardElement = $state(null);
 
-
 	// Check if SVG is larger than container and needs scrolling
 	const needsScrolling = $derived(
 		interactiveMode &&
@@ -503,11 +502,11 @@
 	{/if}
 
 	<div class="dashboard-content">
-		{#if interactiveMode && !isPinned}
+		<!-- {#if interactiveMode && !isPinned}
 			<div class="overlay" transition:fade={{ duration: 500 }}>
 				<button class="explore-button" onclick={() => (isPinned = true)}>Explore the data</button>
 			</div>
-		{/if}
+		{/if} -->
 
 		{#if interactiveMode && activeView == 'state' && selectedStateView == 'map'}
 			<div class="map-container">
@@ -597,20 +596,22 @@
 
 		// Interactive mode styles
 		&.interactive {
-			height: 100vh;
+			height: 100svh;
 			overflow: hidden;
 			justify-content: center;
 		}
 
 		// Pinned mode styles
 		&.pinned {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100vw;
-			height: 100vh;
-			z-index: 1000;
-			border: 10px solid var(--color-theme-blue);
+			height: calc(100svh - var(--header-height, 80px));
+			margin-top: var(--header-height, 80px);
+			// position: fixed;
+			// top: 0;
+			// left: 0;
+			// width: 100vw;
+			// height: 100vh;
+			// z-index: 1000;
+			// border: 10px solid var(--color-theme-blue);
 
 			.dashboard-content {
 				flex: 1;
@@ -634,76 +635,7 @@
 			// Content styles here if needed
 		}
 
-		// Overlay for interactive mode
-		.overlay {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			z-index: 10000;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			gap: 2rem;
-
-			&::before {
-				content: '';
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: linear-gradient(
-					135deg,
-					var(--color-theme-blue) 0%,
-					var(--color-theme-blue-light) 100%
-				);
-				opacity: 0.75;
-			}
-
-			.explore-button {
-				background-color: transparent;
-				border: 3px solid white;
-				color: white;
-				z-index: 20000;
-				font-size: 2rem;
-				font-weight: 600;
-				padding: 1.5rem 3rem;
-				border-radius: 12px;
-				transition: all 0.3s ease;
-				cursor: pointer;
-				letter-spacing: 1px;
-
-				&:hover {
-					transform: scale(1.05);
-					background-color: white;
-					color: var(--color-theme-blue);
-				}
-			}
-
-			.overlay-text {
-				z-index: 20000;
-				color: white;
-				text-align: center;
-				max-width: 600px;
-
-				h3 {
-					font-size: 2.5rem;
-					font-weight: 700;
-					margin: 0 0 1rem 0;
-					text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-				}
-
-				p {
-					font-size: 1.2rem;
-					margin: 0;
-					opacity: 0.9;
-					line-height: 1.6;
-				}
-			}
-		}
+	
 
 		// Dashboard legend
 		.dashboard-legend {
@@ -712,7 +644,7 @@
 
 		// Controls wrapper
 		.controls-wrapper {
-			width: calc(100% - 20px);
+			width: 100%;
 			margin: 0 auto;
 			position: sticky;
 			top: 0;
@@ -723,9 +655,7 @@
 
 			&.pinned {
 				position: fixed;
-				top: 10px;
-				left: 10px;
-				width: calc(100% - 20px);
+				top: var(--header-height, 80px);
 				z-index: 10001;
 			}
 

@@ -1,6 +1,5 @@
 <script>
 	import { base } from '$app/paths';
-	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import '$lib/fonts/stylesheet.css';
 	import '$lib/styles/global.scss';
@@ -9,17 +8,112 @@
 </script>
 
 <main role="main" aria-label="Civic Responsibility Interactive Experience" style:--header-height="{headerHeight}px">
-	<Header bind:clientHeight={headerHeight} />
+	<header class="main-header" role="banner" aria-label="Site navigation" bind:clientHeight={headerHeight}>
+		<div class="header-right">
+			<img
+				class="logo"
+				src={base + '/assets/icons/Lockup_WhiteWhite.png'}
+				alt="More in Common"
+				role="img"
+				aria-label="More in Common logo"
+			/>
+		</div>
+	</header>
 
 	<slot />
 
-	<Footer />
+
 </main>
 
 <style lang="scss">
 	@import '$lib/styles/mixins.scss';
 
-	
+	.main-header {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: $spacing-sm $spacing-lg;
+		z-index: 2000;
+		pointer-events: none;
+
+		height: 80px;
+
+		// Mobile responsive adjustments
+		@include mq('mobile', 'max') {
+			height: 60px;
+			padding: $spacing-xs $spacing-md;
+		}
+
+		@include mq('small-mobile', 'max') {
+			height: 50px;
+			padding: $spacing-xs $spacing-sm;
+		}
+
+		.header-left,
+		.header-right {
+			pointer-events: auto;
+
+			.logo {
+				height: auto;
+				width: 100%;
+				max-width: 300px;
+
+				// Mobile responsive logo sizing
+				@include mq('mobile', 'max') {
+					max-width: 200px;
+				}
+
+				@include mq('small-mobile', 'max') {
+					max-width: 150px;
+				}
+			}
+		}
+		.header-left {
+			display: flex;
+			align-items: center;
+		}
+		.hamburger {
+			background: none;
+			border: none;
+			padding: 0;
+			width: 36px;
+			height: 36px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			gap: 6px;
+			cursor: pointer;
+			span {
+				display: block;
+				height: 4px;
+				width: 100%;
+				background: #fff;
+				border-radius: 2px;
+			}
+		}
+		.header-right {
+			display: flex;
+			gap: $spacing-lg;
+			height: -webkit-fill-available;
+			.logo {
+				color: #fff;
+				font-weight: 700;
+				font-size: 1.1rem;
+				text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+				&.logo-mic {
+					letter-spacing: 0.02em;
+				}
+				&.logo-beacon {
+					font-family: serif;
+					letter-spacing: 0.08em;
+				}
+			}
+		}
+	}
 
 	:global {
 		body {

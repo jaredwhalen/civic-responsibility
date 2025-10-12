@@ -4,7 +4,7 @@
 	import Background from '$lib/components/scrolly/Background.svelte';
 	import Slide from '$lib/components/scrolly/Slide.svelte';
 	import TextFooter from '$lib/components/scrolly/TextFooter.svelte';
-	import Dashboard from '$lib/components/scrolly/dashboard/Dashboard.svelte';
+	import Dashboard from '$lib/components/dashboard/Dashboard.svelte';
 	import Hero from '$lib/components/Hero.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import DebugPanel from '$lib/components/DebugPanel.svelte';
