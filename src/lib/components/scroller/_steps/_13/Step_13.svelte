@@ -139,8 +139,8 @@
 			<div class="text-body">
 				<div class="first-line">Now more than ever, it is important to</div>
 				<div class="second-line">
-					<span class="word">honor</span> <span class="word">our</span>
-					<span class="word">civic</span> <span class="word">responsibilities</span>
+					<span class="word first-word">honor</span> <span class="word">our</span>
+					<span class="word">civic</span> <span class="word last-word">responsibilities.</span>
 				</div>
 			</div>
 		</div>
@@ -199,17 +199,55 @@
 				}
 
 				.second-line {
+					position: relative;
 					font-size: 4.5rem;
 					font-weight: 600;
 					line-height: 1.1;
 					color: var(--color-theme-blue);
+					width: min-content;
+					margin: 0 auto;
 
 					.word {
 						display: inline-block;
-						margin-right: 0.2em;
 						transform-style: preserve-3d;
 						opacity: 0;
 						transform: translateY(30px) scale(0.8);
+					}
+
+					.first-word {
+						position: relative;
+
+						&::before {
+							content: '“';
+							position: absolute;
+							// left: -4rem;
+							// top: -1rem;
+							top: -20px;
+							left: -90px;
+							font-size: 12rem;
+							font-weight: 700;
+							color: var(--color-theme-blue-light);
+							opacity: 0.6;
+							line-height: 1;
+						}
+					}
+
+					.last-word {
+						position: relative;
+
+						&::after {
+							content: '”';
+							position: absolute;
+							// right: -4rem;
+							// bottom: -1rem;
+							top: -20px;
+							right: -90px;
+							font-size: 12rem;
+							font-weight: 700;
+							color: var(--color-theme-blue-light);
+							opacity: 0.6;
+							line-height: 1;
+						}
 					}
 				}
 			}
