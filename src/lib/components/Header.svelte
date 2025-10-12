@@ -1,39 +1,32 @@
 <script>
 	import { base } from '$app/paths';
+	import { page } from '$app/stores';
 
 	let { headerHeight = $bindable() } = $props();
+
+	let bg = $derived($page.url.pathname.includes('/dashboard') || $page.url.pathname.includes('/quiz'));
 </script>
 
-<header
-	class="main-header"
-	aria-label="Site navigation"
-	bind:clientHeight={headerHeight}
->
+<header class="main-header" aria-label="Site navigation" bind:clientHeight={headerHeight} class:bg>
 	<div class="header-left">
 		<a href="https://moreincommonus.com/" target="_blank" rel="noopener noreferrer">
-			<img
-				class="logo"
-				src={base + '/assets/icons/moreincommon.png'}
-				alt="More in Common logo"
-			/>
+			<img class="logo" src={base + '/assets/icons/moreincommon.png'} alt="More in Common logo" />
 		</a>
 		<div class="logo-separator"></div>
 		<a href="https://beaconproject.us/" target="_blank" rel="noopener noreferrer">
-			<img
-				class="logo"
-				src={base + '/assets/icons/beaconproject.png'}
-				alt="Beacon Project logo"
-			/>
+			<img class="logo" src={base + '/assets/icons/beaconproject.png'} alt="Beacon Project logo" />
 		</a>
 	</div>
 
 	<div class="header-right">
-		<a href={base + '/dashboard'} class="nav-button dashboard-button">
-			View the data dashboard
-		</a>
-		<a href={base + '/quiz'} class="nav-button quiz-button">
-			What's your Civic Profile? Take our interactive quiz.
-		</a>
+		{#if !$page.url.pathname.includes('/dashboard')}
+			<a href={base + '/dashboard'} class="nav-button dashboard-button"> View the data dashboard </a>
+		{/if}
+		{#if !$page.url.pathname.includes('/quiz')}
+			<a href={base + '/quiz'} class="nav-button quiz-button">
+				What's your Civic Profile? Take our interactive quiz.
+			</a>
+		{/if}
 	</div>
 </header>
 
@@ -50,6 +43,9 @@
 		z-index: 2000;
 		pointer-events: none;
 		height: 80px;
+		&.bg {
+			background: var(--color-theme-blue);
+		}
 
 		// Mobile responsive adjustments
 		@include mq('mobile', 'max') {

@@ -19,7 +19,11 @@
 	/>
 </svelte:head>
 
-<main role="main" aria-label="Civic Responsibility Interactive Experience" style:--header-height="{headerHeight}px">
+<main
+	role="main"
+	aria-label="Civic Responsibility Interactive Experience"
+	style:--header-height="{headerHeight}px"
+>
 	<Header bind:clientHeight={headerHeight} />
 
 	<slot />
@@ -29,8 +33,6 @@
 
 <style lang="scss">
 	@import '$lib/styles/mixins.scss';
-
-	
 
 	:global {
 		body {
