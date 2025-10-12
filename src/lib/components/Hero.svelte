@@ -38,6 +38,9 @@
 		{/if}
 	</div>
 	
+	<div class="scroll-down">
+		<span>Scroll down</span>
+	</div>
 </section>
 
 <style lang="scss">
@@ -189,6 +192,53 @@
 				}
 			}
 		}
+
+		.scroll-down {
+			position: absolute;
+			bottom: 40px;
+			left: 50%;
+			transform: translateX(-50%);
+			z-index: 4;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 12px;
+			animation: scrollBounce 2s ease-in-out infinite;
+
+			// Mobile responsive positioning
+			@include mq('mobile', 'max') {
+				bottom: 30px;
+			}
+
+			@include mq('small-mobile', 'max') {
+				bottom: 20px;
+			}
+
+			span {
+				color: #fff;
+				font-size: 0.9rem;
+				font-weight: 500;
+				letter-spacing: 0.05em;
+				text-transform: uppercase;
+				text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+
+				// Mobile responsive text
+				@include mq('mobile', 'max') {
+					font-size: 0.8rem;
+				}
+			}
+
+			// White triangle pointing down
+			&::after {
+				content: '';
+				width: 0;
+				height: 0;
+				border-left: 8px solid transparent;
+				border-right: 8px solid transparent;
+				border-top: 12px solid #fff;
+				filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+			}
+		}
 	}
 
 	// Keyframe animation for highlight growth
@@ -201,11 +251,26 @@
 		}
 	}
 
+	// Keyframe animation for scroll indicator bounce
+	@keyframes scrollBounce {
+		0%, 100% {
+			transform: translate(-50%, 0);
+		}
+		50% {
+			transform: translate(-50%, -15px);
+		}
+	}
+
 	// Reduced motion support for accessibility
 	@media (prefers-reduced-motion: reduce) {
 		h1::after {
 			animation: none !important;
 			transform: scaleX(1) !important;
+		}
+
+		.scroll-down {
+			animation: none !important;
+			transform: translateX(-50%) !important;
 		}
 	}
 </style>
