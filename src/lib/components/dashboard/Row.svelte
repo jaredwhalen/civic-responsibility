@@ -244,7 +244,7 @@
 		x2={xScale.range()[1]}
 		y1="0"
 		y2="0"
-		stroke="#aaa"
+		class="grid-line"
 		stroke-width={inIntro ? 2 : 1}
 	/>
 
@@ -369,6 +369,10 @@
 <style lang="scss">
 	.row {
 		transition: transform 0.5s var(--delay, 0s) cubic-bezier(0.25, 0.1, 0.25, 1);
+
+		.grid-line {
+			stroke: var(--color-gray-500);
+		}
 	}
 
 	.row.interactive {
