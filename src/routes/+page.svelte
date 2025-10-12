@@ -108,17 +108,16 @@
 
 <GSAPScroller section="outro" />
 
-<CTA bind:showQuiz />
+<CTA />
 
 <div class="dashboard-preview">
 	<div class="overlay" transition:fade={{ duration: 500 }}>
-		<button class="explore-button" onclick={() => window.location.href = '/dashboard'}>Explore the data</button>
+		<button class="explore-button" onclick={() => (window.location.href = '/dashboard')}
+			>Explore the data</button
+		>
 	</div>
 	<Dashboard activeId="9999-dashboard" interactiveMode={true} />
 </div>
-{#if showQuiz}
-	<Quiz bind:showQuiz />
-{/if}
 
 <style lang="scss">
 	@import '$lib/styles/mixins.scss';
@@ -136,11 +135,14 @@
 		border: 0 !important;
 	}
 
-
 	.dashboard-preview {
 		position: relative;
 		width: 100%;
-		height: 100%;
+		height: 60vh;
+		overflow: hidden;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	// Overlay for interactive mode
