@@ -160,7 +160,7 @@
 					duration: 0,
 					allowHTML: true,
 					hideOnClick: false, // stay open unless we hide
-					interactive: true,
+					interactive: false,
 					trigger: 'mouseenter click',
 					appendTo: document.body // important for SVG
 				});
