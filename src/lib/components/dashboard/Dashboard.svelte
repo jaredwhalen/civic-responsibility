@@ -106,8 +106,8 @@
 			label: 'Gender',
 			value: 'gender',
 			series: [
-				{ label: 'Male', color: getCSSVar('--color-theme-blue') },
-				{ label: 'Female', color: getCSSVar('--color-theme-green') }
+				{ label: 'Men', color: getCSSVar('--color-theme-blue') },
+				{ label: 'Women', color: getCSSVar('--color-theme-green') }
 			]
 		},
 		{
