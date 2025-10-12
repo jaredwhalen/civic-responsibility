@@ -4,9 +4,20 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import '$lib/fonts/stylesheet.css';
 	import '$lib/styles/global.scss';
-
+	import copy from '$lib/data/copy.json';
 	let headerHeight = $state(80);
+
+	const { meta } = copy;
 </script>
+
+<svelte:head>
+	<title>{meta.title}</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+	<meta
+		name="description"
+		content={meta.description || 'Interactive civic responsibility exploration'}
+	/>
+</svelte:head>
 
 <main role="main" aria-label="Civic Responsibility Interactive Experience" style:--header-height="{headerHeight}px">
 	<Header bind:clientHeight={headerHeight} />

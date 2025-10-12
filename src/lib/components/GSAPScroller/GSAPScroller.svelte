@@ -5,6 +5,7 @@
 	import Step_4 from './_steps/_4/Step_4.svelte';
 	import Step_5 from './_steps/_5/Step_5.svelte';
 
+	import Step_12 from './_steps/_12/Step_12.svelte';
 	import Step_13 from './_steps/_13/Step_13.svelte';
 
 	let { section } = $props();
@@ -25,6 +26,7 @@
 	{/if}
 
 	{#if section == 'outro'}
+		<Step_12 />
 		<Step_13 />
 	{/if}
 </div>
