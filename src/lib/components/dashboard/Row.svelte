@@ -26,11 +26,15 @@
 		interactiveMode,
 		inIntro,
 		showGapLine = false,
-		hoveredSeries = $bindable()
+		hoveredSeries = $bindable(),
+		clickedSeries = $bindable(),
+		clickedCircles = $bindable(),
+		activeView
 	} = $props();
 
 	let isDragging = $state(false);
 	let tippyInstances = $state([]);
+	let tippyMap = $state(new Map());
 	let svgEl = $state(null);
 	let lineX2 = $state(0);
 	let showText = $state(false);
@@ -48,14 +52,9 @@
 		const svgRect = svgEl.getBoundingClientRect();
 		const mouseX = event.clientX - svgRect.left;
 		const newValue = xScale.invert(mouseX);
-
 		const clampedValue = Math.max(0, Math.min(100, newValue));
 
-		// Update the series value
-		if (series[0]) {
-			series[0].value = clampedValue;
-		}
-
+		if (series[0]) series[0].value = clampedValue;
 		$userResponse.guess = clampedValue;
 	}
 
@@ -65,12 +64,11 @@
 		svgEl = null;
 	}
 
-	// Add global mouse event listeners
+	// Global mouse listeners when guessing
 	$effect(() => {
 		if (guessMode) {
 			document.addEventListener('mousemove', handleMouseMove);
 			document.addEventListener('mouseup', handleMouseUp);
-
 			return () => {
 				document.removeEventListener('mousemove', handleMouseMove);
 				document.removeEventListener('mouseup', handleMouseUp);
@@ -78,29 +76,22 @@
 		}
 	});
 
-	// Animate line growth and text in poll correct mode
+	// Poll-correct animation
 	$effect(() => {
 		if (pollCorrectMode && series.length === 2) {
-			// Start line at guess position
 			lineX2 = xScale(series[0].value);
 			showText = false;
-
-			// Animate to correct answer position and show text
 			setTimeout(() => {
 				lineX2 = xScale(series[1].value);
 				showText = true;
 			}, 50);
 		} else if (guessMode || pollCorrectMode) {
-			// Show text immediately in other modes
 			showText = true;
 		}
 	});
 
-	// $inspect(hoveredSeries);
-
-	// Calculate gap line coordinates when showGapLine is true
+	// Gap line coordinates
 	let gapLineCoords = $state(null);
-	
 	$effect(() => {
 		if (showGapLine && series.length > 1) {
 			const sortedSeries = [...series].sort((a, b) => a.value - b.value);
@@ -113,7 +104,7 @@
 		}
 	});
 
-	// Function to get circle color
+	// Color
 	function getCircleColor(s) {
 		const defaultColor = '#bbbbbb';
 		return guessMode
@@ -132,101 +123,132 @@
 					: defaultColor;
 	}
 
-	// Function to create tippy instances
+	// Create tippy instances (sticky + registered by circleId)
 	function createTippyInstances() {
-		// Clean up existing instances first - destroy any tippy instances on our elements
+		// Clean up any tippy on our row's elements
 		const existingCircles = document.querySelectorAll(
 			`[data-row-index="${index}"][data-tippy-content]`
 		);
-		existingCircles.forEach((circle) => {
-			if (circle._tippy && typeof circle._tippy.destroy === 'function' && !circle._tippy.state.isDestroyed) {
+		existingCircles.forEach((el) => {
+			if (el._tippy && typeof el._tippy.destroy === 'function' && !el._tippy.state.isDestroyed) {
 				try {
-					circle._tippy.destroy();
+					el._tippy.destroy();
 				} catch (e) {
-					// Silently ignore errors from destroyed instances
-					console.warn('Error destroying tippy instance:', e);
+					console.warn('Destroy tippy error:', e);
 				}
 			}
 		});
 
-		// Also clean up our tracked instances
-		tippyInstances.forEach((instance) => {
-			if (instance && typeof instance.destroy === 'function' && !instance.state.isDestroyed) {
-				try {
-					instance.destroy();
-				} catch (e) {
-					// Silently ignore errors from destroyed instances
-					console.warn('Error destroying tippy instance:', e);
-				}
-			}
+		// Clean up tracked instances
+		tippyInstances.forEach((inst) => {
+			try {
+				inst?.destroy?.();
+			} catch {}
 		});
 		tippyInstances = [];
+		tippyMap = new Map();
 
-		if (!guessMode) {
-			// Use a more specific selector for this component instance
-			const circles = document.querySelectorAll(`[data-row-index="${index}"][data-tippy-content]`);
-	
-			circles.forEach((circle) => {
-				try {
-					const instance = tippy(circle, {
-						theme: 'light',
-						duration: 0,
-						followCursor: true,
-						plugins: [followCursor],
-						allowHTML: true
-					});
-					tippyInstances.push(instance);
-				} catch (e) {
-					console.warn('Error creating tippy instance:', e);
-				}
-			});
-		}
+		if (guessMode) return;
+
+		const circles = document.querySelectorAll(`[data-row-index="${index}"][data-tippy-content]`);
+
+		circles.forEach((circle) => {
+			try {
+				const circleId = circle.getAttribute('data-circle-id');
+				const instance = tippy(circle, {
+					theme: 'light',
+					duration: 0,
+					allowHTML: true,
+					hideOnClick: false, // stay open unless we hide
+					interactive: true,
+					trigger: 'mouseenter click',
+					appendTo: document.body // important for SVG
+				});
+				tippyInstances.push(instance);
+				tippyMap.set(circleId, instance);
+
+				// If pinned, force open initially. Otherwise let normal triggers handle show/hide.
+				if (clickedCircles?.has?.(circleId)) instance.show();
+			} catch (e) {
+				console.warn('Error creating tippy instance:', e);
+			}
+		});
 	}
 
-	// Reactive effect to recreate tooltips when data changes
+	// Recreate tooltips when data/DOM changes
 	$effect(() => {
 		if (options || series.length > 0) {
-			// Watch for changes in series values to trigger tooltip recreation
-			series.forEach((s) => s.value);
-			// Use a small delay to ensure DOM is updated
-			setTimeout(createTippyInstances, 0);
+			series.forEach((s) => s.value); // depend on values
+			setTimeout(createTippyInstances, 0); // after DOM update
 		}
 	});
 
-
-	onMount(() => {
-		// Clear any existing tooltips
-		tippyInstances.forEach((instance) => {
-			if (instance && typeof instance.destroy === 'function' && !instance.state.isDestroyed) {
-				try {
-					instance.destroy();
-				} catch (e) {
-					// Silently ignore errors from destroyed instances
-				}
+	// Sync only pinned tooltips (hide others)
+	$effect(() => {
+		const _ids = [...(clickedCircles ?? new Set())]; // establish dependency
+		tippyMap.forEach((inst, id) => {
+			if (clickedCircles.has(id)) {
+				inst.show();
+			} else {
+				inst.hide();
 			}
 		});
-		
+	});
 
-		tippyInstances = [];
-
-		// Initial tippy creation
+	onMount(() => {
 		createTippyInstances();
 
-		// Cleanup function
+		// Optional: clicking document hides non-pinned tooltips
+		const onDocClick = () => {
+			tippyMap.forEach((inst, id) => {
+				if (!clickedCircles.has(id)) inst.hide();
+			});
+		};
+		document.addEventListener('click', onDocClick);
+
 		return () => {
-			tippyInstances.forEach((instance) => {
-				if (instance && typeof instance.destroy === 'function' && !instance.state.isDestroyed) {
-					try {
-						instance.destroy();
-					} catch (e) {
-						// Silently ignore errors from destroyed instances
-						console.warn('Error destroying tippy instance in cleanup:', e);
-					}
-				}
+			document.removeEventListener('click', onDocClick);
+			tippyInstances.forEach((inst) => {
+				try {
+					inst?.destroy?.();
+				} catch {}
 			});
 			tippyInstances = [];
+			tippyMap = new Map();
 		};
 	});
+
+	function handleCircleClick(event, label) {
+		event.stopPropagation();
+
+		// Keep clickedSeries reactive (immutable Set update)
+		if (activeView != 'mean') {
+			if (clickedSeries.has(label)) {
+				// const next = new Set(clickedSeries);
+				// next.delete(label);
+				// clickedSeries = next;
+			} else {
+				const next = new Set(clickedSeries);
+				next.add(label);
+				clickedSeries = next;
+			}
+		}
+
+		const circleId = `${duty_label}-${label}`;
+
+		// Toggle clickedCircles immutably + immediate show/hide
+		if (clickedCircles.has(circleId)) {
+			const next = new Set(clickedCircles);
+			next.delete(circleId);
+			clickedCircles = next;
+			tippyMap.get(circleId)?.hide();
+		} else {
+			const next = new Set(clickedCircles);
+			next.add(circleId);
+			clickedCircles = next;
+			tippyMap.get(circleId)?.show();
+		}
+	}
 </script>
 
 <g
@@ -262,9 +284,7 @@
 		</text>
 	{/key}
 
-
 	{#if showGapLine && gapLineCoords}
-		<!-- Draw line connecting all circles (from first to last on X axis) -->
 		<line
 			class="gap-line"
 			x1={gapLineCoords.x1}
@@ -288,19 +308,23 @@
 			Math.abs(xScale(series[0].value) - xScale(series[1].value)) < 75}
 
 		{@const color = getCircleColor(s)}
-
 		{@const textOffset = guessMode || pollCorrectMode ? -30 : -30}
+		{@const circleId = `${duty_label}-${s.label}`}
 
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<!-- svelte-ignore a11y_mouse_events_have_key_events -->
 		<circle
 			cx={xScale(s.value)}
 			cy="0"
 			r={inIntro ? 12 : 6}
 			fill={color}
-			opacity={interactiveMode ? (hoveredSeries == s.label ? 1 : 0.75) : 1}
+			opacity={interactiveMode ? 0.75 : 1}
 			onmousedown={handleMouseDown}
 			style={guessMode ? 'cursor: grab;' : ''}
 			class:interactive={guessMode}
 			data-row-index={index}
+			data-circle-id={circleId}
 			data-tippy-content={!guessMode
 				? `<b>${s.label ? (s.label.includes('duties') ? 'U.S. average:' : s.label + ':') : ''}</b> ${s.value ? `${s.value.toFixed(0)}%` : ''}`
 				: ''}
@@ -310,8 +334,9 @@
 			onmouseout={() => {
 				hoveredSeries = null;
 			}}
-			style:stroke={hoveredSeries == s.label ? '#000' : color}
-			style:stroke-width={hoveredSeries == s.label ? '2' : '1'}
+			onclick={(e) => {
+				handleCircleClick(e, s.label);
+			}}
 			class:isDragging
 		/>
 
@@ -346,10 +371,9 @@
 		{/if}
 	{/each}
 
-	<!-- Hover layer - renders on top with no interactivity (only in normal mode) -->
-	{#if hoveredSeries && !guessMode && !pollCorrectMode}
+	{#if clickedSeries.size > 0 || (hoveredSeries && !guessMode && !pollCorrectMode)}
 		{#each series as s}
-			{#if s.label === hoveredSeries}
+			{#if s.label === hoveredSeries || clickedSeries.has(s.label)}
 				<circle
 					cx={xScale(s.value)}
 					cy="0"
@@ -406,7 +430,6 @@
 	}
 
 	circle:not(.isDragging) {
-		// transition: var(--circle-transition);
 		transition: all 0.5s var(--delay, 0s) cubic-bezier(0.25, 0.1, 0.25, 1);
 	}
 
@@ -416,9 +439,9 @@
 
 	.gap-line {
 		stroke-dasharray: 1000;
-        stroke-dashoffset: 1000;
-        animation: drawLine 1s ease-out forwards;
-        animation-delay: 0.5s;
+		stroke-dashoffset: 1000;
+		animation: drawLine 1s ease-out forwards;
+		animation-delay: 0.5s;
 	}
 
 	@keyframes drawLine {
@@ -434,5 +457,9 @@
 		to {
 			stroke-dashoffset: 0;
 		}
+	}
+
+	circle:focus {
+		outline: none;
 	}
 </style>

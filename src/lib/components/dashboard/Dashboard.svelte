@@ -35,16 +35,10 @@
 	let pollCorrectMode = $derived(activeId == 'poll-correct');
 	let mapData = $derived(states.filter((d) => d.duty_label == selectedStateMapViewOption));
 	let hoveredSeries = $state(null);
+	let clickedSeries = $state(new Set());
+	let clickedCircles = $state(new Set());
 
-	// let isPinned = $state(false);
 
-	// onMount(() => {
-	// 	if (interactiveMode) {
-	// 		setTimeout(() => {
-	// 			isMountedWithDelay = true;
-	// 		}, 250);
-	// 	}
-	// });
 
 	$effect(() => {
 		if (activeId != '9999-dashboard') {
@@ -516,7 +510,27 @@
 			style:--chart-height={chartContainerHeight}
 			bind:clientHeight={renderedChartContainerHeight}
 		>
-			<svg {width} height={adjustedDimensions.height}>
+			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+			<svg 
+				{width} 
+				height={adjustedDimensions.height}
+				role="img"
+				aria-label="Data visualization chart"
+				onclick={(e) => {
+					// Reset clicked series if clicking outside circles
+					if (interactiveMode && !e.target.closest('circle')) {
+						clickedSeries = new Set();
+						clickedCircles = new Set();
+					}
+				}}
+				onkeydown={(e) => {
+					// Reset clicked series on Escape key
+					if (interactiveMode && e.key === 'Escape') {
+						clickedSeries = new Set();
+						clickedCircles = new Set();
+					}
+				}}
+			>
 				<g class="rows">
 					{#each sortedViewData as row, i (row.duty_label)}
 						<Row
@@ -541,7 +555,10 @@
 							{interactiveMode}
 							inIntro={!interactiveMode}
 							bind:hoveredSeries
+							bind:clickedSeries
+							bind:clickedCircles
 							showGapLine={currentDataMap[activeId]?.showGapLine}
+							{activeView}
 						/>
 					{/each}
 				</g>
