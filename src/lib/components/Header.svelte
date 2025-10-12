@@ -10,11 +10,19 @@
 	bind:clientHeight={headerHeight}
 >
 	<div class="header-left">
-		<a href={base + '/'}>
+		<a href="https://moreincommonus.com/" target="_blank" rel="noopener noreferrer">
 			<img
 				class="logo"
-				src={base + '/assets/icons/Lockup_WhiteWhite.png'}
+				src={base + '/assets/icons/moreincommon.png'}
 				alt="More in Common logo"
+			/>
+		</a>
+		<div class="logo-separator"></div>
+		<a href="https://beaconproject.us/" target="_blank" rel="noopener noreferrer">
+			<img
+				class="logo"
+				src={base + '/assets/icons/beaconproject.png'}
+				alt="Beacon Project logo"
 			/>
 		</a>
 	</div>
@@ -58,6 +66,7 @@
 			pointer-events: auto;
 			display: flex;
 			align-items: center;
+			gap: $spacing-md;
 
 			a {
 				display: block;
@@ -65,17 +74,31 @@
 			}
 
 			.logo {
-				height: auto;
-				width: 100%;
-				max-width: 300px;
+				height: 80px;
+				width: auto;
 
 				// Mobile responsive logo sizing
 				@include mq('mobile', 'max') {
-					max-width: 200px;
+					height: 30px;
 				}
 
 				@include mq('small-mobile', 'max') {
-					max-width: 150px;
+					height: 25px;
+				}
+			}
+
+			.logo-separator {
+				width: 2px;
+				height: 60px;
+				background-color: #fff;
+
+				// Mobile responsive separator sizing
+				@include mq('mobile', 'max') {
+					height: 30px;
+				}
+
+				@include mq('small-mobile', 'max') {
+					height: 25px;
 				}
 			}
 		}
