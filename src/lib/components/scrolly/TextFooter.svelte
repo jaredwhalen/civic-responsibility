@@ -16,17 +16,15 @@
 			value: 'generation',
 			series: [
 				{ label: 'Gen Z', color: getCSSVar('--color-theme-blue') },
-				{ label: 'Millennials', color: getCSSVar('--color-theme-green') },
-				{ label: 'Gen X', color: getCSSVar('--color-theme-yellow') },
-				{ label: 'Baby Boomers', color: getCSSVar('--color-theme-red') }
+				{ label: 'Baby Boomers', color: getCSSVar('--color-theme-yellow') }
 			]
 		},
 		{
 			label: 'Political Identification',
 			value: 'pid',
 			series: [
-				{ label: 'Democrat', color: getCSSVar('--color-theme-dem-blue') },
-				{ label: 'Republican', color: getCSSVar('--color-theme-gop-red') }
+				{ label: 'Democrats', color: getCSSVar('--color-theme-dem-blue') },
+				{ label: 'Republicans', color: getCSSVar('--color-theme-gop-red') }
 			]
 		}
 	]);

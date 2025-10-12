@@ -136,9 +136,9 @@
 			label: 'Generation',
 			value: 'generation',
 			series: [
-				{ label: 'Gen Z', color: getCSSVar('--color-theme-blue') },
+				{ label: 'Gen Z', color: getCSSVar('--color-theme-yellow') },
 				{ label: 'Millennials', color: getCSSVar('--color-theme-green') },
-				{ label: 'Gen X', color: getCSSVar('--color-theme-yellow') },
+				{ label: 'Gen X', color: getCSSVar('--color-theme-blue') },
 				{ label: 'Baby Boomers', color: getCSSVar('--color-theme-red') }
 			]
 		},
@@ -186,16 +186,16 @@
 			highlightArr: ['Voting', 'Following the Constitution', 'Paying your taxes']
 		},
 		'chart-charity': {
-			includeArr: ['Defending freedom', 'Joining the military', 'Welcoming refugees'],
-			highlightArr: ['Defending freedom', 'Joining the military', 'Welcoming refugees']
+			includeArr: ['Donating to charity', 'Joining the military', 'Welcoming refugees'],
+			highlightArr: ['Donating to charity', 'Joining the military', 'Welcoming refugees']
 		},
 		'chart-party-agree': {
 			includeArr: ['Defending freedom', 'Voting', 'Helping your community'],
 			highlightArr: ['Defending freedom', 'Voting', 'Helping your community'],
 			view: 'pid',
 			series: [
-				{ label: 'Democrat', color: getCSSVar('--color-theme-dem-blue') },
-				{ label: 'Republican', color: getCSSVar('--color-theme-gop-red') }
+				{ label: 'Democrats', color: getCSSVar('--color-theme-dem-blue') },
+				{ label: 'Republicans', color: getCSSVar('--color-theme-gop-red') }
 			]
 		},
 		'chart-party-disagree': {
@@ -203,8 +203,8 @@
 			highlightArr: ['Loving America', 'Supporting equality'],
 			view: 'pid',
 			series: [
-				{ label: 'Democrat', color: getCSSVar('--color-theme-dem-blue') },
-				{ label: 'Republican', color: getCSSVar('--color-theme-gop-red') }
+				{ label: 'Democrats', color: getCSSVar('--color-theme-dem-blue') },
+				{ label: 'Republicans', color: getCSSVar('--color-theme-gop-red') }
 			],
 			showGapLine: true
 		},
@@ -214,9 +214,7 @@
 			view: 'generation',
 			series: [
 				{ label: 'Gen Z', color: getCSSVar('--color-theme-blue') },
-				{ label: 'Millennials', color: getCSSVar('--color-theme-green') },
-				{ label: 'Gen X', color: getCSSVar('--color-theme-yellow') },
-				{ label: 'Baby Boomers', color: getCSSVar('--color-theme-red') }
+				{ label: 'Baby Boomers', color: getCSSVar('--color-theme-yellow') }
 			],
 			showGapLine: true
 		},

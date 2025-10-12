@@ -1,91 +1,91 @@
 "pid3","duty_label","mean"
-"Democrat","Voting",90.1843983100901
-"Democrat","Following the Constitution",91.2547038013263
-"Democrat","Being patriotic",51.7998681566945
-"Democrat","Working hard",49.681968082765
-"Democrat","Making your voice heard",62.6558854100342
-"Democrat","Fighting for people’s rights",81.3260826010937
-"Democrat","Supporting your family",59.6072985922261
-"Democrat","Supporting democracy",83.2798256107003
-"Democrat","Protesting unfairness",64.884289058143
-"Democrat","Donating to charity",37.8942554901505
-"Democrat","Defending freedom",86.5747603670058
-"Democrat","Obeying the law",92.6375927528564
-"Democrat","Practicing freedom of speech",79.9931628749163
-"Democrat","Helping your community",75.4141879081428
-"Democrat","Joining the military",38.564447636383
-"Democrat","Supporting equality",82.6840782858872
-"Democrat","Loving America",47.2128541103499
-"Democrat","Making the most of your opportunities",43.6981332452001
-"Democrat","Connecting across differences",56.184891782285
-"Democrat","Being grateful for your opportunities",53.9934703823417
-"Democrat","Honoring the flag",69.4877361456561
-"Democrat","Welcoming refugees",59.3334307168957
-"Democrat","Paying your taxes",89.6050666064243
-"Democrat","Being self-reliant",44.637590055038
-"Democrat","Reporting for jury duty",86.3610454406961
-"Democrat","Staying informed of current events",54.1883114558921
-"Democrat","Doing community service",61.2460252949019
-"Democrat","Respecting people's differences",75.562336969571
-"Democrat","Protecting the environment",79.1437865188933
-"Democrat","Caring for future generations",73.710510796224
-"Independent","Voting",81.5392278457707
-"Independent","Following the Constitution",89.0800234656396
-"Independent","Being patriotic",55.1252132613313
-"Independent","Working hard",56.2362918131427
-"Independent","Making your voice heard",53.7560366490619
-"Independent","Fighting for people’s rights",73.0614158449038
-"Independent","Supporting your family",66.5642044017942
-"Independent","Supporting democracy",68.7468069228736
-"Independent","Protesting unfairness",54.8561930372722
-"Independent","Donating to charity",34.1702941497702
-"Independent","Defending freedom",86.0899920128551
-"Independent","Obeying the law",90.5369544498297
-"Independent","Practicing freedom of speech",77.4281465801838
-"Independent","Helping your community",70.1452825306124
-"Independent","Joining the military",34.0053831476373
-"Independent","Supporting equality",71.9445551045675
-"Independent","Loving America",54.3335764526371
-"Independent","Making the most of your opportunities",46.1984767165465
-"Independent","Connecting across differences",52.8616837893039
-"Independent","Being grateful for your opportunities",59.4233203670598
-"Independent","Honoring the flag",73.4346406793112
-"Independent","Welcoming refugees",44.61360851879
-"Independent","Paying your taxes",86.3931037161879
-"Independent","Being self-reliant",54.3294497216544
-"Independent","Reporting for jury duty",82.2097711912738
-"Independent","Staying informed of current events",50.9284361771257
-"Independent","Doing community service",53.7229701775252
-"Independent","Respecting people's differences",71.0597538806243
-"Independent","Protecting the environment",72.4670538593919
-"Independent","Caring for future generations",71.199551710648
-"Republican","Voting",89.0178369448332
-"Republican","Following the Constitution",93.0606086762479
-"Republican","Being patriotic",72.9253775800601
-"Republican","Working hard",58.3021548096278
-"Republican","Making your voice heard",50.46260348479
-"Republican","Fighting for people’s rights",68.9638200449717
-"Republican","Supporting your family",67.8089940815727
-"Republican","Supporting democracy",78.4923833793132
-"Republican","Protesting unfairness",45.7181456220939
-"Republican","Donating to charity",35.6164322661949
-"Republican","Defending freedom",88.6465630034741
-"Republican","Obeying the law",95.5379797465129
-"Republican","Practicing freedom of speech",76.0531539297844
-"Republican","Helping your community",73.1160683756516
-"Republican","Joining the military",47.498408546087
-"Republican","Supporting equality",64.163549690027
-"Republican","Loving America",71.6884798855087
-"Republican","Making the most of your opportunities",50.2015187442805
-"Republican","Connecting across differences",48.3575265710575
-"Republican","Being grateful for your opportunities",70.9676178513646
-"Republican","Honoring the flag",89.4585356088922
-"Republican","Welcoming refugees",32.686490525173
-"Republican","Paying your taxes",91.1243759130021
-"Republican","Being self-reliant",56.9914765441852
-"Republican","Reporting for jury duty",88.819693211777
-"Republican","Staying informed of current events",52.0765997408999
-"Republican","Doing community service",53.91756953002
-"Republican","Respecting people's differences",66.315760104504
-"Republican","Protecting the environment",67.5994473589649
-"Republican","Caring for future generations",67.3180893600095
+"Democrats","Voting",90.1843983100901
+"Democrats","Following the Constitution",91.2547038013263
+"Democrats","Being patriotic",51.7998681566945
+"Democrats","Working hard",49.681968082765
+"Democrats","Making your voice heard",62.6558854100342
+"Democrats","Fighting for people’s rights",81.3260826010937
+"Democrats","Supporting your family",59.6072985922261
+"Democrats","Supporting democracy",83.2798256107003
+"Democrats","Protesting unfairness",64.884289058143
+"Democrats","Donating to charity",37.8942554901505
+"Democrats","Defending freedom",86.5747603670058
+"Democrats","Obeying the law",92.6375927528564
+"Democrats","Practicing freedom of speech",79.9931628749163
+"Democrats","Helping your community",75.4141879081428
+"Democrats","Joining the military",38.564447636383
+"Democrats","Supporting equality",82.6840782858872
+"Democrats","Loving America",47.2128541103499
+"Democrats","Making the most of your opportunities",43.6981332452001
+"Democrats","Connecting across differences",56.184891782285
+"Democrats","Being grateful for your opportunities",53.9934703823417
+"Democrats","Honoring the flag",69.4877361456561
+"Democrats","Welcoming refugees",59.3334307168957
+"Democrats","Paying your taxes",89.6050666064243
+"Democrats","Being self-reliant",44.637590055038
+"Democrats","Reporting for jury duty",86.3610454406961
+"Democrats","Staying informed of current events",54.1883114558921
+"Democrats","Doing community service",61.2460252949019
+"Democrats","Respecting people's differences",75.562336969571
+"Democrats","Protecting the environment",79.1437865188933
+"Democrats","Caring for future generations",73.710510796224
+"Independents","Voting",81.5392278457707
+"Independents","Following the Constitution",89.0800234656396
+"Independents","Being patriotic",55.1252132613313
+"Independents","Working hard",56.2362918131427
+"Independents","Making your voice heard",53.7560366490619
+"Independents","Fighting for people’s rights",73.0614158449038
+"Independents","Supporting your family",66.5642044017942
+"Independents","Supporting democracy",68.7468069228736
+"Independents","Protesting unfairness",54.8561930372722
+"Independents","Donating to charity",34.1702941497702
+"Independents","Defending freedom",86.0899920128551
+"Independents","Obeying the law",90.5369544498297
+"Independents","Practicing freedom of speech",77.4281465801838
+"Independents","Helping your community",70.1452825306124
+"Independents","Joining the military",34.0053831476373
+"Independents","Supporting equality",71.9445551045675
+"Independents","Loving America",54.3335764526371
+"Independents","Making the most of your opportunities",46.1984767165465
+"Independents","Connecting across differences",52.8616837893039
+"Independents","Being grateful for your opportunities",59.4233203670598
+"Independents","Honoring the flag",73.4346406793112
+"Independents","Welcoming refugees",44.61360851879
+"Independents","Paying your taxes",86.3931037161879
+"Independents","Being self-reliant",54.3294497216544
+"Independents","Reporting for jury duty",82.2097711912738
+"Independents","Staying informed of current events",50.9284361771257
+"Independents","Doing community service",53.7229701775252
+"Independents","Respecting people's differences",71.0597538806243
+"Independents","Protecting the environment",72.4670538593919
+"Independents","Caring for future generations",71.199551710648
+"Republicans","Voting",89.0178369448332
+"Republicans","Following the Constitution",93.0606086762479
+"Republicans","Being patriotic",72.9253775800601
+"Republicans","Working hard",58.3021548096278
+"Republicans","Making your voice heard",50.46260348479
+"Republicans","Fighting for people’s rights",68.9638200449717
+"Republicans","Supporting your family",67.8089940815727
+"Republicans","Supporting democracy",78.4923833793132
+"Republicans","Protesting unfairness",45.7181456220939
+"Republicans","Donating to charity",35.6164322661949
+"Republicans","Defending freedom",88.6465630034741
+"Republicans","Obeying the law",95.5379797465129
+"Republicans","Practicing freedom of speech",76.0531539297844
+"Republicans","Helping your community",73.1160683756516
+"Republicans","Joining the military",47.498408546087
+"Republicans","Supporting equality",64.163549690027
+"Republicans","Loving America",71.6884798855087
+"Republicans","Making the most of your opportunities",50.2015187442805
+"Republicans","Connecting across differences",48.3575265710575
+"Republicans","Being grateful for your opportunities",70.9676178513646
+"Republicans","Honoring the flag",89.4585356088922
+"Republicans","Welcoming refugees",32.686490525173
+"Republicans","Paying your taxes",91.1243759130021
+"Republicans","Being self-reliant",56.9914765441852
+"Republicans","Reporting for jury duty",88.819693211777
+"Republicans","Staying informed of current events",52.0765997408999
+"Republicans","Doing community service",53.91756953002
+"Republicans","Respecting people's differences",66.315760104504
+"Republicans","Protecting the environment",67.5994473589649
+"Republicans","Caring for future generations",67.3180893600095
