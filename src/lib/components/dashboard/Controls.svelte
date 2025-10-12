@@ -14,7 +14,7 @@
 		isPinned = $bindable(),
 		onExit = () => {}
 	} = $props();
-	let selectedOption = $state('pid');
+	let selectedOption = $state('mean');
 
 	let isDropdownOpen = $state(false);
 	let buttonRefs = $state({});

@@ -27,7 +27,7 @@
 	import { get } from 'svelte/store';
 
 	let { activeId, interactiveMode = $bindable(), animateMount = true, isPinned = false } = $props();
-	let activeView = $state(interactiveMode ? 'pid' : 'mean');
+	let activeView = $state('mean');
 	let selectedStateView = $state('map');
 	let selectedStateChartViewOptions = $state([]);
 	let selectedStateMapViewOption = $state(null);
@@ -52,20 +52,13 @@
 		}
 	});
 
-	// Set default activeView based on interactiveMode
-	$effect(() => {
-		if (interactiveMode && activeId == '9999-dashboard') {
-			activeView = 'pid';
-		} else if (!interactiveMode) {
-			activeView = 'mean';
-		}
-	});
+
 
 	// Reset dashboard to default interactive mode settings when unpinned
 	$effect(() => {
 		if (interactiveMode && !isPinned) {
 			// Reset to default interactive mode settings
-			activeView = 'pid';
+			activeView = 'mean';
 			selectedStateView = 'map';
 			selectedStateChartViewOptions = [];
 			// Reset selectedStateMapViewOption to first state if available
