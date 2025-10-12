@@ -114,9 +114,9 @@
 			label: 'Political Identification',
 			value: 'pid',
 			series: [
-				{ label: 'Democrat', color: getCSSVar('--color-theme-dem-blue') },
-				{ label: 'Republican', color: getCSSVar('--color-theme-gop-red') },
-				{ label: 'Independent', color: getCSSVar('#dddddd') }
+				{ label: 'Democrats', color: getCSSVar('--color-theme-dem-blue') },
+				{ label: 'Republicans', color: getCSSVar('--color-theme-gop-red') },
+				{ label: 'Independents', color: getCSSVar('#dddddd') }
 			]
 		},
 		{
@@ -442,6 +442,7 @@
 	};
 
 	const mapColorScale = scaleSequential().interpolator(interpolateYlGn).domain([0, 100]);
+	
 </script>
 
 <div
