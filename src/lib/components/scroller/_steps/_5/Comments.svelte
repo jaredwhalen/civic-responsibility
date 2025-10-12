@@ -78,9 +78,7 @@
 			{comment.text}
 		</Quote> -->
 
-		<Bubble color={comment.position.color || getCSSVar('--color-theme-light')} direction={comment.position.direction || 'left'}>
-			{comment.text}
-		</Bubble>
+		<img src={`/assets/comments/${comment.name}`} alt={comment.text} />
 	</div>
 {/each}
 
@@ -95,6 +93,11 @@
 		transform-origin: center center;
 		opacity: 0.8; // Fallback visibility
 		transform: scale(0.8); // Fallback scale
+
+		width: 300px;
+		img {
+			opacity: 0.5;
+		}
 
 		&.fade-in {
 			opacity: 1;

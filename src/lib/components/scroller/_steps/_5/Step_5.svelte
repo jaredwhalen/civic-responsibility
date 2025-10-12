@@ -9,59 +9,59 @@
 	const expectedAnswers = [
 		{
 			text: 'Honoring the Constitution',
+			name: 'honoring-the-constitution.png',
 			position: {
 				top: '5%',
 				left: '10%',
-				color: `${getCSSVar('--color-theme-yellow')}`,
 				scale: 1
 			}
 		},
 		{
 			text: 'Practicing freedom of speech',
+			name: 'practicing-freedom-of-speech.png',
 			position: {
 				top: '40%',
 				left: '15%',
-				color: `${getCSSVar('--color-theme-yellow')}`,
-				scale: 1.2,
-				direction: "right"
+				scale: 0.7,
+				direction: 'right'
 			}
 		},
 		{
 			text: 'Obeying the law',
+			name: 'obeying-the-law.png',
 			position: {
 				top: '30%',
 				left: '65%',
-				color: `${getCSSVar('--color-theme-yellow')}`,
-				scale: 1.4
+				scale: 0.8
 			}
 		},
 		{
 			text: 'Paying your taxes',
+			name: 'paying-your-taxes.png',
 			position: {
 				top: '100%',
 				left: '15%',
-				color: `${getCSSVar('--color-theme-yellow')}`,
-				scale: 1.7,
-				direction: "right"
+				scale: 1,
+				direction: 'right'
 			}
 		},
 		{
 			text: 'Serving on a jury',
+			name: 'serving-on-a-jury.png',
 			position: {
 				top: '65%',
 				left: '50%',
-				color: `${getCSSVar('--color-theme-yellow')}`,
 				scale: 1
 			}
 		},
 		{
 			text: 'Voting',
+			name: 'voting.png',
 			position: {
 				top: '100%',
-				left: '80%',
-				color: `${getCSSVar('--color-theme-yellow')}`,
-				scale: 1.3,
-				direction: "right"
+				left: '60%',
+				scale: .5,
+				direction: 'right'
 			}
 		}
 	];
@@ -69,59 +69,59 @@
 	const surprisingAnswers = [
 		{
 			text: 'Tolerating differences',
+			name: 'tolerating-differences.png',
 			position: {
 				top: '15%',
 				left: '10%',
-				color: `${getCSSVar('--color-theme-blue-light')}`,
-				scale: 1,
-				direction: "right"
+				scale: .7,
+				direction: 'right'
 			}
 		},
 		{
 			text: 'Protecting the environment',
+			name: 'protecting-the-environment.png',
 			position: {
 				top: '30%',
 				left: '45%',
-				color: `${getCSSVar('--color-theme-blue-light')}`,
-				scale: 1.2
+				scale: .8
 			}
 		},
 		{
 			text: "Helping one's community",
+			name: 'helping-ones-community.png',
 			position: {
 				top: '55%',
 				left: '70%',
-				color: `${getCSSVar('--color-theme-blue-light')}`,
-				scale: 1,
-				direction: "right"
+				scale: .7,
+				direction: 'right'
 			}
 		},
 		{
-			text: 'Caring for future generation',
+			text: 'Caring for future generations',
+			name: 'caring-for-future-generations.png',
 			position: {
 				top: '50%',
 				left: '15%',
-				color: `${getCSSVar('--color-theme-blue-light')}`,
-				scale: 1.3
+				scale: .9
 			}
 		},
 		{
 			text: "Making one's voice heard",
+			name: 'making-one-s-voice-heard.png',
 			position: {
 				top: '95%',
 				left: '10%',
-				color: `${getCSSVar('--color-theme-blue-light')}`,
-				scale: 1.1
+				scale: .8
 			}
 		},
 		{
 			text: 'Being grateful for your opportunities',
-			position: {
+			name: 'being-grateful-for-your-opportunities.png',
+				position: {
 				top: '85%',
 				left: '50%',
-				color: `${getCSSVar('--color-theme-blue-light')}`,
-				scale: 1,
-				direction: "right"
+				scale: .7,
+				direction: 'right'
 			}
 		}
 	];
@@ -210,7 +210,7 @@
 	<!-- Second section: Others surprised us -->
 	<div class="section surprising">
 		<div class="text-content" bind:this={textElement2}>
-			<div class="text-body text-accent">Others surprised us</div>
+			<div class="text-body">Others surprised us</div>
 		</div>
 
 		<div class="comments-container" bind:this={commentsElement2}>
