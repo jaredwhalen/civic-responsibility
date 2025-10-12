@@ -1,5 +1,11 @@
 <script>
-	let { options, activeView, variant = 'default' } = $props();
+	let {
+		options,
+		activeView,
+		variant = 'default',
+		clickedSeries = $bindable(),
+		interactive = false
+	} = $props();
 </script>
 
 {#if options?.series && options.series.length > 1}
@@ -8,7 +14,24 @@
 		<div class="legend-items">
 			{#each options.series as series}
 				{#if series.label != 'Other'}
-					<div class="legend-item">
+					<div
+						class="legend-item"
+						class:interactive
+						class:active={clickedSeries.has(series.label)}
+						onclick={() => {
+							if (interactive) {
+								if (clickedSeries.has(series.label)) {
+									const next = new Set(clickedSeries);
+									next.delete(series.label);
+									clickedSeries = next;
+								} else {
+									const next = new Set(clickedSeries);
+									next.add(series.label);
+									clickedSeries = next;
+								}
+							}
+						}}
+					>
 						<div class="legend-dot" style="background-color: {series.color}"></div>
 						<span class="legend-label">{series.label}</span>
 					</div>
@@ -66,6 +89,15 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+		border-bottom: 1px solid transparent;
+		&.interactive {
+			cursor: pointer;
+
+			&.active,
+			&:hover {
+				border-bottom: 1px solid var(--color-gray-500);
+			}
+		}
 	}
 
 	.legend-dot {

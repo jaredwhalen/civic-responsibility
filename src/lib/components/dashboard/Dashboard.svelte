@@ -480,7 +480,7 @@
 				{#if activeView == 'state' && selectedStateView == 'map'}
 					<GradientLegend colorScale={mapColorScale} />
 				{:else}
-					<GroupLegend options={options.find((o) => o.value === activeView)} {activeView} />
+					<GroupLegend options={options.find((o) => o.value === activeView)} {activeView} interactive={true} bind:clickedSeries />
 				{/if}
 			</div>
 		</div>
