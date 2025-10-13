@@ -37,10 +37,11 @@
 			</div>
 		{/if}
 	</div>
-	
-	<div class="scroll-down">
-		<span>Scroll down</span>
-	</div>
+	{#if isMounted}
+		<div class="scroll-down" in:fade={{ duration: 1000, delay: 1000 }}>
+			<span>Scroll down</span>
+		</div>
+	{/if}
 </section>
 
 <style lang="scss">
@@ -253,7 +254,8 @@
 
 	// Keyframe animation for scroll indicator bounce
 	@keyframes scrollBounce {
-		0%, 100% {
+		0%,
+		100% {
 			transform: translate(-50%, 0);
 		}
 		50% {
