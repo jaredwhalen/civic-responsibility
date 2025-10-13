@@ -20,6 +20,7 @@ cors <- function(req, res) {
 
 #* Health check
 #* @get /healthz
+#* @serializer json
 function() list(ok = TRUE)
 
 #* Predict (JSON in, JSON out)
@@ -31,9 +32,16 @@ function(req, res){
     res$status <- 400
     return(list(error = "Empty body"))
   }
+
   csv <- Sys.getenv("CSV_PATH", "CR_Data_Names.csv")
+  tie_mode <- Sys.getenv("TIE_MODE", "fractional")  # "fractional" | "highest_if_1_lowest_if_0" | "first"
+
   tryCatch(
-    predict_service(csv_path = csv, payload_json = body, temperature = 1),
+    predict_service(
+      csv_path     = csv,
+      payload_json = body,
+      tie_mode     = tie_mode
+    ),
     error = function(e) {
       res$status <- 400
       list(error = conditionMessage(e))
