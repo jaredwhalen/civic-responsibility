@@ -53,7 +53,7 @@
 	<div class="header-right">
 		{#if isRoutePage}
 			<a href={base + '/'} class="nav-button back-button" onclick={handleBackClick}>
-				<Home size={$isMobile ? undefined : 16} />
+				<Home size={20} />
 				{backButtonText}
 			</a>
 		{/if}
@@ -147,6 +147,7 @@
 				min-height: 2.5rem; // Ensure consistent height
 				box-sizing: border-box;
 				border: none;
+				height: 35px;
 				
 				// Mobile responsive adjustments
 				@include mq('mobile', 'max') {

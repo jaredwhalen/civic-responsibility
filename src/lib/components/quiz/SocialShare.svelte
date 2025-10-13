@@ -13,25 +13,31 @@
 		let text = 'My civic profile is closest to ';
 
 		// Add age prediction
-		if (results.predictions.age_binary) {
-			const age = results.predictions.age_binary.predicted[0];
-			text += age === 'old' ? 'an older' : 'a younger';
+		if (results.summary) {
+			const age = results.summary.find(item => item.group_var === 'age_binary');
+			if (age) {
+				text += age.predicted_group === 'old' ? 'an older' : 'a younger';
+			}
 		}
 
 		text += ' ';
 
 		// Add urban/rural prediction
-		if (results.predictions.urban_binary) {
-			const urban = results.predictions.urban_binary.predicted[0];
-			text += urban.toLowerCase();
+		if (results.summary) {
+			const urban = results.summary.find(item => item.group_var === 'urban_binary');
+			if (urban) {
+				text += urban.predicted_group.toLowerCase();
+			}
 		}
 
 		text += ' ';
 
 		// Add ideology prediction
-		if (results.predictions.ideology_tri) {
-			const ideology = results.predictions.ideology_tri.predicted[0];
-			text += ideology.toLowerCase();
+		if (results.summary) {
+			const ideology = results.summary.find(item => item.group_var === 'ideology_tri');
+			if (ideology) {
+				text += ideology.predicted_group.toLowerCase();
+			}
 		}
 
 		text += ". What's your civic profile? Find out at";
@@ -40,7 +46,7 @@
 	});
 
 	// Get current page URL for sharing
-	const shareUrl = 'https://beaconproject.us/';
+	const shareUrl = 'https://civicprofile.us/';
 
 	// Social media sharing functions
 	const shareOnX = () => {
@@ -141,12 +147,21 @@
 </div>
 
 <style lang="scss">
+	@import '../../styles/mixins.scss';
+	
 	.social-share-container {
 		text-align: center;
 		margin-top: 2rem;
 		padding: 1.5rem;
 		background-color: #f8f9fa;
 		border-radius: 12px;
+
+		// Mobile responsive adjustments
+		@include mq('mobile', 'max') {
+			margin-top: 1.5rem;
+			padding: 1rem;
+			border-radius: 8px;
+		}
 	}
 
 	.share-title {
@@ -156,6 +171,12 @@
 		margin: 0 0 1rem 0;
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
+
+		// Mobile responsive adjustments
+		@include mq('mobile', 'max') {
+			font-size: 1.1rem;
+			margin-bottom: 0.8rem;
+		}
 	}
 
 	.social-icons {
@@ -163,6 +184,11 @@
 		justify-content: center;
 		gap: 1rem;
 		margin-bottom: 0.75rem;
+		
+		// Mobile responsive adjustments
+		@include mq('mobile', 'max') {
+			gap: 0.5rem;
+		}
 	}
 
 	.social-button {
@@ -176,6 +202,12 @@
 		cursor: pointer;
 		transition: all 0.2s ease;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+		// Mobile responsive adjustments
+		@include mq('mobile', 'max') {
+			width: 40px;
+			height: 40px;
+		}
 
 		&:hover {
 			transform: translateY(-2px);
@@ -191,7 +223,7 @@
 			color: white;
 
 			&:hover {
-				background-color: #0d8bd9;
+				background-color: #000;
 			}
 		}
 
@@ -249,20 +281,5 @@
 		color: #666;
 		margin: 0;
 		font-style: italic;
-	}
-
-	@media (max-width: 480px) {
-		.social-icons {
-			gap: 0.75rem;
-		}
-
-		.social-button {
-			width: 45px;
-			height: 45px;
-		}
-
-		.share-title {
-			font-size: 1.1rem;
-		}
 	}
 </style>

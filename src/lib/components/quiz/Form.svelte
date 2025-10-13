@@ -8,7 +8,7 @@
 
 	let profiles = [
 		[1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1],
-		[1,1,1,1,1,1,0,0,0,1,1,0,0,1,0,1,1,0,1,1,1,1,1,0,0,0,0,1,0,0],
+		[1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0],
 		[1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
 		[1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1],
 		[0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0],
@@ -96,9 +96,9 @@
 		margin-bottom: 1.5rem;
 		font-size: 1.5rem;
 		font-weight: 600;
-        border-top: 2px solid var(--color-theme-blue);
-        padding-top: 1.5rem;
-        margin-top: 5rem;
+		border-top: 2px solid var(--color-theme-blue);
+		padding-top: 1.5rem;
+		margin-top: 5rem;
 	}
 
 	.quiz-item {
@@ -111,7 +111,12 @@
 		border-radius: 12px;
 		border: 2px solid transparent;
 		transition: all 0.2s ease;
-        
+
+		@include mq('mobile', 'max') {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 1rem;
+		}
 
 		.quiz-item-label {
 			flex: 1;
@@ -119,11 +124,20 @@
 			font-weight: 500;
 			color: #333;
 			margin-right: 1rem;
+
+			@include mq('mobile', 'max') {
+				margin-right: 0;
+				text-align: center;
+			}
 		}
 
 		.quiz-buttons {
 			display: flex;
 			gap: 0.5rem;
+
+			@include mq('mobile', 'max') {
+				justify-content: center;
+			}
 		}
 
 		.quiz-button {
@@ -136,6 +150,12 @@
 			font-weight: 500;
 			transition: all 0.2s ease;
 			min-width: 80px;
+
+			@include mq('mobile', 'max') {
+				font-size: 1.5rem;
+				padding: 1rem 1.5rem;
+				width: 50%;
+			}
 
 			&:hover {
 				border-color: var(--color-theme-blue);
@@ -154,24 +174,6 @@
 					border-color: var(--color-theme-red);
 					color: white;
 				}
-			}
-		}
-	}
-
-	// Responsive design
-	@media (max-width: 768px) {
-		.quiz-item {
-			flex-direction: column;
-			align-items: stretch;
-			gap: 1rem;
-
-			.quiz-item-label {
-				margin-right: 0;
-				text-align: center;
-			}
-
-			.quiz-buttons {
-				justify-content: center;
 			}
 		}
 	}

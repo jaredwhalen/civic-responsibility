@@ -2,6 +2,7 @@
 	import duties from '$lib/data/csvs/mean_duties_weighted.csv';
 	import { House, Vote, Cake } from '@lucide/svelte';
 	import SocialShare from './SocialShare.svelte';
+	import { isMobile } from '$lib/stores/responsive.js';
 
 	let { results, submittedUserYesCount } = $props();
 
@@ -24,7 +25,7 @@
 		return 'Civic Champion';
 	});
 
-	const iconSize = 30;
+	const iconSize = $isMobile ? 24 : 30;
 </script>
 
 <div class="results-container">
@@ -118,14 +119,24 @@
 </div>
 
 <style lang="scss">
+	@import '../../styles/mixins.scss';
+	
 	.results-container {
 		text-align: center;
-
 		margin: 0 auto;
 		background-color: #fff;
 		border-radius: 12px;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 		overflow: hidden;
+
+
+
+		// Mobile responsive adjustments
+		@include mq('mobile', 'max') {
+			border-radius: 8px;
+			box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+			margin: 0px 0.5rem;
+		}
 	}
 
 	.results-title {
@@ -133,12 +144,22 @@
 		padding: 2rem;
 		text-align: center;
 
+		// Mobile responsive adjustments
+		@include mq('mobile', 'max') {
+			padding: 1.5rem 1rem;
+		}
+
 		.profile-label {
 			font-size: 1.4rem;
 			color: #fff;
 			font-weight: 400;
 			margin-bottom: 0.5rem;
 			opacity: 0.9;
+
+			// Mobile responsive adjustments
+			@include mq('mobile', 'max') {
+				font-size: 1.1rem;
+			}
 		}
 
 		.profile-name {
@@ -147,6 +168,13 @@
 			font-weight: 700;
 			text-transform: uppercase;
 			letter-spacing: 0.05em;
+
+			// Mobile responsive adjustments
+			@include mq('mobile', 'max') {
+				font-size: 2rem;
+				line-height: 1.1;
+				letter-spacing: 0.03em;
+			}
 		}
 	}
 
@@ -158,20 +186,34 @@
 
 	.results-row {
 		padding: 1rem 1.5rem;
-
 		text-align: left; /* Left align text */
 		color: #333;
 		gap: 0.75rem;
 
+		// Mobile responsive adjustments
+		@include mq('mobile', 'max') {
+			padding: 0.8rem 1rem;
+		}
+
 		&.summary {
 			text-align: center;
 			margin: 1.5rem 0;
+
+			// Mobile responsive adjustments
+			@include mq('mobile', 'max') {
+				margin: 1rem 0;
+			}
 		}
 
 		&.flex {
 			display: flex;
 			align-items: flex-start;
 			gap: 1rem;
+
+			// Mobile responsive adjustments
+			@include mq('mobile', 'max') {
+				gap: 0.75rem;
+			}
 		}
 
 		.content-container {
@@ -185,6 +227,13 @@
 				align-items: center;
 				gap: 0.5rem;
 				margin: 0;
+
+				// Mobile responsive adjustments
+				@include mq('mobile', 'max') {
+					flex-direction: column;
+					align-items: flex-start;
+					gap: 0.25rem;
+				}
 			}
 		}
 
@@ -199,6 +248,11 @@
 		p {
 			margin: 0; /* Remove default paragraph margin */
 			font-size: 1.4rem;
+
+			// Mobile responsive adjustments
+			@include mq('mobile', 'max') {
+				font-size: 1.1rem;
+			}
 		}
 
 		.icon-container {
@@ -210,13 +264,19 @@
 			background-color: var(--color-theme-blue);
 			border-radius: 50%;
 			padding: 0.5rem;
+
+			// Mobile responsive adjustments
+			@include mq('mobile', 'max') {
+				width: 40px;
+				height: 40px;
+				padding: 0.4rem;
+			}
 		}
 	}
 
 	.results-subhead {
 		padding: 0.5rem 1rem;
 		margin-bottom: 0.5rem;
-		// border-bottom: 1px solid #e0e0e0;
 		text-align: left;
 		color: #000;
 		background-color: var(--color-theme-yellow);
@@ -224,6 +284,14 @@
 		display: inline-block;
 		border-radius: 20px;
 		font-weight: 600;
+
+		// Mobile responsive adjustments
+		@include mq('mobile', 'max') {
+			padding: 0.4rem 0.8rem;
+			margin: 0.5rem 1rem 1rem 1rem;
+			font-size: 0.9rem;
+			border-radius: 16px;
+		}
 
 		.percentage-match {
 			display: block;
@@ -254,6 +322,13 @@
 		border-radius: 4px;
 		overflow: hidden;
 		margin-top: 0.25rem;
+
+		// Mobile responsive adjustments
+		@include mq('mobile', 'max') {
+			height: 6px;
+			border-radius: 3px;
+			margin-top: 0.5rem;
+		}
 	}
 
 	.progress-fill {
@@ -261,5 +336,10 @@
 		background-color: var(--color-theme-blue-light);
 		border-radius: 4px;
 		transition: width 0.3s ease;
+
+		// Mobile responsive adjustments
+		@include mq('mobile', 'max') {
+			border-radius: 3px;
+		}
 	}
 </style>

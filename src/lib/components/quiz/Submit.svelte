@@ -17,11 +17,14 @@
 		Object.values(responses).filter((response) => response !== null).length
 	);
 	const totalCount = $derived(sortedDuties.length);
-	
+
 	// Check if user has selected all 30 behaviors
 	const canSubmit = $derived(progressCount >= 30);
 
 	async function submitQuiz() {
+
+		window.scrollTo({ top: 0, behavior: 'instant' });
+
 		try {
 			onLoading(true);
 			onError(null);
@@ -33,7 +36,7 @@
 				const dutyKey = `duties_${index + 1}`;
 				dutiesData[dutyKey] = responses[duty.duty_label] ? 1 : 0;
 			});
-            
+
 			const requestData = { duties: dutiesData };
 
 			const response = await fetch('https://civic-responsibility.onrender.com/predict', {
@@ -51,35 +54,14 @@
 			}
 
 			const data = await response.json();
-      
-            
+
 			// Calculate and pass the user's yes count along with results
 			const userYesCount = Object.values(responses).filter((response) => response === true).length;
-            const totalAnswered = Object.values(responses).filter((response) => response !== null).length;
+			const totalAnswered = Object.values(responses).filter((response) => response !== null).length;
 
 			onResults({ ...data, userYesCount, totalAnswered: totalAnswered });
 
 			// Scroll to results container to show results with 20px offset
-			setTimeout(() => {
-				const resultsContainer = document.querySelector('.results-container');
-				const quizContainer = document.querySelector('.quiz-container');
-				
-				if (resultsContainer && quizContainer) {
-					// Check if we're in modal mode (has overflow-y: auto) or standalone mode
-					const isModal = quizContainer.classList.contains('modal');
-					
-					if (isModal) {
-						// Modal mode: scroll within the container
-						const targetY = resultsContainer.offsetTop - 20;
-						quizContainer.scrollTo({ top: targetY, behavior: 'smooth' });
-					} else {
-						// Standalone mode: scroll the window to the results
-						const rect = resultsContainer.getBoundingClientRect();
-						const targetY = window.scrollY + rect.top - 20;
-						window.scrollTo({ top: targetY, behavior: 'smooth' });
-					}
-				}
-			}, 100);
 		} catch (err) {
 			onError(err.message);
 			console.error('Quiz submission error:', err);
@@ -89,10 +71,12 @@
 	}
 </script>
 
-<div class="quiz-footer">
-	<div class="progress-info">
-		<span class="progress-text">{progressCount}/{totalCount} behaviors answered</span>
-	</div>
+<div class="quiz-footer" class:submitted={results}>
+	{#if !results}
+		<div class="progress-info">
+			<span class="progress-text">{progressCount}/{totalCount} behaviors answered</span>
+		</div>
+	{/if}
 	<button class="submit-button" onclick={submitQuiz} disabled={!canSubmit}>
 		{results ? 'Resubmit Quiz' : 'Submit Quiz'}
 	</button>
@@ -104,19 +88,35 @@
 	.quiz-footer {
 		position: sticky;
 		bottom: 0;
-		background: rgba(255, 255, 255, 0.5) ;
-		backdrop-filter: blur(20px) ;
-		-webkit-backdrop-filter: blur(20px) ;
-		border: 1px solid rgba(255, 255, 255, 0.3) ;
+		background: rgba(255, 255, 255, 0.5);
+		backdrop-filter: blur(20px);
+		-webkit-backdrop-filter: blur(20px);
+		border: 1px solid rgba(255, 255, 255, 0.3);
 		padding: 1.5rem 2rem;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1);
+		box-shadow:
+			0 -4px 15px rgba(0, 0, 0, 0.1),
+			0 0 0 1px rgba(255, 255, 255, 0.1);
 		z-index: 100;
 
+		&.submitted {
+			justify-content: center;
+		}
+
+		@include mq('mobile', 'max') {
+			padding: 1rem;
+			flex-direction: column;
+			gap: 1rem;
+			text-align: center;
+		}
 
 		.progress-info {
+			@include mq('mobile', 'max') {
+				order: 2;
+			}
+
 			.progress-text {
 				font-size: 1rem;
 				font-weight: 500;
@@ -138,6 +138,11 @@
 			transition: all 0.3s ease;
 			box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 
+			@include mq('mobile', 'max') {
+				order: 1;
+				padding: 0.5rem;
+			}
+
 			&:hover:not(:disabled) {
 				transform: translateY(-2px);
 				box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
@@ -157,24 +162,6 @@
 				cursor: not-allowed;
 				opacity: 0.6;
 				box-shadow: 0 2px 8px rgba(156, 163, 175, 0.2);
-			}
-		}
-	}
-
-	// Responsive design
-	@media (max-width: 768px) {
-		.quiz-footer {
-			padding: 1rem;
-			flex-direction: column;
-			gap: 1rem;
-			text-align: center;
-
-			.progress-info {
-				order: 2;
-			}
-
-			.submit-button {
-				order: 1;
 			}
 		}
 	}
