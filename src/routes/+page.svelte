@@ -38,7 +38,7 @@
 
 <MatrixScroller {content}/>
 
-<!-- <GSAPScroller section="outro" /> -->
+<GSAPScroller section="outro" />
 
 <!-- <CTA /> -->
 

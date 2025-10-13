@@ -81,7 +81,10 @@
 				text-align: center;
 				font-size: 2.8rem;
 				font-weight: 300;
-			
+
+				@include mq('mobile', 'max') {
+					font-size: 2rem;
+				}
 
 				b {
 					font-weight: 600;
