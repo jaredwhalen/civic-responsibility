@@ -17,6 +17,7 @@
 
 	let containerWidth = $state(0);
 	let containerHeight = $state(0);
+	let tippyInstances = $state([]);
 
 	// Ensure map fits within container with some padding
 	let width = $derived(Math.min(containerWidth - 40, containerHeight * 1.67 - 40));
@@ -41,14 +42,55 @@
 		});
 	});
 
-	onMount(() => {
-		tippy('[data-tippy-content]', {
-			theme: 'light',
-			duration: 0,
-			followCursor: true,
-			plugins: [followCursor],
-			allowHTML: true
+	// Create tippy instances
+	function createTippyInstances() {
+		// Clean up existing instances
+		tippyInstances.forEach((inst) => {
+			try {
+				inst?.destroy?.();
+			} catch {}
 		});
+		tippyInstances = [];
+
+		// Create new instances
+		const elements = document.querySelectorAll('[data-tippy-content]');
+		elements.forEach((el) => {
+			try {
+				const instance = tippy(el, {
+					theme: 'light',
+					duration: 0,
+					followCursor: true,
+					plugins: [followCursor],
+					allowHTML: true
+				});
+				tippyInstances.push(instance);
+			} catch (e) {
+				console.warn('Error creating tippy instance:', e);
+			}
+		});
+	}
+
+	// Recreate tooltips when duty or data changes
+	$effect(() => {
+		if (duty && data) {
+			// Depend on duty and data values
+			duty;
+			data.forEach((d) => d.mean);
+			setTimeout(createTippyInstances, 0); // after DOM update
+		}
+	});
+
+	onMount(() => {
+		createTippyInstances();
+
+		return () => {
+			tippyInstances.forEach((inst) => {
+				try {
+					inst?.destroy?.();
+				} catch {}
+			});
+			tippyInstances = [];
+		};
 	});
 </script>
 

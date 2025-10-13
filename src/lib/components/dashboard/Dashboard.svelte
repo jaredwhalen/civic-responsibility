@@ -498,7 +498,7 @@
 				bind:isPinned
 				searchOptions={{
 					states: Array.from(new Set(filteredStateData.map((d) => d.state))).sort(),
-					duties: Array.from(new Set(transformedData.state.map((d) => d.duty_label)))
+					duties: Array.from(new Set(transformedData.state.map((d) => d.duty_label))).sort()
 				}}
 				onExit={() => {
 					// Scroll to dashboard element when exiting pinned view

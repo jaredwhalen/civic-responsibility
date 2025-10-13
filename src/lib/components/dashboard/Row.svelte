@@ -323,6 +323,9 @@
 			onmousedown={handleMouseDown}
 			style={guessMode ? 'cursor: grab;' : ''}
 			class:interactive={guessMode}
+			data-state={s.label}
+			data-value={s.value}
+			data-duty={duty_label}
 			data-row-index={index}
 			data-circle-id={circleId}
 			data-tippy-content={!guessMode
