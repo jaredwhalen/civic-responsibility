@@ -32,7 +32,7 @@
 	});
 
 	// Derive button text based on navigation state
-	let backButtonText = $derived(cameDirectlyFromRoot ? 'Go back home' : 'Home');
+	let backButtonText = $derived($isMobile ? '' : cameDirectlyFromRoot ? 'Go back home' : 'Home');
 
 	function handleBackClick() {
 		if (cameDirectlyFromRoot && browser) {
@@ -52,10 +52,10 @@
 
 	<div class="header-right">
 		{#if isRoutePage}
-			<button class="nav-button back-button" onclick={handleBackClick}>
-				<Home size={16} />
+			<a href={base + '/'} class="nav-button back-button" onclick={handleBackClick}>
+				<Home size={$isMobile ? undefined : 16} />
 				{backButtonText}
-			</button>
+			</a>
 		{/if}
 		{#if !$page.url.pathname.includes('/dashboard')}
 			<a href={base + '/dashboard'} class="nav-button dashboard-button">
@@ -83,6 +83,8 @@
 </header>
 
 <style lang="scss">
+	@import '../styles/mixins.scss';
+	
 	.main-header {
 		position: absolute;
 		top: 0;
@@ -129,6 +131,7 @@
 			}
 
 			.nav-button {
+				// Consistent base styling for all nav buttons
 				padding: 0.5rem 1rem;
 				border-radius: 6px;
 				cursor: pointer;
@@ -139,8 +142,18 @@
 				white-space: nowrap;
 				display: flex;
 				align-items: center;
+				justify-content: center;
 				gap: 0.5rem;
-				@include glass-effect(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.3));
+				min-height: 2.5rem; // Ensure consistent height
+				box-sizing: border-box;
+				border: none;
+				
+				// Mobile responsive adjustments
+				@include mq('mobile', 'max') {
+					padding: 0.4rem 0.8rem;
+					font-size: 0.8rem;
+					min-height: 2rem;
+				}
 
 				// Show full text by default, hide short text
 				.short-text {
@@ -157,24 +170,19 @@
 					}
 				}
 
-				@include mq('mobile', 'max') {
-					padding: 0.4rem 0.8rem;
-					font-size: 0.8rem;
-				}
-
 				&:hover {
 					transform: translateY(-2px);
 					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 				}
 
-				&.dashboard-button {
-					color: var(--color-theme-light);
-				}
-
+				// Default styling for dashboard and quiz buttons
+				&.dashboard-button,
 				&.quiz-button {
 					color: var(--color-theme-light);
+					@include glass-effect(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.3));
 				}
 
+				// Special styling for back button
 				&.back-button {
 					color: var(--color-theme-light);
 					background: rgba(255, 255, 255, 0.1);
