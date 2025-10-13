@@ -2,8 +2,8 @@
 	import { onMount } from 'svelte';
 	import { gsap } from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
-	import VennDiagram from './VennDiagram.svelte';
 	import Blobs from './Blobs.svelte';
+	import { isMobile } from '$lib/stores/responsive.js';
 
 	let stepElement;
 	let textElement;
@@ -81,7 +81,6 @@
 		bind:clientWidth={artWidth}
 	>
 		{#if artHeight && artWidth}
-			<!-- <VennDiagram offset={artProgress} height={artHeight} width={artWidth} /> -->
 			<Blobs offset={artProgress} height={artHeight} width={artWidth} />
 		{/if}
 	</div>
@@ -95,6 +94,8 @@
 		position: relative;
 		align-items: center;
 		width: 100%;
+
+		
 
 		.text-content {
 			position: sticky;
@@ -111,8 +112,13 @@
 			margin-bottom: 10rem;
 			color: var(--color-theme-light);
 			opacity: 0;
+
 			* {
 				font-size: 4.5rem;
+
+				@include mq('mobile', 'max') {
+					font-size: 2rem;
+				}
 			}
 			// text-shadow: 0 0 5px rgba(255, 255, 255, 1);
 		}
@@ -153,6 +159,11 @@
 			z-index: 1; // Lower z-index to appear behind text
 			pointer-events: none; // Allow clicks to pass through to text
 			opacity: 0;
+
+			@include mq('mobile', 'max') {
+				top: 0vh;
+				transform: translateY(-100%);
+			}
 		}
 	}
 </style>

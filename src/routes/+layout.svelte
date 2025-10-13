@@ -31,7 +31,7 @@
 	<slot />
 
 	{#if $page.url.pathname != '/dashboard'}
-		<Footer />
+		<!-- <Footer /> -->
 	{/if}
 
 </main>

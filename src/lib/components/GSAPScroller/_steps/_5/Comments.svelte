@@ -95,6 +95,12 @@
 		transform: scale(0.8); // Fallback scale
 
 		width: 300px;
+
+		@include mq('mobile', 'max') {
+			width: 150px;
+			margin-left: -5vw;
+		}
+
 		img {
 			opacity: 0.5;
 		}

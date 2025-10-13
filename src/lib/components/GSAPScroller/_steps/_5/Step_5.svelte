@@ -30,7 +30,7 @@
 			text: 'Obeying the law',
 			name: 'obeying-the-law.png',
 			position: {
-				top: '30%',
+				top: '20%',
 				left: '65%',
 				scale: 0.8
 			}
@@ -40,7 +40,7 @@
 			name: 'paying-your-taxes.png',
 			position: {
 				top: '100%',
-				left: '15%',
+				left: '5%',
 				scale: 1,
 				direction: 'right'
 			}
@@ -59,8 +59,8 @@
 			name: 'voting.png',
 			position: {
 				top: '100%',
-				left: '60%',
-				scale: .5,
+				left: '70%',
+				scale: .8,
 				direction: 'right'
 			}
 		}
@@ -81,8 +81,8 @@
 			text: 'Protecting the environment',
 			name: 'protecting-the-environment.png',
 			position: {
-				top: '30%',
-				left: '45%',
+				top: '20%',
+				left: '70%',
 				scale: .8
 			}
 		},
@@ -90,8 +90,8 @@
 			text: "Helping one's community",
 			name: 'helping-ones-community.png',
 			position: {
-				top: '55%',
-				left: '70%',
+				top: '40%',
+				left: '50%',
 				scale: .7,
 				direction: 'right'
 			}
@@ -100,8 +100,8 @@
 			text: 'Caring for future generations',
 			name: 'caring-for-future-generations.png',
 			position: {
-				top: '50%',
-				left: '15%',
+				top: '60%',
+				left: '10%',
 				scale: .9
 			}
 		},
@@ -119,8 +119,8 @@
 			name: 'being-grateful-for-your-opportunities.png',
 				position: {
 				top: '85%',
-				left: '50%',
-				scale: .7,
+				left: '65%',
+				scale: 1,
 				direction: 'right'
 			}
 		}
@@ -269,6 +269,7 @@
 				height: 100%;
 				font-family: $font-family-body;
 				z-index: 1;
+				overflow-x: clip;
 			}
 		}
 	}

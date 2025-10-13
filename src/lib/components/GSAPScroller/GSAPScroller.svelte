@@ -33,11 +33,13 @@
 
 <style lang="scss">
 	@import '../../styles/variables.scss';
+	@import '../../styles/mixins.scss';
 
 	.scroller {
 		position: relative;
 		width: 100%;
 		z-index: 10;
+		overflow-x: clip;
 	}
 
 	// Global text classes for consistent typography
@@ -48,6 +50,20 @@
 		margin: 0;
 		line-height: 1.2;
 		letter-spacing: 0.02em;
+
+		// Mobile responsive sizing
+		@include mq('tablet', 'max') {
+			font-size: 2.5rem;
+		}
+
+		@include mq('mobile', 'max') {
+			font-size: 2rem;
+			line-height: 1.3;
+		}
+
+		@include mq('small-mobile', 'max') {
+			font-size: 1.75rem;
+		}
 	}
 
 	:global(.text-body) {
@@ -56,6 +72,20 @@
 		color: inherit;
 		line-height: 1.2;
 		letter-spacing: 0.02em;
+
+		// Mobile responsive sizing
+		@include mq('tablet', 'max') {
+			font-size: 2.3rem;
+		}
+
+		@include mq('mobile', 'max') {
+			font-size: 1.8rem;
+			line-height: 1.3;
+		}
+
+		@include mq('small-mobile', 'max') {
+			font-size: 1.5rem;
+		}
 	}
 
 	:global(.text-accent) {
@@ -63,6 +93,19 @@
 		font-size: 2.8rem;
 		position: relative;
 		display: inline-block;
+
+		// Mobile responsive sizing
+		@include mq('tablet', 'max') {
+			font-size: 2.3rem;
+		}
+
+		@include mq('mobile', 'max') {
+			font-size: 1.8rem;
+		}
+
+		@include mq('small-mobile', 'max') {
+			font-size: 1.5rem;
+		}
 	}
 
 	.light-bg {

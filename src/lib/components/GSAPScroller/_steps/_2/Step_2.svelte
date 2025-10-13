@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { gsap } from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+	import { isMobile } from '$lib/stores/responsive.js';
 
 	let stepElement;
 	let textElement;
@@ -100,22 +101,39 @@
 	<div class="text-content" bind:this={textElement}>
 		<div class="text-body"><span class="text-accent">We are increasingly</span></div>
 
-		<div class="d-words text-body">
-			<div class="d-word" bind:this={dividedElement} class:visible={dividedUnderline}>
-				<span class="text-accent">divided</span> in our beliefs,
+		{#if $isMobile}
+			<!-- Mobile: Break into two lines -->
+			<div class="d-words text-body">
+				<div class="d-word" bind:this={dividedElement} class:visible={dividedUnderline}>
+					<span class="text-accent">divided</span> in our beliefs,
+				</div>
+				<div class="d-word" bind:this={disillusionedElement} class:visible={disillusionedUnderline}>
+					<span class="text-accent">disillusioned</span> with our politics, and
+				</div>
+				<div class="d-word" bind:this={distrustfulElement} class:visible={distrustfulUnderline}>
+					 <span class="text-accent">distrustful</span> of each other.
+				</div>
 			</div>
-			<div class="d-word" bind:this={disillusionedElement} class:visible={disillusionedUnderline}>
-				<span class="text-accent">disillusioned</span> with our politics, and
+		{:else}
+			<!-- Desktop: Original layout -->
+			<div class="d-words text-body">
+				<div class="d-word" bind:this={dividedElement} class:visible={dividedUnderline}>
+					<span class="text-accent">divided</span> in our beliefs,
+				</div>
+				<div class="d-word" bind:this={disillusionedElement} class:visible={disillusionedUnderline}>
+					<span class="text-accent">disillusioned</span> with our politics, and
+				</div>
+				<div class="d-word" bind:this={distrustfulElement} class:visible={distrustfulUnderline}>
+					<span class="text-accent">distrustful</span> of each other.
+				</div>
 			</div>
-			<div class="d-word" bind:this={distrustfulElement} class:visible={distrustfulUnderline}>
-				<span class="text-accent">distrustful</span> of each other.
-			</div>
-		</div>
+		{/if}
 	</div>
 </div>
 
 <style lang="scss">
 	@import '../../../../styles/variables.scss';
+	@import '../../../../styles/mixins.scss';
 
 	.step-2 {
 		height: 150vh;
@@ -125,8 +143,12 @@
 		justify-content: center;
 		width: 100%;
 		color: var(--color-theme-light);
-
+		// overflow-x: hidden; // Prevent horizontal overflow from GSAP animations
 		z-index: 2;
+
+		@include mq('mobile', 'max') {
+			height: 100vh;
+		}
 
 		.text-content {
 			position: sticky;
@@ -138,10 +160,16 @@
 			z-index: 2;
 			max-width: 900px;
 			padding-bottom: 10rem;
-			// color: white;
+			overflow-x: clip;
+
+			@include mq('mobile', 'max') {
+				padding: 2rem 1rem;
+			}
+
 
 			.text-body {
 				margin: 0 0 1rem 0;
+				
 			}
 
 			.d-words {
@@ -149,12 +177,30 @@
 				flex-direction: column;
 				align-items: flex-start;
 				gap: 1rem;
+				width: 100%;
+				text-align: left;
+				
+			
+				// Mobile responsive adjustments
+				@include mq('mobile', 'max') {
+					// align-items: center;
+					// text-align: center;
+					gap: 0.5rem;
+				}
 
 				.d-word {
 					white-space: nowrap;
 					position: relative;
+					overflow-x: visible; // Allow the word itself to animate
+
+					// Mobile responsive adjustments
+					@include mq('mobile', 'max') {
+						white-space: normal;
+						// text-align: center;
+					}
 
 					.text-accent {
+						
 						&::after {
 							content: '';
 							position: absolute;

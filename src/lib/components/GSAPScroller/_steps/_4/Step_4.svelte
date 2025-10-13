@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { gsap } from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+	import { isMobile } from '$lib/stores/responsive.js';
 
 	let stepElement;
 	let questionElement;
@@ -97,6 +98,7 @@
 
 <style lang="scss">
 	@import '../../../../styles/variables.scss';
+	@import '../../../../styles/mixins.scss';
 
 	.step-4 {
 		height: 150vh;
@@ -105,51 +107,85 @@
 		align-items: center;
 		justify-content: center;
 		width: 100%;
-
 		color: var(--color-theme-light);
 
-	.text-content {
-		position: sticky;
-		top: 50vh;
-		transform: translateY(-50%);
-		width: 50%;
-		padding: 2rem;
-		text-align: right;
-		z-index: 10;
-		max-width: 700px;
-		display: flex;
-		// align-items: center;
-		justify-content: flex-end;
-		b {
-			color: var(--color-theme-blue-light);
+		// Mobile: Stack vertically with natural height
+		@include mq('mobile', 'max') {
+			flex-direction: column;
+			height: auto;
+			min-height: 100vh;
 		}
-	}
 
-	.definition-content {
-		position: sticky;
-		top: 50vh;
-		transform: translateY(-50%);
-		width: 50%;
-		padding: 2rem;
-		text-align: left;
-		z-index: 5;
-		max-width: 700px;
-		display: flex;
-		// align-items: center;
-		justify-content: flex-start;
+		.text-content {
+			position: sticky;
+			top: 50vh;
+			transform: translateY(-50%);
+			width: 50%;
+			padding: 2rem;
+			text-align: right;
+			z-index: 10;
+			max-width: 700px;
+			display: flex;
+			justify-content: flex-end;
+			
+			// Mobile: Full width, center alignment
+			@include mq('mobile', 'max') {
+				width: 100%;
+				text-align: center;
+				justify-content: center;
+				padding: 1rem;
+				position: static;
+				transform: none;
+				margin-bottom: 2rem;
+			}
+
+			b {
+				color: var(--color-theme-blue-light);
+			}
+		}
+
+		.definition-content {
+			position: sticky;
+			top: 50vh;
+			transform: translateY(-50%);
+			width: 50%;
+			padding: 2rem;
+			text-align: left;
+			z-index: 5;
+			max-width: 700px;
+			display: flex;
+			justify-content: flex-start;
+
+			// Mobile: Full width, center alignment
+			@include mq('mobile', 'max') {
+				width: 100%;
+				text-align: center;
+				justify-content: center;
+				padding: 1rem;
+				position: static;
+				transform: none;
+			}
 
 			.dictionary-entry {
-				// background: var(--color-theme-blue-light);
-				// border: 2px solid var(--color-theme-blue);
 				border-radius: 12px;
 				padding-right: 2.5rem;
-				// box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 				font-family: 'Georgia', serif;
+
+				// Mobile responsive adjustments
+				@include mq('mobile', 'max') {
+					padding-right: 0;
+					text-align: center;
+				}
 
 				.term {
 					margin-bottom: 1rem;
 					border-bottom: 2px solid var(--color-theme-blue-light);
 					padding-bottom: 0.5rem;
+
+					// Mobile responsive adjustments
+					@include mq('mobile', 'max') {
+						text-align: center;
+					}
 
 					.term-text {
 						font-size: 2.2rem;
@@ -157,6 +193,11 @@
 						color: var(--color-theme-blue-light);
 						display: block;
 						margin-bottom: 0.25rem;
+
+						// Mobile responsive font size
+						@include mq('mobile', 'max') {
+							font-size: 1.8rem;
+						}
 					}
 
 					.pronunciation {
@@ -174,6 +215,11 @@
 					margin-bottom: 1rem;
 					text-transform: uppercase;
 					letter-spacing: 0.5px;
+
+					// Mobile responsive adjustments
+					@include mq('mobile', 'max') {
+						text-align: center;
+					}
 				}
 
 				.definition-text {
@@ -181,6 +227,13 @@
 					line-height: 1.6;
 					color: var(--color-theme-light);
 					text-align: justify;
+
+					// Mobile responsive adjustments
+					@include mq('mobile', 'max') {
+						font-size: 1.2rem;
+						text-align: center;
+						line-height: 1.5;
+					}
 				}
 			}
 		}
