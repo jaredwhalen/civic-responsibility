@@ -40,7 +40,7 @@
 
 <GSAPScroller section="outro" />
 
-<!-- <CTA /> -->
+<CTA />
 
 
 
