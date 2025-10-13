@@ -56,7 +56,7 @@
 			<button class="back-button" onclick={hideQuiz} data-button="back">
 				{!isStandalone ? '← Back' : '← Go to full story'}
 			</button>
-			<h2>How does your "civic profile" compare with other Americans?</h2>
+			<h2>What’s your civic profile?</h2>
 			<p>
 				Take the quiz below to find out. For each behavior, indicate whether or not you consider it
 				a civic responsibility.
@@ -129,7 +129,7 @@
 
 	.quiz-content {
 		width: 100%;
-		max-width: 1000px;
+		max-width: 700px;
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;

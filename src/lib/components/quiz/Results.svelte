@@ -14,47 +14,52 @@
 		})
 	);
 
-	// Calculate average American yes count
-	const averageAmericanYesCount = $derived(
-		sortedDuties.filter((duty) => Number(duty.mean) > 50).length
-	);
 
-	$inspect(results);
+
+	// Calculate civic profile based on submittedUserYesCount
+	const civicProfile = $derived.by(() => {
+		if (submittedUserYesCount <= 16) return 'Civic Minimalist';
+		if (submittedUserYesCount <= 20) return 'Civic Pragmatist';
+		if (submittedUserYesCount <= 25) return 'Civic Believer';
+		return 'Civic Champion';
+	});
 
 	const iconSize = 30;
 </script>
 
 <div class="results-container">
-	<h3 class="results-title">Your civic profile</h3>
+	<div class="results-title">
+		<div class="profile-label">Your civic profile</div>
+		<div class="profile-name">{civicProfile}</div>
+	</div>
 
 	<div class="results-table">
-		<div class="results-row inline">
+		<div class="results-row summary">
 			<p>
 				You selected <span class="highlight">{submittedUserYesCount}</span>
 				responsibilities. The average American selected
-				<span class="highlight">{averageAmericanYesCount}</span>
+				<span class="highlight">20</span>
 				responsibilities.
 			</p>
 		</div>
 
 		<div class="results-subhead">
-			Based on your {results.totalAnswered === 30
-				? 'responses'
-				: results.totalAnswered + ' responses'}, you match with...
+			Based on your responses, you align most closely with...
 		</div>
 
-		{#if results.predictions.ideology_tri}
-			{@const ideology = results.predictions.ideology_tri}
-			{@const ideologyPercent = (ideology.match[0] * 100).toFixed(0)}
+	{#if results.summary}
+		{@const ideology = results.summary.find(item => item.group_var === 'ideology_tri')}
+		{#if ideology}
+			{@const ideologyPercent = ideology.percent_fit.toFixed(0)}
 			<div class="results-row flex">
 				<div class="icon-container"><Vote color="#fff" size={iconSize} /></div>
 				<div class="content-container">
 					<p>
 						<span class="highlight black">
-							{ideology.predicted[0]} Americans
+							{ideology.predicted_group} Americans
 						</span>
 
-						<span class="highlight blue">{ideologyPercent}%</span> of the time
+						<span class="highlight blue">({ideologyPercent}% match)</span>
 					</p>
 					<div class="progress-bar">
 						<div class="progress-fill" style="width: {ideologyPercent}%"></div>
@@ -62,19 +67,21 @@
 				</div>
 			</div>
 		{/if}
+	{/if}
 
-		{#if results.predictions.urban_binary}
-			{@const urban = results.predictions.urban_binary}
-			{@const urbanPercent = (urban.match[0] * 100).toFixed(0)}
+	{#if results.summary}
+		{@const urban = results.summary.find(item => item.group_var === 'urban_binary')}
+		{#if urban}
+			{@const urbanPercent = urban.percent_fit.toFixed(0)}
 			<div class="results-row flex">
 				<div class="icon-container"><House color="#fff" size={iconSize} /></div>
 				<div class="content-container">
 					<p>
 						<span class="highlight black">
-							{urban.predicted[0]} Americans
+							{urban.predicted_group} Americans
 						</span>
 
-						<span class="highlight blue">{urbanPercent}%</span> of the time
+						<span class="highlight blue">({urbanPercent}% match)</span>
 					</p>
 					<div class="progress-bar">
 						<div class="progress-fill" style="width: {urbanPercent}%"></div>
@@ -82,19 +89,21 @@
 				</div>
 			</div>
 		{/if}
+	{/if}
 
-		{#if results.predictions.age_binary}
-			{@const age = results.predictions.age_binary}
-			{@const agePercent = (age.match[0] * 100).toFixed(0)}
+	{#if results.summary}
+		{@const age = results.summary.find(item => item.group_var === 'age_binary')}
+		{#if age}
+			{@const agePercent = age.percent_fit.toFixed(0)}
 			<div class="results-row flex">
 				<div class="icon-container"><Cake color="#fff" size={iconSize} /></div>
 				<div class="content-container">
 					<p>
 						<span class="highlight black">
-							{age.predicted[0] === 'old' ? 'older (50+)' : 'younger (<50)'} Americans
+							{age.predicted_group === 'old' ? 'older (50+)' : 'younger (<50)'} Americans
 						</span>
 
-						<span class="highlight blue">{agePercent}%</span> of the time
+						<span class="highlight blue">({agePercent}% match)</span>
 					</p>
 					<div class="progress-bar">
 						<div class="progress-fill" style="width: {agePercent}%"></div>
@@ -102,6 +111,7 @@
 				</div>
 			</div>
 		{/if}
+	{/if}
 	</div>
 
 	<SocialShare {results} />
@@ -119,18 +129,31 @@
 	}
 
 	.results-title {
-		font-size: 2.2rem;
-		color: #fff;
-		margin-bottom: 1.5rem;
-		font-weight: 700;
 		background-color: var(--color-theme-blue);
 		padding: 2rem;
+		text-align: center;
+
+		.profile-label {
+			font-size: 1.4rem;
+			color: #fff;
+			font-weight: 400;
+			margin-bottom: 0.5rem;
+			opacity: 0.9;
+		}
+
+		.profile-name {
+			font-size: 2.8rem;
+			color: #fff;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+		}
 	}
 
 	.results-table {
  
 		overflow: hidden; /* Ensures rounded corners apply to inner borders */
-		margin-top: 2rem;
+
 	}
 
 	.results-row {
@@ -139,6 +162,11 @@
 		text-align: left; /* Left align text */
 		color: #333;
 		gap: 0.75rem;
+
+		&.summary {
+			text-align: center;
+			margin: 1.5rem 0;
+		}
 
 		&.flex {
 			display: flex;
@@ -187,6 +215,7 @@
 
 	.results-subhead {
 		padding: 0.5rem 1rem;
+		margin-bottom: 0.5rem;
 		// border-bottom: 1px solid #e0e0e0;
 		text-align: left;
 		color: #000;
@@ -195,6 +224,13 @@
 		display: inline-block;
 		border-radius: 20px;
 		font-weight: 600;
+
+		.percentage-match {
+			display: block;
+			font-size: 0.9em;
+			margin-top: 0.25rem;
+			opacity: 0.8;
+		}
 	}
 
 	.highlight {
@@ -206,6 +242,8 @@
 
 		&.blue {
 			color: var(--color-theme-blue-light);
+			text-transform: none;
+			font-weight: 500;
 		}
 	}
 
