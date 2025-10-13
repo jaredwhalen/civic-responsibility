@@ -40,15 +40,15 @@
 		text {
 			font-family: $font-family-body;
 			font-size: 1rem;
-			fill: var(--color-gray-400);
+			fill: var(--color-gray-500);
+		}
+
+		line {
+			stroke-width: 2;
+			stroke: var(--color-gray-300);
 		}
 
 		&.intro {
-			line {
-				stroke-width: 2;
-				stroke: var(--color-gray-300);
-			}
-
 			.tick line {
 				stroke-width: 3;
 			}
@@ -57,6 +57,7 @@
 				font-size: 1.5rem;
 				font-weight: 500;
 				alignment-baseline: central;
+				fill: var(--color-gray-400);
 			}
 		}
 	}
