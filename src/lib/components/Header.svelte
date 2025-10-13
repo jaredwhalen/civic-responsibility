@@ -1,11 +1,43 @@
 <script>
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
+	import { beforeNavigate } from '$app/navigation';
+	import { Home } from '@lucide/svelte';
 	import Lockup from './Lockup.svelte';
 
 	let { headerHeight = $bindable() } = $props();
 
 	let bg = $derived($page.url.pathname.includes('/dashboard') || $page.url.pathname.includes('/quiz'));
+	let previousPath = $state('');
+	let isRoutePage = $derived($page.url.pathname.includes('/dashboard') || $page.url.pathname.includes('/quiz'));
+	
+	// Track the previous path to determine navigation behavior
+	beforeNavigate((navigation) => {
+		if (navigation.from) {
+			previousPath = navigation.from.url.pathname;
+		}
+	});
+
+	// Determine if we came directly from root
+	let cameDirectlyFromRoot = $derived.by(() => {
+		if (!isRoutePage) return false;
+		// Check if previous path was root (/ or /base)
+		return previousPath === '/' || previousPath === base || previousPath === base + '/';
+	});
+
+	// Derive button text based on navigation state
+	let backButtonText = $derived(cameDirectlyFromRoot ? 'Go back home' : 'Home');
+
+	function handleBackClick() {
+		if (cameDirectlyFromRoot && browser) {
+			// Use browser back to maintain scroll position when coming directly from root
+			window.history.back();
+		} else {
+			// Navigate to root page for all other cases (came from another route, external, etc)
+			window.location.href = base + '/';
+		}
+	}
 </script>
 
 <header class="main-header" aria-label="Site navigation" bind:clientHeight={headerHeight} class:bg>
@@ -14,6 +46,12 @@
 	</div>
 
 	<div class="header-right">
+		{#if isRoutePage}
+			<button class="nav-button back-button" onclick={handleBackClick}>
+				<Home size={16} />
+				{backButtonText}
+			</button>
+		{/if}
 		{#if !$page.url.pathname.includes('/dashboard')}
 			<a href={base + '/dashboard'} class="nav-button dashboard-button"> View the data dashboard </a>
 		{/if}
@@ -100,6 +138,20 @@
 
 				&.quiz-button {
 					color: var(--color-theme-light);
+				}
+
+				&.back-button {
+					color: var(--color-theme-light);
+					background: rgba(255, 255, 255, 0.1);
+					border: 1px solid rgba(255, 255, 255, 0.2);
+					display: flex;
+					align-items: center;
+					gap: 0.5rem;
+					
+					&:hover {
+						background: rgba(255, 255, 255, 0.15);
+						border-color: rgba(255, 255, 255, 0.3);
+					}
 				}
 			}
 		}

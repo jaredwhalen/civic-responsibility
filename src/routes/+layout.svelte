@@ -10,7 +10,6 @@
 
 	const { meta } = copy;
 
-	$inspect($page.url.pathname == '/dashboard');
 </script>
 
 <svelte:head>

@@ -99,17 +99,22 @@
 </div>
 
 <style lang="scss">
+	@import '../../styles/mixins.scss';
+
 	.quiz-footer {
 		position: sticky;
 		bottom: 0;
-		background-color: var(--bg-color);
+		background: rgba(255, 255, 255, 0.5) ;
+		backdrop-filter: blur(20px) ;
+		-webkit-backdrop-filter: blur(20px) ;
+		border: 1px solid rgba(255, 255, 255, 0.3) ;
 		padding: 1.5rem 2rem;
-		border-top: 1px solid #e9ecef;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+		box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1);
 		z-index: 100;
+
 
 		.progress-info {
 			.progress-text {
@@ -120,29 +125,24 @@
 		}
 
 		.submit-button {
-			border: none;
+			background: rgba(59, 130, 246, 0.8);
+			backdrop-filter: blur(10px);
+			-webkit-backdrop-filter: blur(10px);
+			border: 1px solid rgba(59, 130, 246, 0.3);
 			color: white;
 			font-size: 1.2rem;
 			font-weight: 600;
-			background-color: var(--color-theme-blue-light);
 			padding: 1rem 3rem;
 			border-radius: 12px;
 			cursor: pointer;
 			transition: all 0.3s ease;
-
-			padding: 0.5rem 1rem;
-			border-radius: 8px;
-			border: none;
-			cursor: pointer;
-			display: inline-block;
-			font-size: inherit;
-			font-weight: 600;
-			transition: all 0.3s ease;
-			will-change: transform, opacity;
+			box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 
 			&:hover:not(:disabled) {
 				transform: translateY(-2px);
-				box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+				box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+				background: rgba(59, 130, 246, 0.9);
+				border-color: rgba(59, 130, 246, 0.4);
 			}
 
 			&:active:not(:disabled) {
@@ -150,9 +150,13 @@
 			}
 
 			&:disabled {
-				background-color: #ccc;
+				background: rgba(156, 163, 175, 0.5);
+				backdrop-filter: blur(10px);
+				-webkit-backdrop-filter: blur(10px);
+				border: 1px solid rgba(156, 163, 175, 0.2);
 				cursor: not-allowed;
 				opacity: 0.6;
+				box-shadow: 0 2px 8px rgba(156, 163, 175, 0.2);
 			}
 		}
 	}

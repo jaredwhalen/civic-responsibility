@@ -5,28 +5,15 @@
 	import Submit from './Submit.svelte';
 	import Results from './Results.svelte';
 
-	let { showQuiz = $bindable() } = $props();
 	let isLoading = $state(false);
 	let results = $state(null);
 	let error = $state(null);
 	let responses = $state({});
 	let submittedUserYesCount = $state(0);
 
-	// Determine if this is standalone mode (no showQuiz prop) or modal mode
-	const isStandalone = $derived(showQuiz === undefined);
-
-	function hideQuiz() {
-		if (!isStandalone) {
-			showQuiz = false;
-		} else {
-			window.location.href = '/';
-		}
-	}
-
 	function handleResults(newResults) {
 		if (newResults) {
 			results = newResults;
-			// Extract the user's yes count from the results object
 			submittedUserYesCount = newResults.userYesCount || 0;
 		}
 	}
@@ -39,7 +26,6 @@
 		error = err;
 	}
 
-	// Cleanup on component destroy
 	$effect(() => {
 		return () => {
 			document.body.style.overflow = '';
@@ -47,16 +33,10 @@
 	});
 </script>
 
-<div
-	class="quiz-container {isStandalone ? 'standalone' : 'modal'}"
-	transition:fade={{ duration: 300 }}
->
+<div class="quiz-container">
 	<div class="quiz-content">
 		<div class="quiz-header">
-			<button class="back-button" onclick={hideQuiz} data-button="back">
-				{!isStandalone ? '← Back' : '← Go to full story'}
-			</button>
-			<h2>What’s your civic profile?</h2>
+			<h2>What's your civic profile?</h2>
 			<p>
 				Take the quiz below to find out. For each behavior, indicate whether or not you consider it
 				a civic responsibility.
@@ -105,26 +85,13 @@
 </div>
 
 <style lang="scss">
+	@import '../../styles/mixins.scss';
+
 	.quiz-container {
 		background-color: var(--bg-color);
-
-		&.modal {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100vw;
-			height: 100vh;
-			z-index: 10000;
-			overflow-y: auto;
-			border: 10px solid var(--color-theme-blue-light);
-		}
-
-		&.standalone {
-			position: relative;
-			width: 100%;
-			min-height: 100vh;
-			z-index: 1;
-		}
+		width: 100%;
+		min-height: 100vh;
+		margin-bottom: 1rem;
 	}
 
 	.quiz-content {
@@ -133,48 +100,16 @@
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
-
-		.quiz-container.modal & {
-			min-height: 100vh;
-		}
-
-		.quiz-container.standalone & {
-			min-height: calc(100vh - 160px); // Account for header and footer
-			padding-bottom: 2rem;
-		}
+		padding-bottom: 2rem;
 	}
 
 	.quiz-header {
-		position: relative;
 		padding: 2rem;
 		display: flex;
 		flex-direction: column;
 		gap: 2rem;
+		margin-top: 120px;
 
-		.quiz-container.modal & {
-			margin-top: 100px;
-		}
-
-		.quiz-container.standalone & {
-			margin-top: 120px; // Account for header
-		}
-
-		.back-button {
-			background: none;
-			border: none;
-			color: #333;
-			font-size: 14px;
-			font-weight: 800;
-			cursor: pointer;
-			transition: all 0.2s ease;
-			padding: 0.5rem 0;
-			z-index: 10;
-			text-align: left;
-
-			&:hover {
-				color: var(--color-theme-blue);
-			}
-		}
 
 		h2 {
 			margin: 1rem 0 1rem 0;
@@ -192,25 +127,15 @@
 		}
 
 		.definition-container {
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			border-left: 5px solid var(--color-theme-blue-light);
-			padding: 1rem 0px 1rem 1rem;
-			background-color: white;
-			font-family: 'Georgia', serif;
-			font-size: 1.1rem;
-			box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
 			display: none;
 		}
 	}
 
 	.quiz-container {
 		flex: 1;
-		padding: 0px 1.5rem;
+		padding: 0 1.5rem;
 	}
 
-	// Loading state
 	.loading-container {
 		display: flex;
 		flex-direction: column;
@@ -245,7 +170,6 @@
 		}
 	}
 
-	// Error state
 	.error-container {
 		display: flex;
 		flex-direction: column;
@@ -280,7 +204,6 @@
 		}
 	}
 
-	// Responsive design
 	@media (max-width: 768px) {
 		.quiz-content {
 			margin: 0;
