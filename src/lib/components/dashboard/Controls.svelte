@@ -16,6 +16,7 @@
 	} = $props();
 	let selectedOption = $state('mean');
 
+
 	let isDropdownOpen = $state(false);
 	let buttonRefs = $state({});
 	let isMounted = $state(false);
@@ -25,8 +26,8 @@
 	// Derived resultsOptions array based on selectedStateView
 	let resultsOptions = $derived(
 		selectedStateView === 'chart'
-			? Array.from(searchOptions.states).map((state) => ({ label: state, value: state }))
-			: Array.from(searchOptions.duties).map((duty) => ({ label: duty, value: duty }))
+			? searchOptions.states.map((state) => ({ label: state, value: state }))
+			: searchOptions.duties.map((duty) => ({ label: duty, value: duty }))
 	);
 
 	// Update selectedStateMapViewOption when resultsOptions change (for map view)

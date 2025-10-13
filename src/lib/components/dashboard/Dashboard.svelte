@@ -42,6 +42,11 @@
 			return n !== undefined && n >= threshold;
 		});
 	}
+	
+	// Filter data once and reuse
+	const filteredStateData = filterDataByN(states, statesNMap, N_THRESHOLD, 'state');
+	const filteredRaceData = filterDataByN(race, raceNMap, N_THRESHOLD, 'racegroup');
+	
 	let { activeId, interactiveMode = $bindable(), animateMount = true, isPinned = false } = $props();
 	let activeView = $state('mean');
 	let selectedStateView = $state('map');
@@ -49,10 +54,11 @@
 	let selectedStateMapViewOption = $state(null);
 	let guessMode = $derived(activeId == 'poll-guess');
 	let pollCorrectMode = $derived(activeId == 'poll-correct');
+	
 	let mapData = $derived(
-		filterDataByN(states, statesNMap, N_THRESHOLD, 'state').filter(
-			(d) => d.duty_label == selectedStateMapViewOption
-		)
+		filteredStateData
+			.filter((d) => d.duty_label == selectedStateMapViewOption)
+			.sort((a, b) => a.state.localeCompare(b.state))
 	);
 	let hoveredSeries = $state(null);
 	let clickedSeries = $state(new Set());
@@ -283,9 +289,9 @@
 		mean: transformGroupedData(mean),
 		gender: transformGroupedData(gender),
 		generation: transformGroupedData(generation),
-		race: transformGroupedData(filterDataByN(race, raceNMap, N_THRESHOLD, 'racegroup')),
+		race: transformGroupedData(filteredRaceData),
 		pid: transformGroupedData(pid),
-		state: transformGroupedData(filterDataByN(states, statesNMap, N_THRESHOLD, 'state'))
+		state: transformGroupedData(filteredStateData)
 	};
 
 	let currentViewData = $derived.by(() => {
@@ -466,6 +472,9 @@
 	};
 
 	const mapColorScale = scaleSequential().interpolator(interpolateYlGn).domain([0, 100]);
+	
+
+
 </script>
 
 <div
@@ -488,17 +497,8 @@
 				bind:interactiveMode
 				bind:isPinned
 				searchOptions={{
-					states: new Set(
-						states
-							.map((d) => d.state)
-							.filter((state, index, self) => {
-								// Get unique states and check if they meet N threshold
-								const isUnique = self.indexOf(state) === index;
-								const n = statesNMap.get(state.toLowerCase());
-								return isUnique && n !== undefined && n >= N_THRESHOLD;
-							})
-					),
-					duties: new Set(transformedData.state.map((d) => d.duty_label))
+					states: Array.from(new Set(filteredStateData.map((d) => d.state))).sort(),
+					duties: Array.from(new Set(transformedData.state.map((d) => d.duty_label)))
 				}}
 				onExit={() => {
 					// Scroll to dashboard element when exiting pinned view
