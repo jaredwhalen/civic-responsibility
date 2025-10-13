@@ -26,6 +26,22 @@
 	import states from '$lib/data/csvs/mean_duties_weighted_by_state.csv';
 	import { get } from 'svelte/store';
 
+	// n counts
+	import statesN from '$lib/data/csvs/states_n.csv';
+	import raceN from '$lib/data/csvs/race_n.csv';
+
+	const N_THRESHOLD = 30;
+
+	// Create N lookup maps with normalized keys (lowercase)
+	const raceNMap = new Map(raceN.map((d) => [d.raceGroup.toLowerCase(), Number(d.n)]));
+	const statesNMap = new Map(statesN.map((d) => [d.State.toLowerCase(), Number(d.n)]));
+
+	function filterDataByN(data, nMap, threshold, groupKey) {
+		return data.filter((row) => {
+			const n = nMap.get(row[groupKey].toLowerCase());
+			return n !== undefined && n >= threshold;
+		});
+	}
 	let { activeId, interactiveMode = $bindable(), animateMount = true, isPinned = false } = $props();
 	let activeView = $state('mean');
 	let selectedStateView = $state('map');
@@ -33,20 +49,20 @@
 	let selectedStateMapViewOption = $state(null);
 	let guessMode = $derived(activeId == 'poll-guess');
 	let pollCorrectMode = $derived(activeId == 'poll-correct');
-	let mapData = $derived(states.filter((d) => d.duty_label == selectedStateMapViewOption));
+	let mapData = $derived(
+		filterDataByN(states, statesNMap, N_THRESHOLD, 'state').filter(
+			(d) => d.duty_label == selectedStateMapViewOption
+		)
+	);
 	let hoveredSeries = $state(null);
 	let clickedSeries = $state(new Set());
 	let clickedCircles = $state(new Set());
-
-
 
 	$effect(() => {
 		if (activeId != '9999-dashboard') {
 			activeView = 'mean';
 		}
 	});
-
-
 
 	// Reset dashboard to default interactive mode settings when unpinned
 	$effect(() => {
@@ -267,9 +283,9 @@
 		mean: transformGroupedData(mean),
 		gender: transformGroupedData(gender),
 		generation: transformGroupedData(generation),
-		race: transformGroupedData(race),
+		race: transformGroupedData(filterDataByN(race, raceNMap, N_THRESHOLD, 'racegroup')),
 		pid: transformGroupedData(pid),
-		state: transformGroupedData(states)
+		state: transformGroupedData(filterDataByN(states, statesNMap, N_THRESHOLD, 'state'))
 	};
 
 	let currentViewData = $derived.by(() => {
@@ -373,12 +389,20 @@
 	let dashboardHeight = $state(null);
 	let controlsHeight = $state(null);
 	let axisHeight = 50;
+	let noteHeight = $state(0);
+
+	// Reset noteHeight when note is not visible
+	$effect(() => {
+		if (!interactiveMode || (activeView !== 'state' && activeView !== 'race')) {
+			noteHeight = 0;
+		}
+	});
 
 	// Calculate dynamic row height based on available space
 	const rowHeight = $derived.by(() => {
 		if (!dashboardHeight || !controlsHeight) return baseRowHeight;
 
-		const availableHeight = dashboardHeight - axisHeight - controlsHeight;
+		const availableHeight = dashboardHeight - axisHeight - controlsHeight - noteHeight;
 
 		const requiredHeight =
 			currentViewData.length * baseRowHeight +
@@ -417,7 +441,7 @@
 	// Calculate chart container height for pinned mode
 	const chartContainerHeight = $derived(
 		interactiveMode && isPinned
-			? `calc(100vh - ${controlsHeight || 200}px - ${selectedStateView == 'map' ? 0 : axisHeight}px)`
+			? `calc(100vh - ${controlsHeight || 200}px - ${selectedStateView == 'map' ? 0 : axisHeight}px - ${noteHeight}px)`
 			: adjustedDimensions.height
 	);
 
@@ -442,7 +466,6 @@
 	};
 
 	const mapColorScale = scaleSequential().interpolator(interpolateYlGn).domain([0, 100]);
-	
 </script>
 
 <div
@@ -465,7 +488,16 @@
 				bind:interactiveMode
 				bind:isPinned
 				searchOptions={{
-					states: new Set(states.map((d) => d.state)),
+					states: new Set(
+						states
+							.map((d) => d.state)
+							.filter((state, index, self) => {
+								// Get unique states and check if they meet N threshold
+								const isUnique = self.indexOf(state) === index;
+								const n = statesNMap.get(state.toLowerCase());
+								return isUnique && n !== undefined && n >= N_THRESHOLD;
+							})
+					),
 					duties: new Set(transformedData.state.map((d) => d.duty_label))
 				}}
 				onExit={() => {
@@ -481,7 +513,12 @@
 				{#if activeView == 'state' && selectedStateView == 'map'}
 					<GradientLegend colorScale={mapColorScale} />
 				{:else}
-					<GroupLegend options={options.find((o) => o.value === activeView)} {activeView} interactive={true} bind:clickedSeries />
+					<GroupLegend
+						options={options.find((o) => o.value === activeView)}
+						{activeView}
+						interactive={true}
+						bind:clickedSeries
+					/>
 				{/if}
 			</div>
 		</div>
@@ -512,8 +549,8 @@
 			bind:clientHeight={renderedChartContainerHeight}
 		>
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-			<svg 
-				{width} 
+			<svg
+				{width}
 				height={adjustedDimensions.height}
 				role="img"
 				aria-label="Data visualization chart"
@@ -586,6 +623,16 @@
 				/>
 			</div>
 		{/if}
+
+		{#if interactiveMode && (activeView === 'state' || activeView === 'race')}
+			<div class="n-threshold-note" class:sticky={interactiveMode} bind:clientHeight={noteHeight}>
+				{#if activeView === 'state'}
+					Only states with more than N = 30 participants are included
+				{:else}
+					Only categories with more than N = 30 participants are included
+				{/if}
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -644,8 +691,6 @@
 			// Content styles here if needed
 		}
 
-	
-
 		// Dashboard legend
 		.dashboard-legend {
 			margin-top: 0.5rem;
@@ -697,6 +742,22 @@
 		// Axis wrapper
 		.axis-wrapper {
 			background-color: var(--bg-color);
+
+			&.sticky {
+				position: sticky;
+				bottom: 0;
+				z-index: 1000;
+			}
+		}
+
+		// N threshold note
+		.n-threshold-note {
+			background-color: var(--bg-color);
+			padding: 0.75rem 1rem;
+			text-align: center;
+			font-size: 0.875rem;
+			color: #666;
+			font-style: italic;
 
 			&.sticky {
 				position: sticky;

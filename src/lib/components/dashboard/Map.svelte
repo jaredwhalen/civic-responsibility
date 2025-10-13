@@ -27,6 +27,8 @@
 	let projection = $derived(geoAlbersUsa().fitSize([width, height], geoJson));
 	let pathGenerator = $derived(geoPath().projection(projection));
 
+
+	console.log(data)
 	run(() => {
 		paths = geoJson.features.map((feature) => {
 			const stateData = data.find((d) => d.state === feature.properties.NAME);
