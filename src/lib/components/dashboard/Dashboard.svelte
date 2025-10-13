@@ -9,6 +9,7 @@
 	import { interpolateRgb } from 'd3-interpolate';
 	import { interpolateViridis } from 'd3-scale-chromatic';
 	import { getCSSVar } from '$lib/helpers/getCSSVar';
+	import { isMobile } from '$lib/stores/responsive.js';
 
 	// components
 	import Controls from './Controls.svelte';
@@ -382,9 +383,9 @@
 		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
 			top: interactiveMode ? baseRowHeight : 60,
-			right: interactiveMode ? 50 : 150,
+			right:  $isMobile ? 15 : (interactiveMode ? 50 : 150),
 			bottom: interactiveMode ? baseRowHeight : 0,
-			left: guessMode ? 150 : 450
+			left: $isMobile ? 15 : (guessMode ? 150 : 450)
 		}
 	});
 
@@ -473,7 +474,23 @@
 
 	const mapColorScale = scaleSequential().interpolator(interpolateViridis).domain([0, 100]);
 	
+	// Function to reset clicked series and circles
+	function resetSelections(e) {
+		// Reset clicked series if interacting outside circles
+		if (interactiveMode && !e.target.closest('circle')) {
+			clickedSeries = new Set();
+			clickedCircles = new Set();
+		}
+	}
 
+	// Function to handle Escape key
+	function handleEscapeKey(e) {
+		// Reset clicked series on Escape key
+		if (interactiveMode && e.key === 'Escape') {
+			clickedSeries = new Set();
+			clickedCircles = new Set();
+		}
+	}
 
 </script>
 
@@ -525,12 +542,6 @@
 	{/if}
 
 	<div class="dashboard-content">
-		<!-- {#if interactiveMode && !isPinned}
-			<div class="overlay" transition:fade={{ duration: 500 }}>
-				<button class="explore-button" onclick={() => (isPinned = true)}>Explore the data</button>
-			</div>
-		{/if} -->
-
 		{#if interactiveMode && activeView == 'state' && selectedStateView == 'map'}
 			<div class="map-container">
 				<MapViz
@@ -554,20 +565,9 @@
 				height={adjustedDimensions.height}
 				role="img"
 				aria-label="Data visualization chart"
-				onclick={(e) => {
-					// Reset clicked series if clicking outside circles
-					if (interactiveMode && !e.target.closest('circle')) {
-						clickedSeries = new Set();
-						clickedCircles = new Set();
-					}
-				}}
-				onkeydown={(e) => {
-					// Reset clicked series on Escape key
-					if (interactiveMode && e.key === 'Escape') {
-						clickedSeries = new Set();
-						clickedCircles = new Set();
-					}
-				}}
+				onclick={resetSelections}
+				ontouchend={resetSelections}
+				onkeydown={handleEscapeKey}
 			>
 				<g class="rows">
 					{#each sortedViewData as row, i (row.duty_label)}
@@ -649,6 +649,11 @@
 		background-color: var(--bg-color);
 		transition: all 0.5s ease;
 		font-family: sans-serif;
+
+		@include mq('small-mobile', 'max') {
+			justify-content: flex-end;
+			padding-bottom: 1rem;
+		}
 
 		// Interactive mode styles
 		&.interactive {

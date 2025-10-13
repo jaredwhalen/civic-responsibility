@@ -61,9 +61,7 @@
 			line-height: 1.3;
 		}
 
-		@include mq('small-mobile', 'max') {
-			font-size: 1.75rem;
-		}
+	
 	}
 
 	:global(.text-body) {

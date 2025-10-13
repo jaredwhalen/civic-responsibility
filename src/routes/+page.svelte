@@ -36,7 +36,7 @@
 
 <GSAPScroller section="intro" />
 
-<!-- <MatrixScroller {content}/> -->
+<MatrixScroller {content}/>
 
 <!-- <GSAPScroller section="outro" /> -->
 

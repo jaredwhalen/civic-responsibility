@@ -1,4 +1,6 @@
 <script>
+	import { isMobile } from '$lib/stores/responsive.js';
+
 	let { width, dimensions, axisHeight, tickSize, xScale, inIntro } = $props();
 </script>
 
@@ -6,7 +8,7 @@
 	<svg {width} height={axisHeight}>
 		<g class="x-axis axis" class:intro={inIntro}>
 			<line x1={dimensions.margins.left} x2={width - dimensions.margins.right} stroke-width="2" />
-			{#each [0, 25, 50, 75, 100] as tickValue}
+			{#each [0, 25, 50, 75, 100] as tickValue, i}
 				<line
 					x1={xScale(tickValue)}
 					x2={xScale(tickValue)}
@@ -19,7 +21,7 @@
 					class="tick"
 					transform="translate({xScale(tickValue)}, {(inIntro ? tickSize * 1.5 : tickSize) / 2})"
 				>
-					<text y="30" text-anchor="middle">{tickValue}%</text>
+					<text y={$isMobile ? '20' : '30'} text-anchor="middle" class:first={i === 0} class:last={i === 4}>{tickValue}%</text>
 				</g>
 			{/each}
 		</g>
@@ -58,6 +60,20 @@
 				font-weight: 500;
 				alignment-baseline: central;
 				fill: var(--color-gray-400);
+
+				@include mq('mobile', 'max') {
+					font-size: 0.9rem;
+
+					&.first {
+						text-anchor: start;
+						transform: translateX(-3px);
+					}
+
+					&.last {
+						text-anchor: end;
+						transform: translateX(3px);
+					}
+				}
 			}
 		}
 	}

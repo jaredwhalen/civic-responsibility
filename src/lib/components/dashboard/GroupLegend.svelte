@@ -76,6 +76,20 @@
 			.legend-items {
 				justify-content: center;
 			}
+
+			@include mq('mobile', 'max') {
+
+				margin-top: 0rem;
+				.legend-label {
+					font-size: 1rem;
+				}
+
+				.legend-dot {
+					width: 12px;
+					height: 12px;
+					border: none;
+				}
+			}
 		}
 	}
 

@@ -79,7 +79,10 @@
 
 		{#if ActiveComponent}
 			<div class="text-footer__component">
-				<ActiveComponent options={options.find((o) => o.value === content.component.series)} variant={content?.component?.variant} />
+				<ActiveComponent
+					options={options.find((o) => o.value === content.component.series)}
+					variant={content?.component?.variant}
+				/>
 			</div>
 		{/if}
 	</div>
@@ -105,6 +108,10 @@
 				opacity: 0;
 			}
 
+			@include mq('small-mobile', 'max') {
+				top: 10%;
+			}
+
 			// @include mq('medium') {
 			// 	bottom: 20px;
 			// }
@@ -112,13 +119,14 @@
 			&__content {
 				width: 100%;
 
-		
 				font-size: 2rem;
 				line-height: 1.5;
 				font-weight: 400;
 				font-family: $font-family-body;
-				// background-color: rgb(236, 241, 250);
-				// border: 1px solid #999;
+
+				@include mq('small-mobile', 'max') {
+					font-size: 1.4rem;
+				}
 
 				// Mobile responsive adjustments
 				@include mq('mobile', 'max') {
@@ -145,9 +153,23 @@
 			}
 		}
 
-		// // Global style for show-on-interaction elements
-		// .show-on-interaction {
-		// 	display: var(--show-on-interaction-display, none);
-		// }
+		span.instructions {
+			display: block;
+			font-size: 1.4rem;
+			font-family: $font-family-sans;
+			font-weight: 300;
+			margin-top: 1rem;
+
+			// Mobile responsive instructions
+			@include mq('mobile', 'max') {
+				font-size: 0.9rem;
+				margin-top: 15px;
+			}
+
+			.dot {
+				color: $color-theme-red;
+				// font-size: 2rem;
+			}
+		}
 	}
 </style>

@@ -4,9 +4,8 @@
 
 	import Text from '$lib/components/MatrixScroller/Text.svelte';
 
-
 	let { content } = $props();
-    
+
 	let count = $state(0);
 	let index = $state(0);
 	let offset = $state(0);
@@ -64,8 +63,26 @@
 			aria-label="Second content slides"
 		>
 			{#each content.scrolly.slidesFixed as slide, slideIndex}
-				<section style="height: 100vh;"></section>
+				<section class="slide"></section>
 			{/each}
 		</div>
 	{/snippet}
 </Scroller>
+
+<style lang="scss">
+	.slide {
+		height: 100svh;
+
+		&::after {
+			content: '';
+			position: absolute;
+			right: 2.5px;
+			width: 10px;
+			height: 10px;
+			background: #000;
+			border-radius: 50%;
+			opacity: 0.3;
+			top: 50%;
+		}
+	}
+</style>

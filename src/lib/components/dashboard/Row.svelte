@@ -6,6 +6,7 @@
 	import 'tippy.js/themes/light.css';
 	import { onMount } from 'svelte';
 	import { getCSSVar } from '$lib/helpers/getCSSVar';
+	import { isMobile } from '$lib/stores/responsive.js';
 
 	let {
 		duty_label = '',
@@ -46,6 +47,13 @@
 		svgEl = event.target.ownerSVGElement;
 	}
 
+	function handleTouchStart(event) {
+		if (!guessMode) return;
+		isDragging = true;
+		event.preventDefault();
+		svgEl = event.target.ownerSVGElement;
+	}
+
 	function handleMouseMove(event) {
 		if (!guessMode || !isDragging || !svgEl) return;
 
@@ -58,20 +66,44 @@
 		$userResponse.guess = clampedValue;
 	}
 
+	function handleTouchMove(event) {
+		if (!guessMode || !isDragging || !svgEl) return;
+
+		event.preventDefault();
+		const svgRect = svgEl.getBoundingClientRect();
+		const touch = event.touches[0];
+		const touchX = touch.clientX - svgRect.left;
+		const newValue = xScale.invert(touchX);
+		const clampedValue = Math.max(0, Math.min(100, newValue));
+
+		if (series[0]) series[0].value = clampedValue;
+		$userResponse.guess = clampedValue;
+	}
+
 	function handleMouseUp() {
 		if (!guessMode) return;
 		isDragging = false;
 		svgEl = null;
 	}
 
-	// Global mouse listeners when guessing
+	function handleTouchEnd() {
+		if (!guessMode) return;
+		isDragging = false;
+		svgEl = null;
+	}
+
+	// Global mouse and touch listeners when guessing
 	$effect(() => {
 		if (guessMode) {
 			document.addEventListener('mousemove', handleMouseMove);
 			document.addEventListener('mouseup', handleMouseUp);
+			document.addEventListener('touchmove', handleTouchMove, { passive: false });
+			document.addEventListener('touchend', handleTouchEnd);
 			return () => {
 				document.removeEventListener('mousemove', handleMouseMove);
 				document.removeEventListener('mouseup', handleMouseUp);
+				document.removeEventListener('touchmove', handleTouchMove);
+				document.removeEventListener('touchend', handleTouchEnd);
 			};
 		}
 	});
@@ -257,7 +289,7 @@
 	class:highlight
 	class:interactive={interactiveMode}
 	transform="translate(0, {y})"
-	transition:fly={{ duration: 500, y: 100, delay: index * 10 }}
+	transition:fly={{ duration: $isMobile ? 0 : 500, y: 100, delay: index * 10 }}
 	style="--delay: {index * 10}ms;"
 	style:--circle-transition={circleTransition}
 >
@@ -269,20 +301,6 @@
 		class="grid-line"
 		stroke-width={inIntro ? 2 : 1}
 	/>
-
-	{#key duty_label}
-		<text
-			class:hide={guessMode}
-			class="duty-label"
-			x={dimensions.margins.left - 10}
-			y="0"
-			dy="0.32em"
-			text-anchor="end"
-			class:highlight
-		>
-			{duty_label}
-		</text>
-	{/key}
 
 	{#if showGapLine && gapLineCoords}
 		<line
@@ -308,7 +326,7 @@
 			Math.abs(xScale(series[0].value) - xScale(series[1].value)) < 75}
 
 		{@const color = getCircleColor(s)}
-		{@const textOffset = guessMode || pollCorrectMode ? -30 : -30}
+		{@const textOffset = $isMobile ? -20 : -30}
 		{@const circleId = `${duty_label}-${s.label}`}
 
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -321,6 +339,7 @@
 			fill={color}
 			opacity={interactiveMode ? 0.75 : 1}
 			onmousedown={handleMouseDown}
+			ontouchstart={handleTouchStart}
 			style={guessMode ? 'cursor: grab;' : ''}
 			class:interactive={guessMode}
 			data-state={s.label}
@@ -332,12 +351,15 @@
 				? `<b>${s.label ? (s.label.includes('duties') ? 'U.S. average:' : s.label + ':') : ''}</b> ${s.value ? `${s.value.toFixed(0)}%` : ''}`
 				: ''}
 			onmouseover={() => {
+				if (!interactiveMode) return;
 				hoveredSeries = s.label;
 			}}
 			onmouseout={() => {
+				if (!interactiveMode) return;
 				hoveredSeries = null;
 			}}
 			onclick={(e) => {
+				if (!interactiveMode) return;
 				handleCircleClick(e, s.label);
 			}}
 			class:isDragging
@@ -391,6 +413,20 @@
 			{/if}
 		{/each}
 	{/if}
+
+	{#key duty_label}
+		<text
+			class:hide={guessMode}
+			class="duty-label"
+			x={dimensions.margins.left - ($isMobile ? 0 : 10)}
+			y={$isMobile ? '-12' : '0'}
+			dy="0.32em"
+			text-anchor={$isMobile ? 'start' : 'end'}
+			class:highlight
+		>
+			{duty_label}
+		</text>
+	{/key}
 </g>
 
 <style lang="scss">
@@ -413,8 +449,19 @@
 		font-size: 1.6rem;
 		transition: opacity 0.5s ease;
 		font-weight: 300;
+		stroke: var(--bg-color);
+		stroke-width: 2;
+		paint-order: stroke;
+
+		@include mq('mobile', 'max') {
+			font-size: 1rem;
+		}
+
 		&.highlight {
 			font-weight: 700;
+			@include mq('mobile', 'max') {
+				font-weight: 400;
+			}
 		}
 	}
 
@@ -429,6 +476,10 @@
 		&.show {
 			opacity: 1;
 			transform: translateX(0);
+		}
+
+		@include mq('mobile', 'max') {
+			font-size: 1.4rem;
 		}
 	}
 
