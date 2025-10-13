@@ -1,6 +1,7 @@
 <script>
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
+	import Lockup from './Lockup.svelte';
 
 	let { headerHeight = $bindable() } = $props();
 
@@ -9,13 +10,7 @@
 
 <header class="main-header" aria-label="Site navigation" bind:clientHeight={headerHeight} class:bg>
 	<div class="header-left">
-		<a href="https://moreincommonus.com/" target="_blank" rel="noopener noreferrer">
-			<img class="logo" src={base + '/assets/icons/moreincommon.png'} alt="More in Common logo" />
-		</a>
-		<div class="logo-separator"></div>
-		<a href="https://beaconproject.us/" target="_blank" rel="noopener noreferrer">
-			<img class="logo" src={base + '/assets/icons/beaconproject.png'} alt="Beacon Project logo" />
-		</a>
+		<Lockup size="large" />
 	</div>
 
 	<div class="header-right">
@@ -60,43 +55,6 @@
 
 		.header-left {
 			pointer-events: auto;
-			display: flex;
-			align-items: center;
-			gap: $spacing-md;
-
-			a {
-				display: block;
-				line-height: 0;
-			}
-
-			.logo {
-				height: 80px;
-				width: auto;
-
-				// Mobile responsive logo sizing
-				@include mq('mobile', 'max') {
-					height: 30px;
-				}
-
-				@include mq('small-mobile', 'max') {
-					height: 25px;
-				}
-			}
-
-			.logo-separator {
-				width: 2px;
-				height: 60px;
-				background-color: #fff;
-
-				// Mobile responsive separator sizing
-				@include mq('mobile', 'max') {
-					height: 30px;
-				}
-
-				@include mq('small-mobile', 'max') {
-					height: 25px;
-				}
-			}
 		}
 
 		.header-right {
