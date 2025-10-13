@@ -419,7 +419,7 @@
 			class:hide={guessMode}
 			class="duty-label"
 			x={dimensions.margins.left - ($isMobile ? 0 : 10)}
-			y={$isMobile ? '-12' : '0'}
+			y={$isMobile ? interactiveMode ? '-15' : '-12' : '0'}
 			dy="0.32em"
 			text-anchor={$isMobile ? 'start' : 'end'}
 			class:highlight

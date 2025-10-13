@@ -1,6 +1,8 @@
 <script>
-	import { fade } from 'svelte/transition';
+	import { fade, fly } from 'svelte/transition';
 	import stateAbbreviations from '$lib/data/stateAbbreviations.json';
+	import { ListFilter } from '@lucide/svelte';
+	import { isMobile } from '$lib/stores/responsive.js';
 
 	let {
 		activeView = $bindable(),
@@ -12,8 +14,9 @@
 		isPinned = $bindable(),
 		onExit = () => {}
 	} = $props();
+	
 	let selectedOption = $state('mean');
-
+	let isModalOpen = $state(false);
 	let isDropdownOpen = $state(false);
 	let buttonRefs = $state({});
 
@@ -166,12 +169,83 @@
 			return `${selectedStateChartViewOptions.length} states selected`;
 		}
 	}
+
+	// Toggle modal (mobile only)
+	function toggleModal() {
+		isModalOpen = !isModalOpen;
+	}
+
+	// Close modal
+	function closeModal() {
+		isModalOpen = false;
+		isDropdownOpen = false;
+	}
+
+	// Get current view summary text
+	function getCurrentViewSummary() {
+		const viewLabel = options.find(opt => opt.value === selectedOption)?.label || 'U.S. average';
+		
+		if (activeView === 'state' && selectedStateView === 'map' && selectedStateMapViewOption) {
+			return `${viewLabel} - ${selectedStateMapViewOption}`;
+		}
+		
+		return viewLabel;
+	}
+
+	// Prevent body scroll when modal is open on mobile
+	$effect(() => {
+		if ($isMobile && isModalOpen) {
+			document.body.style.overflow = 'hidden';
+		} else {
+			document.body.style.overflow = '';
+		}
+		
+		// Cleanup
+		return () => {
+			document.body.style.overflow = '';
+		};
+	});
 </script>
 
-<!-- <svelte:window on:click={handleClickOutside} /> -->
-<div class="controls-container">
-	<div class="dashboard-controls">
-		<div class="dashboard-controls-inner">
+<!-- Modal overlay (mobile only) -->
+{#if $isMobile && isModalOpen}
+	<div 
+		class="modal-overlay" 
+		onclick={closeModal} 
+		onkeydown={(e) => e.key === 'Escape' && closeModal()}
+		role="button"
+		tabindex="-1"
+		aria-label="Close modal"
+		transition:fade={{ duration: 200 }}
+	></div>
+{/if}
+
+<!-- Mobile filter button and summary (always visible on mobile) -->
+{#if $isMobile}
+	<div class="mobile-controls-header">
+		<button class="filter-button" onclick={toggleModal} aria-label="Open filter options">
+			<ListFilter size={20} />
+		</button>
+		<div class="view-summary">
+			<span class="view-summary-label">Viewing data by:</span>
+			<span class="view-summary-value">{getCurrentViewSummary()}</span>
+		</div>
+	</div>
+{/if}
+
+<!-- Controls container -->
+<div class="controls-container" class:modal-open={$isMobile && isModalOpen}>
+	{#if !$isMobile || isModalOpen}
+		<div class="dashboard-controls" transition:fly={{ y: $isMobile ? 300 : 0, duration: 300 }}>
+			<!-- Modal header (mobile only) -->
+			{#if $isMobile}
+				<div class="modal-header">
+					<h2>Filter Options</h2>
+					<button class="close-button" onclick={closeModal} aria-label="Close filters">×</button>
+				</div>
+			{/if}
+
+			<div class="dashboard-controls-inner">
 				<div class="dashboard-controls-inner-title">
 					<h3>View data by</h3>
 				</div>
@@ -223,9 +297,24 @@
 									{#if selectedStateChartViewOptions.length > 0}
 										<div class="state-pills">
 											{#each selectedStateChartViewOptions as state}
-												<div class="state-pill" onclick={() => removeState(state)}>
+												<div 
+													class="state-pill" 
+													onclick={(e) => {
+														e.stopPropagation();
+														removeState(state);
+													}}
+													onkeydown={(e) => {
+														if (e.key === 'Enter' || e.key === ' ') {
+															e.preventDefault();
+															removeState(state);
+														}
+													}}
+													role="button"
+													tabindex="0"
+													aria-label="Remove {state}"
+												>
 													<span class="state-name">{stateAbbreviations[state] || state}</span>
-													<button class="remove-state" aria-label="Remove {state}"> × </button>
+													<span class="remove-icon" aria-hidden="true">×</span>
 												</div>
 											{/each}
 										</div>
@@ -262,29 +351,199 @@
 					</div>
 				</div>
 			{/if}
-	</div>
+
+			<!-- Apply button (mobile only) -->
+			{#if $isMobile}
+				<div class="modal-footer">
+					<button class="apply-button" onclick={closeModal}>Apply Filters</button>
+				</div>
+			{/if}
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
+	// Modal overlay (mobile only)
+	.modal-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		z-index: 1002;
+	}
+
+	// Mobile controls header (filter button + summary)
+	.mobile-controls-header {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		// padding: 0.75rem 1rem;
+		// background-color: #fff;
+		// border-radius: 0.5rem;
+		// box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+		// margin-bottom: 1rem;
+
+		.filter-button {
+			width: 40px;
+			height: 40px;
+			border-radius: 0.375rem;
+			background-color: $color-theme-yellow;
+			color: #000;
+			border: none;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: all 0.2s ease;
+			flex-shrink: 0;
+
+			&:hover {
+				background-color: #e1bc2f;
+			}
+
+			&:active {
+				transform: scale(0.95);
+			}
+		}
+
+		.view-summary {
+			display: flex;
+			flex-direction: column;
+			gap: 0.125rem;
+			flex: 1;
+			min-width: 0;
+
+			.view-summary-label {
+				font-size: 0.75rem;
+				color: #666;
+				font-weight: 500;
+			}
+
+			.view-summary-value {
+				font-size: 0.9rem;
+				color: #000;
+				font-weight: 600;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+		}
+	}
+
 	.controls-container {
 		position: relative;
 		z-index: 1000;
+
+		// Modal mode on mobile
+		&.modal-open {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			z-index: 1003;
+		}
 	}
 
 	.dashboard-controls {
-		// position: absolute;
-		// top: 0;
-		// left: 0;
-		// right: 0;
-		// width: 100%;
-		// max-width: 1400px;
-		// margin: 1rem auto;
-
 		display: flex;
 		gap: 1rem;
+		flex-wrap: wrap;
+	
+		@include mq('mobile', 'max') {
+			flex-wrap: wrap;
+			flex-direction: column;
+			background-color: #fff;
+			border-radius: 1rem 1rem 0 0;
+			padding: 0;
+			max-height: 85vh;
+			overflow-y: auto;
+			box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+		}
+
+		// Modal header (mobile only)
+		.modal-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 1.5rem 1rem 1rem;
+			border-bottom: 1px solid #e0e0e0;
+			position: sticky;
+			top: 0;
+			background-color: #fff;
+			z-index: 10;
+
+			h2 {
+				font-size: 1.25rem;
+				font-weight: 600;
+				margin: 0;
+			}
+
+			.close-button {
+				background: none;
+				border: none;
+				font-size: 2rem;
+				line-height: 1;
+				cursor: pointer;
+				color: #666;
+				padding: 0;
+				width: 32px;
+				height: 32px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: color 0.2s ease;
+
+				&:hover {
+					color: #000;
+				}
+			}
+		}
+
+		// Modal footer (mobile only)
+		.modal-footer {
+			padding: 1rem;
+			border-top: 1px solid #e0e0e0;
+			position: sticky;
+			bottom: 0;
+			background-color: #fff;
+			z-index: 10;
+
+			.apply-button {
+				width: 100%;
+				padding: 1rem;
+				background-color: $color-theme-yellow;
+				color: #000;
+				border: none;
+				border-radius: 0.5rem;
+				font-size: 1rem;
+				font-weight: 600;
+				cursor: pointer;
+				transition: all 0.2s ease;
+
+				&:hover {
+					background-color: #e1bc2f;
+				}
+
+				&:active {
+					transform: scale(0.98);
+				}
+			}
+		}
 
 		.dashboard-controls-inner {
 			width: fit-content;
+
+			@include mq('mobile', 'max') {
+				width: 100%;
+				padding: 1rem;
+				border-bottom: 1px solid #f0f0f0;
+
+				&:last-of-type {
+					border-bottom: none;
+				}
+			}
 
 			.dashboard-controls-inner-title {
 				h3 {
@@ -298,9 +557,14 @@
 				border-radius: 0.25rem;
 
 				display: flex;
-				justify-content: center;
+				justify-content: flex-start;
 				align-items: center;
 				gap: 0.25rem;
+				flex-wrap: wrap;
+
+				@include mq('mobile', 'max') {
+					// overflow-x: scroll;
+				}
 
 				.dashboard-controls-inner-option {
 					padding: 0.5rem 0.5rem;
@@ -331,11 +595,19 @@
 
 		.dropdown-container {
 			position: relative;
-			width: 100%;
+		    width: fit-content;
+
+			@include mq('mobile', 'max') {
+				width: 100%;
+			}
 
 			.dropdown-button {
 				width: 100%;
 				min-width: 185px;
+
+				@include mq('mobile', 'max') {
+					min-width: 100%;
+				}
 				// height: 50px; // Fixed height instead of max-height
 				padding: 0.5rem 1rem; // Reduced padding to account for fixed height
 				border: none;
@@ -423,7 +695,7 @@
 							background-color: #d8d8d8;
 							border-color: #b0b0b0;
 
-							.remove-state {
+							.remove-icon {
 								color: #333;
 							}
 						}
@@ -435,32 +707,17 @@
 							line-height: 1; // Ensure consistent line height
 						}
 
-						.remove-state {
-							background: none;
-							border: none;
+						.remove-icon {
 							color: #666;
 							font-weight: bold;
-							cursor: pointer;
-							padding: 0;
-							width: 14px; // Slightly smaller
-							height: 14px; // Slightly smaller
+							font-size: 1.2rem;
+							line-height: 1;
 							display: flex;
 							align-items: center;
 							justify-content: center;
-							border-radius: 50%;
 							transition: all 0.2s ease;
 							margin-left: 0.25rem;
 							flex-shrink: 0;
-
-							// &:hover {
-							// 	background-color: #c0c0c0;
-							// 	color: #333;
-							// }
-
-							&:focus {
-								outline: none;
-								outline-offset: 2px;
-							}
 						}
 					}
 				}

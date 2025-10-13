@@ -5,7 +5,7 @@
 	import '$lib/fonts/stylesheet.css';
 	import '$lib/styles/global.scss';
 	import copy from '$lib/data/copy.json';
-	let headerHeight = $state(80);
+	let headerHeight = $state(0);
 	import { page } from '$app/stores';
 
 	const { meta } = copy;
@@ -26,7 +26,7 @@
 	aria-label="Civic Responsibility Interactive Experience"
 	style:--header-height="{headerHeight}px"
 >
-	<Header bind:clientHeight={headerHeight} />
+	<Header bind:headerHeight />
 
 	<slot />
 

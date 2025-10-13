@@ -96,7 +96,9 @@
 	.legend-items {
 		display: flex;
 		align-items: center;
-		gap: 1.5rem;
+		column-gap: 1rem;
+		row-gap: 0rem;
+		flex-wrap: wrap;
 	}
 
 	.legend-item {
