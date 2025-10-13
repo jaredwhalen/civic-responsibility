@@ -142,6 +142,16 @@
 				padding-bottom: 100px;
 				// text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);z
 
+				// Mobile responsive padding
+				@include mq('tablet', 'max') {
+					padding-left: 30px;
+					padding-bottom: 80px;
+				}
+
+				@include mq('mobile', 'max') {
+					padding: 0px;
+				}
+
 				h1 {
 					display: inline-block;
 					margin: 0px;
@@ -152,6 +162,19 @@
 					width: fit-content;
 					padding: 0px 1vw;
 					color: $color-beacon-white;
+					white-space: nowrap;
+
+					// Mobile responsive font sizing
+					@include mq('tablet', 'max') {
+						font-size: 10vw;
+					}
+
+					@include mq('mobile', 'max') {
+						font-size: 12vw;
+				
+					}
+
+			
 
 					&:after {
 						content: '';
@@ -169,6 +192,21 @@
 						animation: highlightGrow 1s ease-out forwards;
 						animation-delay: 1000ms; // Start after first text appears
 						// box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+
+						// Mobile responsive highlight height
+						@include mq('tablet', 'max') {
+							height: 5vw;
+						}
+
+						@include mq('mobile', 'max') {
+							height: 6vw;
+							bottom: 1vw;
+						}
+
+						@include mq('small-mobile', 'max') {
+							height: 7vw;
+							bottom: 1.5vw;
+						}
 					}
 
 					// border: 4px solid $color-beacon-white;
@@ -208,12 +246,10 @@
 
 			// Mobile responsive positioning
 			@include mq('mobile', 'max') {
-				bottom: 30px;
+				bottom: 120px;
 			}
 
-			@include mq('small-mobile', 'max') {
-				bottom: 20px;
-			}
+	
 
 			span {
 				color: #fff;
