@@ -117,7 +117,7 @@
             <em style="line-height: 1.5;">${duty}</em><br/>
             <b style="font-size: 1.2em;">${state}</b><br/>
           
-            ${state && mean ? `Mean: <b>${mean.toFixed(0)}%</b>` : 'No data'}
+            ${state && mean ? `Average: <b>${mean.toFixed(0)}%</b>` : 'No data'}
           
      
             `}
