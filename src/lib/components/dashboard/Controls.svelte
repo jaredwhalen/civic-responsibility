@@ -1,7 +1,5 @@
 <script>
 	import { fade } from 'svelte/transition';
-	import { onMount } from 'svelte';
-	import smoothScroll from '$lib/helpers/smoothScroll.js';
 	import stateAbbreviations from '$lib/data/stateAbbreviations.json';
 
 	let {
@@ -16,12 +14,8 @@
 	} = $props();
 	let selectedOption = $state('mean');
 
-
 	let isDropdownOpen = $state(false);
 	let buttonRefs = $state({});
-	let isMounted = $state(false);
-	let isDismounting = $state(false);
-	let containerHeight = $state(0);
 
 	// Derived resultsOptions array based on selectedStateView
 	let resultsOptions = $derived(
@@ -108,26 +102,6 @@
 		isDropdownOpen = false;
 	});
 
-	onMount(() => {
-		// Get the actual height of the content
-		const container = document.querySelector('.controls-content');
-		if (container) {
-			containerHeight = container.scrollHeight;
-		}
-
-		// Trigger height animation after a brief delay to ensure DOM is ready
-		setTimeout(() => {
-			isMounted = true;
-		}, 50);
-	});
-
-	// Function to handle dismounting with animation
-	function handleDismount() {
-		isPinned = false;
-		// Call the onExit callback to handle scroll after state update
-		onExit();
-	}
-
 	function handleSelect(value) {
 		if (value == selectedOption) {
 			selectedOption = 'mean';
@@ -195,14 +169,9 @@
 </script>
 
 <!-- <svelte:window on:click={handleClickOutside} /> -->
-<div
-	class="controls-container {isMounted ? 'mounted' : ''} {isDismounting ? 'dismounting' : ''}"
-	style="height: {isMounted && !isDismounting ? containerHeight + 'px' : '0px'}"
->
-	<div class="controls-content">
-		<button onclick={handleDismount} data-button="back">← Exit dashboard</button>
-		<div class="dashboard-controls">
-			<div class="dashboard-controls-inner">
+<div class="controls-container">
+	<div class="dashboard-controls">
+		<div class="dashboard-controls-inner">
 				<div class="dashboard-controls-inner-title">
 					<h3>View data by</h3>
 				</div>
@@ -293,19 +262,13 @@
 					</div>
 				</div>
 			{/if}
-		</div>
 	</div>
 </div>
 
 <style lang="scss">
 	.controls-container {
+		position: relative;
 		z-index: 1000;
-		position: relative;
-	}
-
-	.controls-content {
-		position: relative;
-		z-index: 10000;
 	}
 
 	.dashboard-controls {
@@ -419,10 +382,6 @@
 					}
 				}
 
-				&[aria-expanded='true'] .dropdown-arrow {
-					// transform: rotate(180deg);
-				}
-
 				.dropdown-text {
 					flex: 1;
 					margin-right: 0.5rem;
@@ -520,38 +479,6 @@
 				overflow-y: auto;
 				z-index: 1000;
 
-				.dropdown-header {
-					display: flex;
-					justify-content: space-between;
-					align-items: center;
-					padding: 0.75rem 1rem;
-					border-bottom: 1px solid #eee;
-					margin-bottom: 0.5rem;
-
-					.dropdown-subtitle {
-						font-size: 0.875rem;
-						color: #666;
-						font-weight: 500;
-					}
-
-					.clear-selection {
-						background: none;
-						border: none;
-						color: #666;
-						font-size: 0.875rem;
-						font-weight: 500;
-						cursor: pointer;
-						transition: all 0.2s ease;
-						padding: 0.25rem 0.5rem;
-						border-radius: 0.25rem;
-
-						&:hover {
-							color: #333;
-							background-color: #f5f5f5;
-						}
-					}
-				}
-
 				.dropdown-item {
 					width: 100%;
 					padding: 0.75rem 1rem;
@@ -599,55 +526,8 @@
 						cursor: not-allowed;
 						color: #ccc;
 					}
-
-					.option-label {
-						flex: 1;
-					}
-
-					.checkmark {
-						color: $color-beacon-yellow;
-						font-size: 1rem;
-						margin-left: 0.5rem;
-						font-weight: bold;
-					}
 				}
 			}
 		}
-	}
-
-	.controls-container {
-		// overflow: hidden;
-		transition:
-			height 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-			transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-		transform: translateY(-400px);
-		opacity: 0;
-		overflow: hidden;
-
-		&.mounted {
-			transform: translateY(0);
-			opacity: 1;
-			overflow: visible;
-		}
-
-		&.dismounting {
-			transform: translateY(-100px);
-			opacity: 0;
-		}
-	}
-
-	.controls-content {
-		// Content wrapper to measure height
-	}
-
-	button[data-button='back'] {
-		background: none;
-		border: none;
-		color: #333;
-		font-size: 14px;
-		font-weight: 800;
-		cursor: pointer;
-		transition: all 0.2s ease;
-		padding-bottom: 0.5rem;
 	}
 </style>
