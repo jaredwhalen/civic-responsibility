@@ -6,8 +6,11 @@
 	import '$lib/styles/global.scss';
 	import copy from '$lib/data/copy.json';
 	let headerHeight = $state(80);
+	import { page } from '$app/stores';
 
 	const { meta } = copy;
+
+	$inspect($page.url.pathname == '/dashboard');
 </script>
 
 <svelte:head>
@@ -28,7 +31,10 @@
 
 	<slot />
 
-	<Footer />
+	{#if $page.url.pathname != '/dashboard'}
+		<Footer />
+	{/if}
+
 </main>
 
 <style lang="scss">
