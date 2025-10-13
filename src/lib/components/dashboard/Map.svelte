@@ -27,8 +27,6 @@
 	let projection = $derived(geoAlbersUsa().fitSize([width, height], geoJson));
 	let pathGenerator = $derived(geoPath().projection(projection));
 
-
-	console.log(data)
 	run(() => {
 		paths = geoJson.features.map((feature) => {
 			const stateData = data.find((d) => d.state === feature.properties.NAME);
@@ -52,7 +50,6 @@
 			allowHTML: true
 		});
 	});
-	
 </script>
 
 <div
@@ -69,9 +66,11 @@
 		<g>
 			{#each paths as { d, state, mean }}
 				<path
-					{d}
 					fill="transparent"
 					stroke-width="1"
+					data-state={state}
+					data-mean={mean}
+					data-duty={duty}
 					data-tippy-content={`
             <em style="line-height: 1.5;">${duty}</em><br/>
             <b style="font-size: 1.2em;">${state}</b><br/>
@@ -81,6 +80,7 @@
      
             `}
 					class="outline"
+					{d}
 				></path>
 			{/each}
 		</g>
@@ -102,7 +102,7 @@
 
 	svg {
 		margin-top: 10px;
-		
+
 		path {
 			stroke: $color-theme-light;
 			stroke-width: 1.2px;

@@ -7,7 +7,7 @@
 
 	import { scaleSequential } from 'd3-scale';
 	import { interpolateRgb } from 'd3-interpolate';
-	import { interpolateYlGn } from 'd3-scale-chromatic';
+	import { interpolateViridis } from 'd3-scale-chromatic';
 	import { getCSSVar } from '$lib/helpers/getCSSVar';
 
 	// components
@@ -471,7 +471,7 @@
 		return scaleLinear().domain([0, 100]).range(colors).interpolate(interpolateRgb);
 	};
 
-	const mapColorScale = scaleSequential().interpolator(interpolateYlGn).domain([0, 100]);
+	const mapColorScale = scaleSequential().interpolator(interpolateViridis).domain([0, 100]);
 	
 
 

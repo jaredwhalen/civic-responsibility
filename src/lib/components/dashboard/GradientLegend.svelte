@@ -1,7 +1,5 @@
 <script>
 	let { colorScale } = $props();
-
-	let range = colorScale.range();
 </script>
 
 <div class="legend">
@@ -9,7 +7,7 @@
 	<div class="gradient-bar">
 		<div
 			class="gradient-fill"
-			style="background: linear-gradient(to right, {range[0]}, {range[1]});"
+			style="background: linear-gradient(to right, {colorScale(0)}, {colorScale(25)}, {colorScale(50)}, {colorScale(75)}, {colorScale(100)});"
 		></div>
 	</div>
 	<div class="legend-labels">
