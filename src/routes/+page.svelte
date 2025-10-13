@@ -34,7 +34,7 @@
 	heroText={content.hero.text}
 />
 
-<!-- <GSAPScroller section="intro" /> -->
+<GSAPScroller section="intro" />
 
 <!-- <MatrixScroller {content}/> -->
 
