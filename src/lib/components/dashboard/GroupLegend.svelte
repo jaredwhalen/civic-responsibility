@@ -17,10 +17,10 @@
 					<div
 						class="legend-item"
 						class:interactive
-						class:active={clickedSeries.has(series.label)}
+						class:active={clickedSeries?.has(series.label)}
 						onclick={() => {
 							if (interactive) {
-								if (clickedSeries.has(series.label)) {
+								if (clickedSeries?.has(series.label)) {
 									const next = new Set(clickedSeries);
 									next.delete(series.label);
 									clickedSeries = next;
