@@ -3,15 +3,20 @@
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 	import { beforeNavigate } from '$app/navigation';
-	import { Home } from '@lucide/svelte';
+	import { Home, ChartBar, UserPen } from '@lucide/svelte';
 	import Lockup from './Lockup.svelte';
+	import { isMobile } from '$lib/stores/responsive.js';
 
 	let { headerHeight = $bindable() } = $props();
 
-	let bg = $derived($page.url.pathname.includes('/dashboard') || $page.url.pathname.includes('/quiz'));
+	let bg = $derived(
+		$page.url.pathname.includes('/dashboard') || $page.url.pathname.includes('/quiz')
+	);
 	let previousPath = $state('');
-	let isRoutePage = $derived($page.url.pathname.includes('/dashboard') || $page.url.pathname.includes('/quiz'));
-	
+	let isRoutePage = $derived(
+		$page.url.pathname.includes('/dashboard') || $page.url.pathname.includes('/quiz')
+	);
+
 	// Track the previous path to determine navigation behavior
 	beforeNavigate((navigation) => {
 		if (navigation.from) {
@@ -42,7 +47,7 @@
 
 <header class="main-header" aria-label="Site navigation" bind:clientHeight={headerHeight} class:bg>
 	<div class="header-left">
-		<Lockup size="large" />
+		<Lockup size={$isMobile ? 'medium' : 'large'} />
 	</div>
 
 	<div class="header-right">
@@ -53,11 +58,25 @@
 			</button>
 		{/if}
 		{#if !$page.url.pathname.includes('/dashboard')}
-			<a href={base + '/dashboard'} class="nav-button dashboard-button"> View the data dashboard </a>
+			<a href={base + '/dashboard'} class="nav-button dashboard-button">
+				{#if $isMobile}
+					<span>Data</span>
+				{:else}
+					<ChartBar size={16} />
+					<span class="full-text">View the data dashboard</span>
+					<span class="short-text">Explore data</span>
+				{/if}
+			</a>
 		{/if}
 		{#if !$page.url.pathname.includes('/quiz')}
 			<a href={base + '/quiz'} class="nav-button quiz-button">
-				What's your Civic Profile? Take our interactive quiz.
+				{#if $isMobile}
+					<span>Quiz</span>
+				{:else}
+					<UserPen size={16} />
+					<span class="full-text">What's your Civic Profile? Take our interactive quiz.</span>
+					<span class="short-text">Take quiz</span>
+				{/if}
 			</a>
 		{/if}
 	</div>
@@ -93,6 +112,7 @@
 
 		.header-left {
 			pointer-events: auto;
+			flex-shrink: 0; // Prevent Lockup from squishing
 		}
 
 		.header-right {
@@ -100,14 +120,12 @@
 			display: flex;
 			gap: $spacing-md;
 			align-items: center;
+			flex-shrink: 1;
+			min-width: 0; // Allow flex items to shrink below content size
 
 			// Hide buttons on smaller screens
 			@include mq('mobile', 'max') {
 				gap: $spacing-sm;
-			}
-
-			@include mq('small-mobile', 'max') {
-				display: none;
 			}
 
 			.nav-button {
@@ -119,8 +137,25 @@
 				text-decoration: none;
 				transition: all 0.3s ease;
 				white-space: nowrap;
-				display: inline-block;
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
 				@include glass-effect(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.3));
+
+				// Show full text by default, hide short text
+				.short-text {
+					display: none;
+				}
+
+				// Below 1000px, show short text and hide full text
+				@media (max-width: 1000px) {
+					.full-text {
+						display: none;
+					}
+					.short-text {
+						display: inline;
+					}
+				}
 
 				@include mq('mobile', 'max') {
 					padding: 0.4rem 0.8rem;
@@ -144,10 +179,7 @@
 					color: var(--color-theme-light);
 					background: rgba(255, 255, 255, 0.1);
 					border: 1px solid rgba(255, 255, 255, 0.2);
-					display: flex;
-					align-items: center;
-					gap: 0.5rem;
-					
+
 					&:hover {
 						background: rgba(255, 255, 255, 0.15);
 						border-color: rgba(255, 255, 255, 0.3);

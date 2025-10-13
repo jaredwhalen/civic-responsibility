@@ -34,22 +34,15 @@
 	heroText={content.hero.text}
 />
 
-<GSAPScroller section="intro" />
+<!-- <GSAPScroller section="intro" /> -->
 
-<MatrixScroller {content}/>
+<!-- <MatrixScroller {content}/> -->
 
-<GSAPScroller section="outro" />
+<!-- <GSAPScroller section="outro" /> -->
 
-<CTA />
+<!-- <CTA /> -->
 
-<!-- <div class="dashboard-preview">
-	<div class="overlay" transition:fade={{ duration: 500 }}>
-		<button class="explore-button" onclick={() => (window.location.href = '/dashboard')}
-			>Explore the data</button
-		>
-	</div>
-	<Dashboard activeId="9999-dashboard" interactiveMode={true} />
-</div> -->
+
 
 <style lang="scss">
 	@import '$lib/styles/mixins.scss';

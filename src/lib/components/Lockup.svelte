@@ -28,15 +28,22 @@
 		align-items: center;
 		gap: $spacing-md;
 		pointer-events: auto;
+		flex-shrink: 0; // Prevent lockup from squishing
+
+		@include mq('mobile', 'max') {
+			gap: $spacing-sm;
+		}
 
 		a {
 			display: block;
 			line-height: 0;
+			flex-shrink: 0; // Prevent logos from squishing
 		}
 
 		.logo {
 			width: auto;
 			transition: opacity 0.3s ease;
+			flex-shrink: 0; // Prevent logos from squishing
 
 			&:hover {
 				opacity: 0.8;
@@ -58,45 +65,19 @@
 				height: 60px;
 			}
 
-			@include mq('mobile', 'max') {
-				.logo {
-					height: 30px;
-				}
 
-				.logo-separator {
-					height: 30px;
-				}
-			}
-
-			@include mq('small-mobile', 'max') {
-				.logo {
-					height: 25px;
-				}
-
-				.logo-separator {
-					height: 25px;
-				}
-			}
 		}
 
 		&.size-medium {
 			.logo {
-				height: 40px;
+				height: 45px;
 			}
 
 			.logo-separator {
-				height: 30px;
+				height: 35px;
+				width: 1px;
 			}
 
-			@include mq('mobile', 'max') {
-				.logo {
-					height: 25px;
-				}
-
-				.logo-separator {
-					height: 20px;
-				}
-			}
 		}
 
 		&.size-small {
