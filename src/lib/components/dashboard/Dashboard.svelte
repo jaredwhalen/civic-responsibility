@@ -43,11 +43,11 @@
 			return n !== undefined && n >= threshold;
 		});
 	}
-	
+
 	// Filter data once and reuse
 	const filteredStateData = filterDataByN(states, statesNMap, N_THRESHOLD, 'state');
 	const filteredRaceData = filterDataByN(race, raceNMap, N_THRESHOLD, 'racegroup');
-	
+
 	let { activeId, interactiveMode = $bindable(), animateMount = true, isPinned = false } = $props();
 	let activeView = $state('mean');
 	let selectedStateView = $state('map');
@@ -55,7 +55,7 @@
 	let selectedStateMapViewOption = $state(null);
 	let guessMode = $derived(activeId == 'poll-guess');
 	let pollCorrectMode = $derived(activeId == 'poll-correct');
-	
+
 	let mapData = $derived(
 		filteredStateData
 			.filter((d) => d.duty_label == selectedStateMapViewOption)
@@ -383,9 +383,9 @@
 		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
 			top: interactiveMode ? baseRowHeight : 60,
-			right:  $isMobile ? 15 : (interactiveMode ? 50 : 150),
-			bottom: interactiveMode ? baseRowHeight : 0,
-			left: $isMobile ? 15 : (guessMode ? 150 : 450)
+			right: $isMobile ? 15 : interactiveMode ? 50 : 150,
+			bottom: 0,
+			left: $isMobile ? 15 : guessMode ? 150 : 450
 		}
 	});
 
@@ -395,7 +395,7 @@
 
 	let dashboardHeight = $state(null);
 	let controlsHeight = $state(null);
-	let axisHeight = 50;
+	let axisHeight = $derived($isMobile ? 40 : 50);
 	let noteHeight = $state(0);
 
 	// Reset noteHeight when note is not visible
@@ -441,14 +441,14 @@
 	// Add extra space for the last row to align with axis baseline
 	const adjustedDimensions = $derived({
 		...baseDimensions,
-		height: (currentViewData.length + 1) * rowHeight + adjustedMargins.top + adjustedMargins.bottom,
+		height: currentViewData.length * rowHeight + adjustedMargins.top + adjustedMargins.bottom,
 		margins: adjustedMargins
 	});
 
 	// Calculate chart container height for pinned mode
 	const chartContainerHeight = $derived(
 		interactiveMode && isPinned
-			? `calc(100vh - ${controlsHeight || 200}px - ${selectedStateView == 'map' ? 0 : axisHeight}px - ${noteHeight}px)`
+			? `calc(100svh - ${controlsHeight || 200}px - ${selectedStateView == 'map' ? 0 : axisHeight}px - ${noteHeight}px)`
 			: adjustedDimensions.height
 	);
 
@@ -473,7 +473,7 @@
 	};
 
 	const mapColorScale = scaleSequential().interpolator(interpolateViridis).domain([0, 100]);
-	
+
 	// Function to reset clicked series and circles
 	function resetSelections(e) {
 		// Reset clicked series if interacting outside circles
@@ -491,7 +491,6 @@
 			clickedCircles = new Set();
 		}
 	}
-
 </script>
 
 <div
@@ -500,12 +499,17 @@
 	class:interactive={interactiveMode}
 	class:pinned={interactiveMode && isPinned}
 	style:--controls-height="{controlsHeight}px"
+	style:--note-height="{noteHeight}px"
 	bind:this={dashboardElement}
 	bind:clientWidth={width}
 	bind:clientHeight={dashboardHeight}
 >
 	{#if interactiveMode && isPinned}
-		<div bind:clientHeight={controlsHeight} class="controls-wrapper pinned" class:mobile={$isMobile}>
+		<div
+			bind:clientHeight={controlsHeight}
+			class="controls-wrapper pinned"
+			class:mobile={$isMobile}
+		>
 			<Controls
 				bind:activeView
 				bind:selectedStateView
@@ -543,7 +547,7 @@
 
 	<div class="dashboard-content">
 		{#if interactiveMode && activeView == 'state' && selectedStateView == 'map'}
-			<div class="map-container">
+			<div class="map-wrapper">
 				<MapViz
 					data={mapData}
 					{width}
@@ -573,7 +577,7 @@
 					{#each sortedViewData as row, i (row.duty_label)}
 						<Row
 							{...row}
-							y={i * rowHeight + adjustedDimensions.margins.top + rowHeight / 2}
+							y={i * rowHeight + adjustedDimensions.margins.top}
 							{xScale}
 							dimensions={adjustedDimensions}
 							{rowHeight}
@@ -652,7 +656,6 @@
 
 		@include mq('small-mobile', 'max') {
 			justify-content: flex-end;
-			padding-bottom: 1rem;
 		}
 
 		// Interactive mode styles
@@ -683,6 +686,7 @@
 				.chart-container {
 					flex: 1;
 					margin-top: var(--controls-height);
+					position: relative;
 
 					&.needs-scrolling {
 						overflow: auto;
@@ -719,7 +723,7 @@
 			&.pinned {
 				position: fixed;
 				top: var(--header-height, 80px);
-				z-index: 10001;
+				z-index: 100;
 			}
 
 			.unpin-button {
@@ -768,6 +772,10 @@
 			color: #666;
 			font-style: italic;
 
+			@include mq('mobile', 'max') {
+				padding: 0.25rem 1rem;
+			}
+
 			&.sticky {
 				position: sticky;
 				bottom: 0;
@@ -777,12 +785,12 @@
 	}
 
 	// Map container
-	.map-container {
+	.map-wrapper {
 		position: absolute;
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: calc(100svh - var(--controls-height));
+		height: calc(100svh - var(--header-height, 80px) - var(--controls-height) - var(--note-height));
 		margin-top: var(--controls-height);
 		background-color: var(--bg-color);
 		z-index: 10;
@@ -809,14 +817,26 @@
 		}
 
 		.bottom-gradient {
-			position: absolute;
-			bottom: -1px;
-			left: 0;
-			right: 0;
-			height: 40px;
-			background: linear-gradient(to bottom, transparent, $color-theme-light);
-			pointer-events: none;
-			z-index: 10;
+			width: 100%;
+			height: 0px;
+			bottom: 0;
+			&::after {
+				content: '';
+
+				bottom: -1px;
+				left: 0;
+				right: 0;
+				position: absolute;
+
+				bottom: -1px;
+				left: 0;
+				right: 0;
+				width: 100%;
+				height: 25px;
+				background: linear-gradient(to bottom, transparent, $color-theme-light);
+				pointer-events: none;
+				z-index: 10;
+			}
 		}
 	}
 

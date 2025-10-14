@@ -21,7 +21,12 @@
 					class="tick"
 					transform="translate({xScale(tickValue)}, {(inIntro ? tickSize * 1.5 : tickSize) / 2})"
 				>
-					<text y={$isMobile ? '20' : '30'} text-anchor="middle" class:first={i === 0} class:last={i === 4}>{tickValue}%</text>
+					<text
+						y={$isMobile ? '20' : '30'}
+						text-anchor="middle"
+						class:first={i === 0}
+						class:last={i === 4}>{tickValue}%</text
+					>
 				</g>
 			{/each}
 		</g>
@@ -43,6 +48,18 @@
 			font-family: $font-family-body;
 			font-size: 1rem;
 			fill: var(--color-gray-500);
+
+			@include mq('mobile', 'max') {
+				&.first {
+					text-anchor: start;
+					transform: translateX(-3px);
+				}
+
+				&.last {
+					text-anchor: end;
+					transform: translateX(3px);
+				}
+			}
 		}
 
 		line {
@@ -63,16 +80,6 @@
 
 				@include mq('mobile', 'max') {
 					font-size: 0.9rem;
-
-					&.first {
-						text-anchor: start;
-						transform: translateX(-3px);
-					}
-
-					&.last {
-						text-anchor: end;
-						transform: translateX(3px);
-					}
 				}
 			}
 		}

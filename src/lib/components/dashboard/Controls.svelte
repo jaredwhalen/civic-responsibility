@@ -184,9 +184,10 @@
 	// Get current view summary text
 	function getCurrentViewSummary() {
 		const viewLabel = options.find(opt => opt.value === selectedOption)?.label || 'U.S. average';
-		
+	
+
 		if (activeView === 'state' && selectedStateView === 'map' && selectedStateMapViewOption) {
-			return `${viewLabel} - ${selectedStateMapViewOption}`;
+			return selectedStateMapViewOption;
 		}
 		
 		return viewLabel;
@@ -207,36 +208,38 @@
 	});
 </script>
 
-<!-- Modal overlay (mobile only) -->
-{#if $isMobile && isModalOpen}
-	<div 
-		class="modal-overlay" 
-		onclick={closeModal} 
-		onkeydown={(e) => e.key === 'Escape' && closeModal()}
-		role="button"
-		tabindex="-1"
-		aria-label="Close modal"
-		transition:fade={{ duration: 200 }}
-	></div>
-{/if}
-
-<!-- Mobile filter button and summary (always visible on mobile) -->
-{#if $isMobile}
-	<div class="mobile-controls-header">
-		<button class="filter-button" onclick={toggleModal} aria-label="Open filter options">
-			<ListFilter size={20} />
-		</button>
-		<div class="view-summary">
-			<span class="view-summary-label">Viewing data by:</span>
-			<span class="view-summary-value">{getCurrentViewSummary()}</span>
+<!-- Wrapper for mobile controls -->
+<div class="controls-wrapper">
+	<!-- Mobile filter button and summary (always visible on mobile) -->
+	{#if $isMobile}
+		<div class="mobile-controls-header">
+			<button class="filter-button" onclick={toggleModal} aria-label="Open filter options">
+				<ListFilter size={20} />
+			</button>
+			<div class="view-summary">
+				<span class="view-summary-label">Viewing {selectedStateView === 'map' ? 'states' : 'data'} by:</span>
+				<span class="view-summary-value">{getCurrentViewSummary()}</span>
+			</div>
 		</div>
-	</div>
-{/if}
+	{/if}
 
-<!-- Controls container -->
-<div class="controls-container" class:modal-open={$isMobile && isModalOpen}>
-	{#if !$isMobile || isModalOpen}
-		<div class="dashboard-controls" transition:fly={{ y: $isMobile ? 300 : 0, duration: 300 }}>
+	<!-- Modal overlay (mobile only) -->
+	{#if $isMobile && isModalOpen}
+		<div 
+			class="modal-overlay" 
+			onclick={closeModal} 
+			onkeydown={(e) => e.key === 'Escape' && closeModal()}
+			role="button"
+			tabindex="-1"
+			aria-label="Close modal"
+			transition:fade={{ duration: 200 }}
+		></div>
+	{/if}
+
+	<!-- Controls container -->
+	<div class="controls-container" class:modal-open={$isMobile && isModalOpen}>
+		{#if !$isMobile || isModalOpen}
+			<div class="dashboard-controls" transition:fly={{ y: $isMobile ? 300 : 0, duration: 300 }}>
 			<!-- Modal header (mobile only) -->
 			{#if $isMobile}
 				<div class="modal-header">
@@ -360,6 +363,7 @@
 			{/if}
 		</div>
 	{/if}
+	</div>
 </div>
 
 <style lang="scss">
@@ -457,9 +461,10 @@
 			background-color: #fff;
 			border-radius: 1rem 1rem 0 0;
 			padding: 0;
-			max-height: 85vh;
+			height: calc(100vh - var(--header-height, 0px));
 			overflow-y: auto;
 			box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+			gap: 0rem;
 		}
 
 		// Modal header (mobile only)

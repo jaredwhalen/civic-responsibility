@@ -20,7 +20,7 @@
 	let tippyInstances = $state([]);
 
 	// Ensure map fits within container with some padding
-	let width = $derived(Math.min(containerWidth - 40, containerHeight * 1.67 - 40));
+	let width = $derived(Math.min(containerWidth, (containerHeight) * 1.67));
 	let height = $derived(width / 1.67);
 
 	let paths = $state([]);
@@ -131,12 +131,12 @@
 
 <style lang="scss">
 	.map-container {
-		width: calc(100% - 60px);
-		height: calc(100% - 60px);
+		width:100%;
+		height: 100%;
 		margin: 0 auto;
 		display: flex;
 		justify-content: center;
-		align-items: center;
+		align-items: flex-start;
 		overflow: hidden;
 		max-width: 100%;
 		max-height: 100%;
@@ -160,5 +160,9 @@
 				opacity: 1;
 			}
 		}
+
+		path:focus {
+			outline: none;
+		}	
 	}
 </style>

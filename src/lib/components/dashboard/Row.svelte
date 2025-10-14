@@ -335,7 +335,7 @@
 		<circle
 			cx={xScale(s.value)}
 			cy="0"
-			r={inIntro ? 12 : 6}
+			r={inIntro ? 12 : $isMobile ? 7 : 6}
 			fill={color}
 			opacity={interactiveMode ? 0.75 : 1}
 			onmousedown={handleMouseDown}
@@ -402,7 +402,7 @@
 				<circle
 					cx={xScale(s.value)}
 					cy="0"
-					r={inIntro ? 12 : 6}
+					r={inIntro ? 12 : $isMobile ? 7 : 6}
 					fill={getCircleColor(s)}
 					opacity={1}
 					style="pointer-events: none;"
