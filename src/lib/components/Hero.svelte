@@ -5,7 +5,7 @@
 	import { slide, fade } from 'svelte/transition';
 
 	let {
-		videoSrc = '/assets/videos/web-bg.mp4',
+		videoSrc = '/assets/videos/civic-montage.mp4',
 		poster = '/assets/videos/placeholder.jpg',
 		heroText = ''
 	} = $props();

@@ -35,6 +35,13 @@
 	<div class="footer-logos">
 		<Lockup size="large" />
 	</div>
+
+	<div class="footer-contact">
+		<p>
+			For questions or technical issues, please contact us at
+			<a href="mailto:beaconproject@moreincommon.com">beaconproject@moreincommon.com</a>
+		</p>
+	</div>
 </footer>
 
 <style lang="scss">
@@ -144,6 +151,32 @@
 		align-self: flex-end;
 	}
 
+	.footer-contact {
+		text-align: center;
+		font-size: 0.9rem;
+		opacity: 0.8;
+		margin-top: 1rem;
+		padding-top: 1rem;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		width: 100%;
+
+		p {
+			margin: 0;
+		}
+
+		a {
+			color: #f9d246;
+			text-decoration: none;
+			font-weight: 500;
+			transition: opacity 0.2s ease;
+
+			&:hover {
+				opacity: 0.8;
+				text-decoration: underline;
+			}
+		}
+	}
+
 	@media (max-width: 768px) {
 		.footer-beacon-section {
 			max-width: 100%;
@@ -172,6 +205,11 @@
 
 		.footer-logos {
 			align-self: center;
+		}
+
+		.footer-contact {
+			font-size: 0.85rem;
+			padding: 1.5rem 1rem 0;
 		}
 	}
 </style>
