@@ -1,1 +1,0 @@
-import"../chunks/NZTpNUN0.js";import"../chunks/COp0kGux.js";import"../chunks/DSYvxv1K.js";import{D as t}from"../chunks/DT_8BeEM.js";function n(o){t(o,{activeId:"9999-dashboard",interactiveMode:!0,isPinned:!0})}export{n as component};
