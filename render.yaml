@@ -3,6 +3,6 @@ services:
     name: civic-api
     env: docker
     rootDir: civic-api
-    plan: free
+    plan: starter
     healthCheckPath: /healthz
     autoDeploy: true
