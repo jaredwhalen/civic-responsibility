@@ -1,15 +1,25 @@
 <script>
 	import { fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import Form from './Form.svelte';
 	import Submit from './Submit.svelte';
 	import Results from './Results.svelte';
+	import { Info } from '@lucide/svelte';
+
+	import tippy from 'tippy.js';
+	import 'tippy.js/dist/tippy.css';
+	import 'tippy.js/themes/light.css';
 
 	let isLoading = $state(false);
 	let results = $state(null);
 	let error = $state(null);
 	let responses = $state({});
 	let submittedUserYesCount = $state(0);
+	let infoIcon = $state(null);
+
+	const definition =
+		'Behaviors people are expected to perform as upstanding members of our national community.';
 
 	function handleResults(newResults) {
 		if (newResults) {
@@ -26,6 +36,25 @@
 		error = err;
 	}
 
+	onMount(() => {
+		let tippyInstance;
+		if (infoIcon) {
+			tippyInstance = tippy(infoIcon, {
+				content: definition,
+				theme: 'light',
+				placement: 'top',
+				arrow: true,
+				duration: [200, 150]
+			});
+		}
+
+		return () => {
+			if (tippyInstance) {
+				tippyInstance.destroy();
+			}
+		};
+	});
+
 	$effect(() => {
 		return () => {
 			document.body.style.overflow = '';
@@ -39,7 +68,12 @@
 			<h2>What's your civic profile?</h2>
 			<p>
 				Take the quiz below to find out. For each behavior, indicate whether or not you consider it
-				a civic responsibility.
+				a <span class="definition-text"
+					>civic responsibility
+					<span class="info-icon" bind:this={infoIcon}>
+						<Info size={16} />
+					</span>
+				</span>.
 			</p>
 			<div class="definition-container">
 				<strong>civic responsibilities</strong>
@@ -138,6 +172,31 @@
 
 			@include mq('mobile', 'max') {
 				font-size: 1.2rem;
+			}
+
+			.definition-text {
+				position: relative;
+				white-space: nowrap;
+				font-weight: 600;
+			}
+
+			.info-icon {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				vertical-align: middle;
+				cursor: help;
+				opacity: 0.7;
+				transition: opacity 0.2s ease;
+
+				&:hover {
+					opacity: 1;
+				}
+
+				:global(svg) {
+					display: inline-block;
+					vertical-align: middle;
+				}
 			}
 		}
 
