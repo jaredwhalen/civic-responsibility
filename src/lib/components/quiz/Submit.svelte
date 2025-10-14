@@ -1,4 +1,5 @@
 <script>
+	import { scale } from 'svelte/transition';
 	import duties from '$lib/data/csvs/mean_duties_weighted.csv';
 
 	let { responses, results, onResults, onLoading, onError } = $props();
@@ -22,7 +23,6 @@
 	const canSubmit = $derived(progressCount >= 30);
 
 	async function submitQuiz() {
-
 		window.scrollTo({ top: 0, behavior: 'instant' });
 
 		try {
@@ -77,9 +77,11 @@
 			<span class="progress-text">{progressCount}/{totalCount} behaviors answered</span>
 		</div>
 	{/if}
-	<button class="submit-button" onclick={submitQuiz} disabled={!canSubmit}>
-		{results ? 'Resubmit Quiz' : 'Submit Quiz'}
-	</button>
+	{#if canSubmit}
+		<button class="submit-button" onclick={submitQuiz} transition:scale>
+			{results ? 'Resubmit Quiz' : 'Submit Quiz'}
+		</button>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -87,7 +89,7 @@
 
 	.quiz-footer {
 		position: sticky;
-		bottom: 0;
+		bottom: 0px;
 		background: rgba(255, 255, 255, 0.5);
 		backdrop-filter: blur(20px);
 		-webkit-backdrop-filter: blur(20px);

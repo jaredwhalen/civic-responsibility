@@ -4,7 +4,7 @@
 	let { responses = $bindable(), results } = $props();
 
 	// Debugging variable for auto-answering
-	let debugAutoAnswer = $state(true);
+	let debugAutoAnswer = $state(false);
 
 	let profiles = [
 		[1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1],
@@ -152,8 +152,8 @@
 			min-width: 80px;
 
 			@include mq('mobile', 'max') {
-				font-size: 1.5rem;
-				padding: 1rem 1.5rem;
+				font-size: 1rem;
+				padding: 0.5rem;
 				width: 50%;
 			}
 

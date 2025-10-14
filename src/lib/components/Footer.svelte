@@ -52,6 +52,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 2rem;
+		z-index: 1000;
 
 		@include mq('mobile', 'max') {
 			padding: 1rem;

@@ -125,7 +125,7 @@
 		background-color: var(--bg-color);
 		width: 100%;
 		min-height: 100vh;
-		margin-bottom: 1rem;
+
 		flex: 1;
 		padding: 0 1.5rem;
 
@@ -140,7 +140,7 @@
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
-		padding-bottom: 2rem;
+	
 	}
 
 	.quiz-header {
