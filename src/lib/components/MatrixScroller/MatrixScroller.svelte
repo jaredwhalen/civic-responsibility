@@ -72,6 +72,7 @@
 <style lang="scss">
 	.slide {
 		height: 100svh;
+		position: relative;
 
 		&::after {
 			content: '';
