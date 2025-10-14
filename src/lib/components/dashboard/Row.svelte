@@ -326,7 +326,7 @@
 			Math.abs(xScale(series[0].value) - xScale(series[1].value)) < 75}
 
 		{@const color = getCircleColor(s)}
-		{@const textOffset = $isMobile ? -20 : -30}
+		{@const textOffset = $isMobile ? -25 : -30}
 		{@const circleId = `${duty_label}-${s.label}`}
 
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
