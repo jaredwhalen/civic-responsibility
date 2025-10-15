@@ -36,9 +36,8 @@ select <- dplyr::select
         urban %in% c("Suburban", "Rural") ~ "Suburban/Rural",
         TRUE ~ NA_character_
       ),
-      ideology_tri = case_when(
+      ideology_binary = case_when(
         ideology %in% c("Liberal", "Slightly liberal", "Very liberal") ~ "Liberal",
-        ideology %in% c("Moderate") ~ "Moderate",
         ideology %in% c("Conservative", "Slightly conservative", "Very conservative") ~ "Conservative",
         TRUE ~ NA_character_
       ),
@@ -54,7 +53,7 @@ select <- dplyr::select
   list(
     Data_Clean = Data_Clean,
     duty_cols  = paste0("duties_", 1:30),
-    group_vars = c("urban_binary", "ideology_tri", "age_binary")
+    group_vars = c("urban_binary", "ideology_binary", "age_binary")
   )
 }
 
