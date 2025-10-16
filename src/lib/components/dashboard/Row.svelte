@@ -283,6 +283,8 @@
 			tippyMap.get(circleId)?.show();
 		}
 	}
+
+	let circleRadius = $derived(inIntro ? 12 : $isMobile ? 7 : 6);
 </script>
 
 <g
@@ -311,9 +313,8 @@
 			y1="0"
 			x2={gapLineCoords.x2}
 			y2="0"
-			stroke="#000"
-			stroke-width="4"
-			opacity="0.4"
+			stroke={getCSSVar('--color-gray-200')}
+			stroke-width={circleRadius*2}
 		/>
 	{/if}
 
@@ -404,7 +405,7 @@
 				<circle
 					cx={xScale(s.value)}
 					cy="0"
-					r={inIntro ? 12 : $isMobile ? 7 : 6}
+					r={circleRadius}
 					fill={getCircleColor(s)}
 					opacity={1}
 					style="pointer-events: none;"
