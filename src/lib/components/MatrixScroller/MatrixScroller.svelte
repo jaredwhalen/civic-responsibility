@@ -50,6 +50,8 @@
 				showDashboard={Boolean(activeSlide.showDashboard)}
 				{interactiveMode}
 			/>
+
+			<div class="progress-indicator" style:--slide-progress={offset}></div>
 		</div>
 
 		<Text content={activeSlide} />
@@ -71,8 +73,16 @@
 
 <style lang="scss">
 	.slide {
-		height: 100svh;
+		height: 70svh;
 		position: relative;
+	}
+
+	.progress-indicator {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
 
 		&::after {
 			content: '';
@@ -83,7 +93,7 @@
 			background: #000;
 			border-radius: 50%;
 			opacity: 0.3;
-			top: 50%;
+			bottom: calc(var(--slide-progress) * 100%);
 		}
 	}
 </style>
