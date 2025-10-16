@@ -6,6 +6,7 @@
 
 	let stepElement;
 	let textElement;
+	let quotesElement;
 	let progress = $state(0);
 	let animatedNumber = $state(0);
 	let counterAnimation;
@@ -13,6 +14,7 @@
 	// Reactive calculations based on scroll progress
 	let firstLineProgress = $derived(Math.max(0, Math.min(1, (progress - 15) / 20))); // 15-35% scroll
 	let secondLineProgress = $derived(Math.max(0, Math.min(1, (progress - 25) / 25))); // 25-50% scroll
+	let quotesProgress = $derived(Math.max(0, Math.min(1, (progress - 10) / 30))); // 10-40% scroll
 
 	// Overall opacity for the entire content block (text + chart)
 	let overallContentOpacity = $derived(() => {
@@ -37,6 +39,7 @@
 
 		// Set initial states
 		gsap.set(textElement, { opacity: 0 });
+		gsap.set(quotesElement, { opacity: 0 });
 
 		// Set initial states for both lines
 		const firstLine = textElement?.querySelector('.first-line');
@@ -76,6 +79,15 @@
 				duration: 0.1,
 				ease: 'none'
 			});
+
+			// Animate quotes fade in
+			if (quotesElement) {
+				gsap.to(quotesElement, {
+					opacity: quotesProgress,
+					duration: 0.1,
+					ease: 'none'
+				});
+			}
 
 			// Animate first line (slides down from top)
 			const firstLine = textElement.querySelector('.first-line');
@@ -136,11 +148,15 @@
 <div class="step-13" bind:this={stepElement}>
 	<div class="sticky-container">
 		<div class="text-content" bind:this={textElement}>
+			<div class="quotes-background" bind:this={quotesElement}>
+				<span class="quote quote-left">“</span>
+				<span class="quote quote-right">”</span>
+			</div>
 			<div class="text-body">
 				<div class="first-line">Now more than ever, it is important to</div>
 				<div class="second-line">
-					<span class="word first-word">honor</span> <span class="word">our</span>
-					<span class="word">civic</span> <span class="word last-word">responsibilities.</span>
+					<span class="word">honor</span> <span class="word">our</span>
+					<span class="word">civic</span> <span class="word">responsibilities.</span>
 				</div>
 			</div>
 		</div>
@@ -185,9 +201,53 @@
 			z-index: 10;
 			max-width: 900px;
 			will-change: transform, opacity;
+			position: relative;
+
+			.quotes-background {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				pointer-events: none;
+				z-index: -1;
+
+				.quote {
+					position: absolute;
+					font-size: 25rem;
+					font-weight: 700;
+					color: var(--color-theme-blue-light);
+					opacity: 0.6;
+					line-height: 1;
+
+					@include mq('mobile', 'max') {
+						font-size: 6rem;
+					}
+				}
+
+				.quote-left {
+					top: -20px;
+					left: -20px;
+
+					@include mq('mobile', 'max') {
+						left: -2.5rem;
+					}
+				}
+
+				.quote-right {
+					top: -20px;
+					right: -20px;
+
+					@include mq('mobile', 'max') {
+						right: -2rem;
+					}
+				}
+			}
 
 			.text-body {
 				text-align: center;
+				position: relative;
+				z-index: 1;
 
 				.first-line {
 					font-size: 2.5rem;
@@ -220,52 +280,6 @@
 						transform-style: preserve-3d;
 						opacity: 0;
 						transform: translateY(30px) scale(0.8);
-					}
-
-					.first-word {
-						position: relative;
-
-						&::before {
-							content: '“';
-							position: absolute;
-							// left: -4rem;
-							// top: -1rem;
-							top: -20px;
-							left: -90px;
-							font-size: 12rem;
-							font-weight: 700;
-							color: var(--color-theme-blue-light);
-							opacity: 0.6;
-							line-height: 1;
-
-							@include mq('mobile', 'max') {
-								font-size: 6rem;
-								left: -2.5rem;
-							}
-						}
-					}
-
-					.last-word {
-						position: relative;
-
-						&::after {
-							content: '”';
-							position: absolute;
-							// right: -4rem;
-							// bottom: -1rem;
-							top: -20px;
-							right: -90px;
-							font-size: 12rem;
-							font-weight: 700;
-							color: var(--color-theme-blue-light);
-							opacity: 0.6;
-							line-height: 1;
-
-							@include mq('mobile', 'max') {
-								font-size: 6rem;
-								right: -2rem;
-							}
-						}
 					}
 				}
 			}
