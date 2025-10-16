@@ -87,7 +87,7 @@
 
 <div class="cta-section" bind:this={ctaElement}>
 	<div class="cta-background">
-		<Dashboard activeId="9999-dashboard" interactiveMode={true} />
+		<Dashboard activeId="9999-dashboard" interactiveMode={true} disableTippy={true} />
 	</div>
 	<div class="cta-overlay"></div>
 	<div class="cta-content">

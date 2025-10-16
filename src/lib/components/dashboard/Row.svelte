@@ -30,7 +30,8 @@
 		hoveredSeries = $bindable(),
 		clickedSeries = $bindable(),
 		clickedCircles = $bindable(),
-		activeView
+		activeView,
+		disableTippy = false
 	} = $props();
 
 	let isDragging = $state(false);
@@ -157,6 +158,7 @@
 
 	// Create tippy instances (sticky + registered by circleId)
 	function createTippyInstances() {
+	
 		// Clean up any tippy on our row's elements
 		const existingCircles = document.querySelectorAll(
 			`[data-row-index="${index}"][data-tippy-content]`
@@ -180,7 +182,7 @@
 		tippyInstances = [];
 		tippyMap = new Map();
 
-		if (guessMode) return;
+		if (guessMode || disableTippy) return;
 
 		const circles = document.querySelectorAll(`[data-row-index="${index}"][data-tippy-content]`);
 
@@ -419,7 +421,7 @@
 			class:hide={guessMode}
 			class="duty-label"
 			x={dimensions.margins.left - ($isMobile ? 0 : 10)}
-			y={$isMobile ? interactiveMode ? '-15' : '-12' : '0'}
+			y={$isMobile ? (interactiveMode ? '-15' : '-12') : '0'}
 			dy="0.32em"
 			text-anchor={$isMobile ? 'start' : 'end'}
 			class:highlight

@@ -48,7 +48,7 @@
 	const filteredStateData = filterDataByN(states, statesNMap, N_THRESHOLD, 'state');
 	const filteredRaceData = filterDataByN(race, raceNMap, N_THRESHOLD, 'racegroup');
 
-	let { activeId, interactiveMode = $bindable(), animateMount = true, isPinned = false } = $props();
+	let { activeId, interactiveMode = $bindable(), animateMount = true, isPinned = false, disableTippy = false } = $props();
 	let activeView = $state('mean');
 	let selectedStateView = $state('map');
 	let selectedStateChartViewOptions = $state([]);
@@ -375,7 +375,7 @@
 
 	let width = $state(0);
 	const baseRowHeight = interactiveMode ? 35 : 45;
-	const minRowHeight = interactiveMode ? ($isMobile ? 45 : 25) : 40;
+	const minRowHeight = interactiveMode ? ($isMobile ? 45 : 15) : 40;
 
 	// Base dimensions without rowHeight to avoid circular dependency
 	const baseDimensions = $derived({
@@ -601,6 +601,7 @@
 							bind:clickedCircles
 							showGapLine={currentDataMap[activeId]?.showGapLine}
 							{activeView}
+							{disableTippy}
 						/>
 					{/each}
 				</g>
