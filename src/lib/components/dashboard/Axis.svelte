@@ -30,6 +30,13 @@
 				</g>
 			{/each}
 		</g>
+
+		<text
+			x={dimensions.margins.left + (width - dimensions.margins.right - dimensions.margins.left) / 2}
+			y={axisHeight - (inIntro ? 5 : 15)}
+			text-anchor="middle"
+			class="axis-label">% selecting behavior as civic responsibility</text
+		>
 	</svg>
 </div>
 
@@ -83,5 +90,11 @@
 				}
 			}
 		}
+	}
+	.axis-label {
+		font-size: 0.8rem;
+		fill: var(--color-gray-1000);
+		font-weight: 800;
+		transition: all 0.5s ease;
 	}
 </style>

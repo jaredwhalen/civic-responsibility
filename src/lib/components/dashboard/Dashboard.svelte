@@ -395,7 +395,7 @@
 
 	let dashboardHeight = $state(null);
 	let controlsHeight = $state(null);
-	let axisHeight = $derived($isMobile ? 40 : 50);
+	let axisHeight = $derived($isMobile ? 60 : 70);
 	let noteHeight = $state(0);
 
 	// Reset noteHeight when note is not visible
