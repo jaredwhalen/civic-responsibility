@@ -588,6 +588,7 @@
 					transition: all 0.2s ease;
 					font-family: sans-serif;
 					white-space: nowrap;
+					width: 100%;
 
 					&.selected {
 						background-color: $color-theme-yellow;

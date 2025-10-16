@@ -381,17 +381,19 @@
 
 	let width = $state(0);
 	const baseRowHeight = interactiveMode ? 35 : 45;
-	const minRowHeight = interactiveMode ? ($isMobile ? 45 : 15) : 40;
+
+	const minRowHeight = interactiveMode ? ($isMobile ? 45 : 25) : 40;
+	let controlsWidth = $state(null);
 
 	// Base dimensions without rowHeight to avoid circular dependency
 	const baseDimensions = $derived({
-		width,
+		width: interactiveMode && isPinned ? width - Math.min(controlsWidth || 0, 200) : width,
 		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
 			top: interactiveMode ? baseRowHeight : 60,
-			right: $isMobile ? 15 : interactiveMode ? 50 : 150,
+			right: $isMobile ? 15 : interactiveMode ? 50 : 50,
 			bottom: 0,
-			left: $isMobile ? 15 : guessMode ? 150 : 450
+			left: $isMobile ? 15 : guessMode ? 150 : 350
 		}
 	});
 
@@ -401,7 +403,9 @@
 
 	let dashboardHeight = $state(null);
 	let controlsHeight = $state(null);
+
 	let axisHeight = $derived($isMobile ? 80 : 100);
+
 	let noteHeight = $state(0);
 
 	// Reset noteHeight when note is not visible
@@ -413,9 +417,9 @@
 
 	// Calculate dynamic row height based on available space
 	const rowHeight = $derived.by(() => {
-		if (!dashboardHeight || !controlsHeight) return baseRowHeight;
+		if (!dashboardHeight) return baseRowHeight;
 
-		const availableHeight = dashboardHeight - axisHeight - controlsHeight - noteHeight;
+		const availableHeight = dashboardHeight - axisHeight - noteHeight;
 
 		const requiredHeight =
 			currentViewData.length * baseRowHeight +
@@ -454,7 +458,7 @@
 	// Calculate chart container height for pinned mode
 	const chartContainerHeight = $derived(
 		interactiveMode && isPinned
-			? `calc(100svh - ${controlsHeight || 200}px - ${selectedStateView == 'map' ? 0 : axisHeight}px - ${noteHeight}px)`
+			? `calc(100svh - ${selectedStateView == 'map' ? 0 : axisHeight}px - ${noteHeight}px)`
 			: adjustedDimensions.height
 	);
 
@@ -471,7 +475,7 @@
 	const xScale = $derived(
 		scaleLinear()
 			.domain([0, 100])
-			.range([baseDimensions.margins.left, width - baseDimensions.margins.right])
+			.range([baseDimensions.margins.left, baseDimensions.width - baseDimensions.margins.right])
 	);
 
 	const createCustomColorScale = (colors) => {
@@ -509,64 +513,64 @@
 	// 			`);
 </script>
 
-<div
-	class="dashboard"
-	class:intro={!interactiveMode}
-	class:interactive={interactiveMode}
-	class:pinned={interactiveMode && isPinned}
-	style:--controls-height="{controlsHeight}px"
-	style:--note-height="{noteHeight}px"
-	bind:this={dashboardElement}
-	bind:clientWidth={width}
-	bind:clientHeight={dashboardHeight}
->
-	{#if interactiveMode && isPinned}
-		<div
-			bind:clientHeight={controlsHeight}
-			class="controls-wrapper pinned"
-			class:mobile={$isMobile}
-		>
-			<Controls
-				bind:activeView
-				bind:selectedStateView
-				bind:selectedStateMapViewOption
-				bind:selectedStateChartViewOptions
-				bind:interactiveMode
-				bind:isPinned
-				searchOptions={{
-					states: Array.from(new Set(filteredStateData.map((d) => d.state))).sort(),
-					duties: Array.from(new Set(transformedData.state.map((d) => d.duty_label))).sort()
-				}}
-				onExit={() => {
-					// Scroll to dashboard element when exiting pinned view
-					setTimeout(() => {
-						if (dashboardElement) {
-							dashboardElement.scrollIntoView({ behavior: 'instant', block: 'start' });
-						}
-					}, 100);
-				}}
-			/>
-			<div class="dashboard-legend">
-				{#if activeView == 'state' && selectedStateView == 'map'}
-					<GradientLegend colorScale={mapColorScale} />
-				{:else}
-					<GroupLegend
-						options={options.find((o) => o.value === activeView)}
-						{activeView}
-						interactive={true}
-						bind:clickedSeries
-					/>
-				{/if}
+	<div
+		class="dashboard"
+		class:intro={!interactiveMode}
+		class:interactive={interactiveMode}
+		class:pinned={interactiveMode && isPinned}
+		style:--controls-width="{controlsWidth}px"
+		style:--note-height="{noteHeight}px"
+		bind:this={dashboardElement}
+		bind:clientWidth={width}
+		bind:clientHeight={dashboardHeight}
+	>
+		{#if interactiveMode && isPinned}
+			<div
+				bind:clientWidth={controlsWidth}
+				class="controls-wrapper pinned"
+				class:mobile={$isMobile}
+			>
+				<Controls
+					bind:activeView
+					bind:selectedStateView
+					bind:selectedStateMapViewOption
+					bind:selectedStateChartViewOptions
+					bind:interactiveMode
+					bind:isPinned
+					searchOptions={{
+						states: Array.from(new Set(filteredStateData.map((d) => d.state))).sort(),
+						duties: Array.from(new Set(transformedData.state.map((d) => d.duty_label))).sort()
+					}}
+					onExit={() => {
+						// Scroll to dashboard element when exiting pinned view
+						setTimeout(() => {
+							if (dashboardElement) {
+								dashboardElement.scrollIntoView({ behavior: 'instant', block: 'start' });
+							}
+						}, 100);
+					}}
+				/>
+				<div class="dashboard-legend">
+					{#if activeView == 'state' && selectedStateView == 'map'}
+						<GradientLegend colorScale={mapColorScale} />
+					{:else}
+						<GroupLegend
+							options={options.find((o) => o.value === activeView)}
+							{activeView}
+							interactive={true}
+							bind:clickedSeries
+						/>
+					{/if}
+				</div>
 			</div>
-		</div>
-	{/if}
+		{/if}
 
 	<div class="dashboard-content">
 		{#if interactiveMode && activeView == 'state' && selectedStateView == 'map'}
 			<div class="map-wrapper">
 				<MapViz
 					data={mapData}
-					{width}
+					width={baseDimensions.width}
 					duty={selectedStateMapViewOption}
 					colorScale={mapColorScale}
 				/>
@@ -581,7 +585,7 @@
 		>
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<svg
-				{width}
+				width={baseDimensions.width}
 				height={adjustedDimensions.height}
 				role="img"
 				aria-label="Data visualization chart"
@@ -635,7 +639,7 @@
 		{#if activeView != 'state' || selectedStateView != 'map'}
 			<div class="axis-wrapper" class:sticky={interactiveMode}>
 				<Axis
-					{width}
+					width={baseDimensions.width}
 					dimensions={adjustedDimensions}
 					{axisHeight}
 					{tickSize}
@@ -689,23 +693,27 @@
 		&.pinned {
 			height: calc(100svh - var(--header-height, 80px));
 			margin-top: var(--header-height, 80px);
-			// position: fixed;
-			// top: 0;
-			// left: 0;
-			// width: 100vw;
-			// height: 100vh;
-			// z-index: 1000;
-			// border: 10px solid var(--color-theme-blue);
+			display: flex;
+			flex-direction: row;
+
+			@include mq('mobile', 'max') {
+				flex-direction: column;
+			}
 
 			.dashboard-content {
 				flex: 1;
 				display: flex;
 				flex-direction: column;
 				overflow: hidden;
+				margin-left: min(var(--controls-width), 200px);
+
+				@include mq('mobile', 'max') {
+					margin-left: 0;
+					margin-top: var(--controls-height, 0);
+				}
 
 				.chart-container {
 					flex: 1;
-					margin-top: var(--controls-height);
 					position: relative;
 
 					&.needs-scrolling {
@@ -715,14 +723,11 @@
 			}
 		}
 
-		// Dashboard content
-		.dashboard-content {
-			// Content styles here if needed
-		}
 
 		// Dashboard legend
 		.dashboard-legend {
 			margin-top: 0.5rem;
+			flex-shrink: 0;
 		}
 
 		// Controls wrapper
@@ -743,33 +748,32 @@
 			&.pinned {
 				position: fixed;
 				top: var(--header-height, 80px);
+				left: 0;
+				width: min(var(--controls-width), 200px);
+				max-width: 200px;
+				height: calc(100svh - var(--header-height, 80px));
 				z-index: 100;
-			}
-
-			.unpin-button {
+				overflow-y: auto;
+				box-shadow: 2px 0 10px 0 rgba(0, 0, 0, 0.1);
 				display: flex;
-				align-items: center;
-				gap: 0.5rem;
-				background: none;
-				border: 2px solid var(--color-theme-blue);
-				color: var(--color-theme-blue);
-				padding: 0.5rem 1rem;
-				border-radius: 8px;
-				cursor: pointer;
-				font-size: 0.9rem;
-				font-weight: 500;
-				transition: all 0.2s ease;
+				flex-direction: column;
 
-				&:hover {
-					background-color: var(--color-theme-blue);
-					color: white;
+				// Ensure Controls component takes available space
+				:global(.controls) {
+					flex: 1;
+					display: flex;
+					flex-direction: column;
 				}
 
-				svg {
-					width: 16px;
-					height: 16px;
+				@include mq('mobile', 'max') {
+					position: sticky;
+					width: 100%;
+					max-width: none;
+					height: auto;
+					box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
 				}
 			}
+
 		}
 
 		// Axis wrapper
@@ -810,16 +814,11 @@
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: calc(100svh - var(--header-height, 80px) - var(--controls-height) - var(--note-height));
-		margin-top: var(--controls-height);
+		height: calc(100svh - var(--header-height, 80px) - var(--note-height));
 		background-color: var(--bg-color);
 		z-index: 10;
 		transition: all 0.5s ease;
 
-		&.visible {
-			opacity: 1;
-			pointer-events: auto;
-		}
 	}
 
 	// Chart container
