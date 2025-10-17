@@ -31,7 +31,7 @@
 	import statesN from '$lib/data/csvs/states_n.csv';
 	import raceN from '$lib/data/csvs/race_n.csv';
 
-	const N_THRESHOLD = 30;
+	const N_THRESHOLD = 40;
 
 	// Create N lookup maps with normalized keys (lowercase)
 	const raceNMap = new Map(raceN.map((d) => [d.raceGroup.toLowerCase(), Number(d.n)]));
@@ -632,9 +632,9 @@
 		{#if interactiveMode && (activeView === 'state' || activeView === 'race')}
 			<div class="n-threshold-note" class:sticky={interactiveMode} bind:clientHeight={noteHeight}>
 				{#if activeView === 'state'}
-					Only states with more than N = 30 participants are included
+					Only states with more than N = 40 participants are included
 				{:else}
-					Only categories with more than N = 30 participants are included
+					Only categories with more than N = 40 participants are included
 				{/if}
 			</div>
 		{/if}
