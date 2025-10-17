@@ -91,15 +91,18 @@
 	</div>
 	<div class="cta-overlay"></div>
 	<div class="cta-content">
+
+		<!-- <iframe src="https://thebeaconproject.substack.com/embed" width="100%" height="150" scrolling="no"></iframe> -->
+
 		<div class="cta-title" bind:this={textElement}>
-			<h2>Dive deeper into the data...</h2>
+			<h2>Explore further into the data...</h2>
 		</div>
 		
 		<div class="cta-columns">
 			<div class="cta-column dashboard-column">
 				<div class="column-content">
-					<h3>Dashboard</h3>
-					<p>Explore how the data breaks down along demographic lines, gender, location, and more.</p>
+					<h3>Data Dashboard</h3>
+					<p>Learn how Americans’ beliefs differ by political affiliation, gender, location, and more.</p>
 					<button data-button="explore" bind:this={exploreButton} onclick={() => window.location.href = '/dashboard'}>
 						Explore the data
 					</button>
@@ -109,7 +112,7 @@
 			<div class="cta-column quiz-column">
 				<div class="column-content">
 					<h3>Interactive Quiz</h3>
-					<p>Take our interactive quiz to see how your beliefs compare to those of other Americans.</p>
+					<p>How do your beliefs compare to other Americans’</p>
 					<button data-button="quiz" bind:this={quizButton} onclick={() => window.location.href = '/quiz'}>
 						Start the quiz
 					</button>

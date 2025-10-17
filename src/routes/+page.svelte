@@ -14,6 +14,7 @@
 	import MatrixScroller from '$lib/components/MatrixScroller/MatrixScroller.svelte';
 
 	import CTA from '$lib/components/CTA.svelte';
+	import EmailSignupSection from '$lib/components/EmailSignupSection.svelte';
 	import Dashboard from '$lib/components/dashboard/Dashboard.svelte';
 	import Quiz from '$lib/components/quiz/Quiz.svelte';
 	const { meta, content } = copy;
@@ -39,6 +40,8 @@
 <MatrixScroller {content}/>
 
 <GSAPScroller section="outro" />
+
+<EmailSignupSection />
 
 <CTA />
 

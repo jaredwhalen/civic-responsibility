@@ -49,7 +49,7 @@
 		</div>
 
 	{#if results.summary}
-		{@const ideology = results.summary.find(item => item.group_var === 'ideology_tri')}
+		{@const ideology = results.summary.find(item => item.group_var === 'ideology_binary')}
 		{#if ideology}
 			{@const ideologyPercent = ideology.percent_fit.toFixed(0)}
 			<div class="results-row flex">
