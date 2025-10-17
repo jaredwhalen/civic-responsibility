@@ -3,7 +3,7 @@
 </script>
 
 <div class="legend">
-	<div class="legend-title">Mean agreement rate</div>
+	<div class="legend-title">% selecting behavior as civic responsibility</div>
 	<div class="gradient-bar">
 		<div
 			class="gradient-fill"
@@ -22,7 +22,7 @@
 		max-width: 250px;
 
 		.legend-title {
-			font-size: 14px;
+			font-size: 12px;
 			font-weight: 800;
 			color: #666;
 			font-family: sans-serif;
