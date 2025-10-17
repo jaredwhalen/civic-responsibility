@@ -32,7 +32,7 @@
 	});
 
 	// Derive button text based on navigation state
-	let backButtonText = $derived($isMobile ? '' : cameDirectlyFromRoot ? 'Go back home' : 'Home');
+	let backButtonText = $derived($isMobile ? '' : cameDirectlyFromRoot ? 'Return to main page' : 'Main page');
 
 	function handleBackClick() {
 		if (cameDirectlyFromRoot && browser) {
