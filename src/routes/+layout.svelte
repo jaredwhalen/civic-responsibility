@@ -1,14 +1,54 @@
 <script>
 	import { base } from '$app/paths';
+	import { onMount } from 'svelte';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import '$lib/fonts/stylesheet.css';
 	import '$lib/styles/global.scss';
 	import copy from '$lib/data/copy.json';
 	let headerHeight = $state(0);
+	let showFooter = $state(false);
 	import { page } from '$app/stores';
 
 	const { meta } = copy;
+
+	// Check if user has scrolled to bottom of page
+	function checkScrollToBottom() {
+		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+		const scrollHeight = document.documentElement.scrollHeight;
+		const clientHeight = window.innerHeight;
+		
+		// Check if user is at bottom (with small tolerance)
+		const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+		
+		if (isAtBottom && !showFooter) {
+			// Wait 1 second then show footer
+			setTimeout(() => {
+				showFooter = true;
+			}, 500);
+		}
+	}
+
+	onMount(() => {
+		// Only apply scroll detection on root page
+		const isRootPage = $page.url.pathname === '/';
+		
+		if (isRootPage) {
+			// Check initial scroll position in case user is already at bottom
+			checkScrollToBottom();
+			
+			// Add scroll listener
+			window.addEventListener('scroll', checkScrollToBottom);
+			
+			// Cleanup
+			return () => {
+				window.removeEventListener('scroll', checkScrollToBottom);
+			};
+		} else {
+			// For non-root pages (like /quiz), show footer immediately
+			showFooter = true;
+		}
+	});
 
 </script>
 
@@ -30,7 +70,7 @@
 
 	<slot />
 
-	{#if $page.url.pathname != '/dashboard'}
+	{#if $page.url.pathname != '/dashboard' && showFooter}
 		<Footer />
 	{/if}
 
