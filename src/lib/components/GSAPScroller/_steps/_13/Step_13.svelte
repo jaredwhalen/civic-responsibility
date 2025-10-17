@@ -217,7 +217,7 @@
 					font-size: 25rem;
 					font-weight: 700;
 					color: var(--color-theme-blue-light);
-					opacity: 0.6;
+					opacity: 0.3;
 					line-height: 1;
 
 					@include mq('mobile', 'max') {
