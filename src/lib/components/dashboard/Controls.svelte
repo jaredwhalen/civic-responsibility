@@ -14,7 +14,7 @@
 		isPinned = $bindable(),
 		onExit = () => {}
 	} = $props();
-	
+
 	let selectedOption = $state('mean');
 	let isModalOpen = $state(false);
 	let isDropdownOpen = $state(false);
@@ -183,13 +183,12 @@
 
 	// Get current view summary text
 	function getCurrentViewSummary() {
-		const viewLabel = options.find(opt => opt.value === selectedOption)?.label || 'U.S. average';
-	
+		const viewLabel = options.find((opt) => opt.value === selectedOption)?.label || 'U.S. average';
 
 		if (activeView === 'state' && selectedStateView === 'map' && selectedStateMapViewOption) {
 			return selectedStateMapViewOption;
 		}
-		
+
 		return viewLabel;
 	}
 
@@ -200,7 +199,7 @@
 		} else {
 			document.body.style.overflow = '';
 		}
-		
+
 		// Cleanup
 		return () => {
 			document.body.style.overflow = '';
@@ -217,7 +216,9 @@
 				<ListFilter size={20} />
 			</button>
 			<div class="view-summary">
-				<span class="view-summary-label">Viewing {selectedStateView === 'map' ? 'states' : 'data'} by:</span>
+				<span class="view-summary-label"
+					>Viewing {selectedStateView === 'map' ? 'states' : 'data'} by:</span
+				>
 				<span class="view-summary-value">{getCurrentViewSummary()}</span>
 			</div>
 		</div>
@@ -225,9 +226,9 @@
 
 	<!-- Modal overlay (mobile only) -->
 	{#if $isMobile && isModalOpen}
-		<div 
-			class="modal-overlay" 
-			onclick={closeModal} 
+		<div
+			class="modal-overlay"
+			onclick={closeModal}
 			onkeydown={(e) => e.key === 'Escape' && closeModal()}
 			role="button"
 			tabindex="-1"
@@ -240,129 +241,133 @@
 	<div class="controls-container" class:modal-open={$isMobile && isModalOpen}>
 		{#if !$isMobile || isModalOpen}
 			<div class="dashboard-controls" transition:fly={{ y: $isMobile ? 300 : 0, duration: 300 }}>
-			<!-- Modal header (mobile only) -->
-			{#if $isMobile}
-				<div class="modal-header">
-					<h2>Filter Options</h2>
-					<button class="close-button" onclick={closeModal} aria-label="Close filters">×</button>
-				</div>
-			{/if}
+				<!-- Modal header (mobile only) -->
+				{#if $isMobile}
+					<div class="modal-header">
+						<h2>Filter Options</h2>
+						<button class="close-button" onclick={closeModal} aria-label="Close filters">×</button>
+					</div>
+				{/if}
 
-			<div class="dashboard-controls-inner">
-				<div class="dashboard-controls-inner-title">
-					<h3>View data by</h3>
-				</div>
-
-				<div class="dashboard-controls-inner-options">
-					{#each options as option}
-						<button
-							bind:this={buttonRefs[option.value]}
-							class="dashboard-controls-inner-option {selectedOption === option.value
-								? 'selected'
-								: ''}"
-							onclick={() => handleSelect(option.value)}
-						>
-							{option.label}
-						</button>
-					{/each}
-				</div>
-			</div>
-
-			{#if activeView == 'state'}
 				<div class="dashboard-controls-inner">
 					<div class="dashboard-controls-inner-title">
-						<h3>Display</h3>
+						<h3>View data by</h3>
 					</div>
 
 					<div class="dashboard-controls-inner-options">
-						{#each stateViewOptions as option}
+						{#each options as option}
 							<button
-								onclick={() => (selectedStateView = option.value)}
-								class="dashboard-controls-inner-option {selectedStateView === option.value
+								bind:this={buttonRefs[option.value]}
+								class="dashboard-controls-inner-option {selectedOption === option.value
 									? 'selected'
-									: ''}">{option.label}</button
+									: ''}"
+								onclick={() => handleSelect(option.value)}
 							>
+								{option.label}
+							</button>
 						{/each}
 					</div>
 				</div>
 
-				<div class="dashboard-controls-inner">
-					<div class="dashboard-controls-inner-title">
-						<h3>View results for</h3>
+				{#if activeView == 'state'}
+					<div class="dashboard-controls-inner">
+						<div class="dashboard-controls-inner-title">
+							<h3>Display</h3>
+						</div>
+
+						<div class="dashboard-controls-inner-options">
+							{#each stateViewOptions as option}
+								<button
+									onclick={() => (selectedStateView = option.value)}
+									class="dashboard-controls-inner-option {selectedStateView === option.value
+										? 'selected'
+										: ''}">{option.label}</button
+								>
+							{/each}
+						</div>
 					</div>
 
-					<div class="dropdown-container">
-						<button class="dropdown-button" onclick={toggleDropdown} aria-expanded={isDropdownOpen}>
-							<span class="dropdown-arrow" class:is-open={isDropdownOpen}>▼</span>
-							<span class="dropdown-text">
-								{#if selectedStateView === 'chart'}
-									<!-- State pills for chart view -->
-									{#if selectedStateChartViewOptions.length > 0}
-										<div class="state-pills">
-											{#each selectedStateChartViewOptions as state}
-												<div 
-													class="state-pill" 
-													onclick={(e) => {
-														e.stopPropagation();
-														removeState(state);
-													}}
-													onkeydown={(e) => {
-														if (e.key === 'Enter' || e.key === ' ') {
-															e.preventDefault();
+					<div class="dashboard-controls-inner">
+						<div class="dashboard-controls-inner-title">
+							<h3>Select {selectedStateView === 'chart' ? 'states' : 'a civic responsibility'}</h3>
+						</div>
+
+						<div class="dropdown-container">
+							<button
+								class="dropdown-button"
+								onclick={toggleDropdown}
+								aria-expanded={isDropdownOpen}
+							>
+								<span class="dropdown-arrow" class:is-open={isDropdownOpen}>▼</span>
+								<span class="dropdown-text">
+									{#if selectedStateView === 'chart'}
+										<!-- State pills for chart view -->
+										{#if selectedStateChartViewOptions.length > 0}
+											<div class="state-pills">
+												{#each selectedStateChartViewOptions as state}
+													<div
+														class="state-pill"
+														onclick={(e) => {
+															e.stopPropagation();
 															removeState(state);
-														}
-													}}
-													role="button"
-													tabindex="0"
-													aria-label="Remove {state}"
-												>
-													<span class="state-name">{stateAbbreviations[state] || state}</span>
-													<span class="remove-icon" aria-hidden="true">×</span>
-												</div>
-											{/each}
-										</div>
+														}}
+														onkeydown={(e) => {
+															if (e.key === 'Enter' || e.key === ' ') {
+																e.preventDefault();
+																removeState(state);
+															}
+														}}
+														role="button"
+														tabindex="0"
+														aria-label="Remove {state}"
+													>
+														<span class="state-name">{stateAbbreviations[state] || state}</span>
+														<span class="remove-icon" aria-hidden="true">×</span>
+													</div>
+												{/each}
+											</div>
+										{:else}
+											<span class="dropdown-text-content">Select up to 3 states</span>
+										{/if}
 									{:else}
-										Select up to 3 states
+										<span class="dropdown-text-content">{selectedStateMapViewOption || 'Select a duty'}</span>
 									{/if}
-								{:else}
-									{selectedStateMapViewOption || 'Select a duty'}
-								{/if}
-							</span>
-						</button>
+								</span>
+							</button>
 
-						{#if isDropdownOpen}
-							<div class="dropdown-menu" transition:fade={{ duration: 200 }}>
-								{#each resultsOptions as option}
-									<button
-										class="dropdown-item {selectedStateView === 'chart'
-											? selectedStateChartViewOptions.includes(option.value)
-												? 'selected'
-												: ''
-											: selectedStateMapViewOption === option.value
-												? 'selected'
-												: ''}"
-										onclick={() => handleStateSelect(option.value)}
-										disabled={selectedStateView === 'chart' &&
-											selectedStateChartViewOptions.length >= 3 &&
-											!selectedStateChartViewOptions.includes(option.value)}
-									>
-										{option.label}
-									</button>
-								{/each}
-							</div>
-						{/if}
+							{#if isDropdownOpen}
+								<div class="dropdown-menu" transition:fade={{ duration: 200 }}>
+									{#each resultsOptions as option}
+										<button
+											class="dropdown-item {selectedStateView === 'chart'
+												? selectedStateChartViewOptions.includes(option.value)
+													? 'selected'
+													: ''
+												: selectedStateMapViewOption === option.value
+													? 'selected'
+													: ''}"
+											onclick={() => handleStateSelect(option.value)}
+											disabled={selectedStateView === 'chart' &&
+												selectedStateChartViewOptions.length >= 3 &&
+												!selectedStateChartViewOptions.includes(option.value)}
+										>
+											{option.label}
+										</button>
+									{/each}
+								</div>
+							{/if}
+						</div>
 					</div>
-				</div>
-			{/if}
+				{/if}
 
-			<!-- Apply button (mobile only) -->
-			{#if $isMobile}
-				<div class="modal-footer">
-					<button class="apply-button" onclick={closeModal}>Apply Filters</button>
-				</div>
-			{/if}
-		</div>
-	{/if}
+				<!-- Apply button (mobile only) -->
+				{#if $isMobile}
+					<div class="modal-footer">
+						<button class="apply-button" onclick={closeModal}>Apply Filters</button>
+					</div>
+				{/if}
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -454,7 +459,7 @@
 		display: flex;
 		gap: 1rem;
 		flex-wrap: wrap;
-	
+
 		@include mq('mobile', 'max') {
 			flex-wrap: wrap;
 			flex-direction: column;
@@ -600,15 +605,14 @@
 
 		.dropdown-container {
 			position: relative;
-		    width: fit-content;
+			width: fit-content;
 
 			@include mq('mobile', 'max') {
 				width: 100%;
 			}
 
 			.dropdown-button {
-				width: 100%;
-				min-width: 185px;
+				width: 250px;
 
 				@include mq('mobile', 'max') {
 					min-width: 100%;
@@ -668,6 +672,14 @@
 					overflow: hidden;
 					height: 100%; // Take full height of button
 					max-height: 100%; // Ensure it doesn't exceed button height
+
+					.dropdown-text-content {
+						white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						flex: 1;
+						min-width: 0;
+					}
 				}
 
 				// State pills styling - positioned inside the button
@@ -754,12 +766,17 @@
 					font-family: sans-serif;
 					text-align: left;
 					border-radius: 0;
-					white-space: nowrap;
-					overflow: hidden;
-					text-overflow: ellipsis;
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
+					white-space: normal;
+					word-wrap: break-word;
+					line-height: 1.4;
+
+					&:hover:not(:disabled) {
+						background-color: $color-beacon-yellow;
+						color: #333;
+					}
 
 					&:first-child {
 						border-top-left-radius: 0.5rem;
@@ -771,10 +788,6 @@
 						border-bottom-right-radius: 0.5rem;
 					}
 
-					&:hover:not(:disabled) {
-						background-color: $color-beacon-yellow;
-						color: #333;
-					}
 
 					&.selected {
 						// background-color: $color-beacon-yellow;
@@ -792,4 +805,5 @@
 			}
 		}
 	}
+
 </style>
