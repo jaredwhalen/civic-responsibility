@@ -1,6 +1,6 @@
 <script>
 	import duties from '$lib/data/csvs/mean_duties_weighted.csv';
-	import { House, Vote, Cake } from '@lucide/svelte';
+	import { House, Landmark, Cake } from '@lucide/svelte';
 	import SocialShare from './SocialShare.svelte';
 	import { isMobile } from '$lib/stores/responsive.js';
 
@@ -53,7 +53,7 @@
 		{#if ideology}
 			{@const ideologyPercent = ideology.percent_fit.toFixed(0)}
 			<div class="results-row flex">
-				<div class="icon-container"><Vote color="#fff" size={iconSize} /></div>
+				<div class="icon-container"><Landmark color="#fff" size={iconSize} /></div>
 				<div class="content-container">
 					<p>
 						<span class="highlight black">
