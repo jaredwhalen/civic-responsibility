@@ -74,6 +74,7 @@
 
 <style lang="scss">
 	@import '../styles/variables.scss';
+	@import '../styles/mixins.scss';
 
 	.email-signup-section {
         z-index: 1;
@@ -124,17 +125,13 @@
 				display: flex;
 				gap: 1rem;
 				width: 100%;
-				background: rgba(255, 255, 255, 0.15);
-				backdrop-filter: blur(15px);
-				border: 1px solid rgba(255, 255, 255, 0.25);
 				border-radius: 16px;
 				padding: 1.5rem;
 				box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
 				transition: all 0.3s ease;
+				@include glass-effect(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.25), 15px);
 
 				&:hover {
-					background: rgba(255, 255, 255, 0.2);
-					border-color: rgba(255, 255, 255, 0.35);
 					box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
 				}
 
