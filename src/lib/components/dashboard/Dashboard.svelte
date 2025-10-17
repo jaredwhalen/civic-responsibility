@@ -406,7 +406,7 @@
 
 	// Reset noteHeight when note is not visible
 	$effect(() => {
-		if (!interactiveMode || (activeView !== 'state' && activeView !== 'race')) {
+		if (!interactiveMode) {
 			noteHeight = 0;
 		}
 	});
@@ -497,6 +497,16 @@
 			clickedCircles = new Set();
 		}
 	}
+
+	// 	$inspect(`
+
+	// dashboardHeight: ${dashboardHeight}
+	// controlsHeight: ${controlsHeight}
+	// rowHeight: ${rowHeight}
+	// adjustedDimensions.height: ${adjustedDimensions.height}
+	// renderedChartContainerHeight: ${renderedChartContainerHeight}
+	// needsScrolling: ${needsScrolling}
+	// 			`);
 </script>
 
 <div
