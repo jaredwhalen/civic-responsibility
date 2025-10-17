@@ -19,7 +19,7 @@
 	let infoIcon = $state(null);
 
 	const definition =
-		'Behaviors people are expected to perform as upstanding members of our national community.';
+		'<b>Civic responsibilities:</b> Behaviors people are expected to perform as upstanding members of our national community.';
 
 	function handleResults(newResults) {
 		if (newResults) {
@@ -44,7 +44,8 @@
 				theme: 'light',
 				placement: 'top',
 				arrow: true,
-				duration: [200, 150]
+				duration: [200, 150],
+				allowHTML: true
 			});
 		}
 
