@@ -48,7 +48,13 @@
 	const filteredStateData = filterDataByN(states, statesNMap, N_THRESHOLD, 'state');
 	const filteredRaceData = filterDataByN(race, raceNMap, N_THRESHOLD, 'racegroup');
 
-	let { activeId, interactiveMode = $bindable(), animateMount = true, isPinned = false, disableTippy = false } = $props();
+	let {
+		activeId,
+		interactiveMode = $bindable(),
+		animateMount = true,
+		isPinned = false,
+		disableTippy = false
+	} = $props();
 	let activeView = $state('mean');
 	let selectedStateView = $state('map');
 	let selectedStateChartViewOptions = $state([]);
@@ -629,15 +635,16 @@
 			</div>
 		{/if}
 
-		{#if interactiveMode && (activeView === 'state' || activeView === 'race')}
-			<div class="n-threshold-note" class:sticky={interactiveMode} bind:clientHeight={noteHeight}>
+		<div class="n-threshold-note" class:sticky={interactiveMode} bind:clientHeight={noteHeight}>
+			{#if interactiveMode && (activeView === 'state' || activeView === 'race')}
 				{#if activeView === 'state'}
-					Only states with more than N = 40 participants are included
+					Only states with more than N = 40 participants are included;
 				{:else}
-					Only categories with more than N = 40 participants are included
+					Only categories with more than N = 40 participants are included;
 				{/if}
-			</div>
-		{/if}
+			{/if}
+			Margin of error = 1% (larger for subgroups)
+		</div>
 	</div>
 </div>
 
