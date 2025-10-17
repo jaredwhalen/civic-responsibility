@@ -16,8 +16,7 @@
 			<div class="footer-section">
 				<h2 class="footer-title">About The Beacon Project</h2>
 				<p>
-					We are a multi-year effort at More in Common to develop a new civic vision for America
-					that speaks to modern challenges.
+					We are a multi-year effort at More in Common to develop a new civic vision that can speak to America’s Exhausted Majority.
 				</p>
 			</div>
 			<div class="footer-section">
