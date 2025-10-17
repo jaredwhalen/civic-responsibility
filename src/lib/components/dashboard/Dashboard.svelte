@@ -145,7 +145,7 @@
 			series: [
 				{ label: 'Democrats', color: getCSSVar('--color-theme-dem-blue') },
 				{ label: 'Republicans', color: getCSSVar('--color-theme-gop-red') },
-				{ label: 'Independents', color: getCSSVar('#dddddd') }
+				{ label: 'Independents', color: getCSSVar('--color-theme-yellow') }
 			]
 		},
 		{
