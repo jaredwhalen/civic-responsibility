@@ -8,14 +8,21 @@
 	} = $props();
 </script>
 
-{#if options?.series && options.series.length > 1}
-	<div class="legend" class:large-font={variant === 'large-font'}>
-		<!-- <div class="legend-title">Legend</div> -->
-		<div class="legend-items">
-			{#each options.series as series}
+<div class="legend" class:large-font={variant === 'large-font'}>
+	<!-- <div class="legend-title">Legend</div> -->
+	<div class="legend-items">
+		{#if interactive}
+			<span class="legend-item instruction"
+				><span class="legend-label">Select dots to compare</span></span
+			>
+		{/if}
+
+		{#if options?.series && options.series.length > 1}
+			{#each options.series as series, i}
 				{#if series.label != 'Other'}
 					<div
 						class="legend-item"
+						class:first={i === 0 && interactive}
 						class:interactive
 						class:active={clickedSeries?.has(series.label)}
 						onclick={() => {
@@ -46,9 +53,9 @@
 					</div>
 				{/if}
 			{/each}
-		</div>
+		{/if}
 	</div>
-{/if}
+</div>
 
 <style lang="scss">
 	.legend {
@@ -78,7 +85,6 @@
 			}
 
 			@include mq('mobile', 'max') {
-
 				margin-top: 0rem;
 				.legend-label {
 					font-size: 1rem;
@@ -106,6 +112,28 @@
 		align-items: center;
 		gap: 0.5rem;
 		border-bottom: 1px solid transparent;
+
+		&.first {
+			margin-left: 1rem;
+			position: relative;
+
+			&::before {
+				content: '';
+				margin-right: 1rem;
+				color: var(--color-gray-500);
+				position: absolute;
+				left: -1rem;
+				height: 100%;
+				border-left: 1px solid var(--color-gray-400);
+			}
+
+			@include mq('mobile', 'max') {
+				margin-left: 0rem;
+				&::before {
+					display: none;
+				}
+			}
+		}
 		&.interactive {
 			cursor: pointer;
 
@@ -144,5 +172,12 @@
 		font-weight: 500;
 		color: #666;
 		font-family: sans-serif;
+	}
+
+	.instruction {
+		font-style: italic;
+		@include mq('mobile', 'max') {
+			width: 100%;
+		}
 	}
 </style>
