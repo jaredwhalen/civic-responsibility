@@ -166,7 +166,7 @@
 				{ label: 'Black', color: getCSSVar('--color-theme-green') },
 				{ label: 'Hispanic', color: getCSSVar('--color-theme-yellow') },
 				{ label: 'Asian', color: getCSSVar('--color-theme-red') },
-				{ label: 'Other', color: '#dddddd' }
+				{ label: 'Mixed race', color: '#dddddd' }
 			]
 		},
 		{
