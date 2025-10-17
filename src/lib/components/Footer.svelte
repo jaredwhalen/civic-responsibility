@@ -6,7 +6,7 @@
 	<div class="footer-beacon-section">
 		<div class="beacon-text">
 			This website was produced by the
-			<span class="beacon-project">Beacon Project</span>
+			<a class="beacon-project" href="https://beaconproject.us/" target="_blank">Beacon Project</a>
 		</div>
 		<a class="learn-more-button" href="https://beaconproject.us/" target="_blank">Learn More</a>
 	</div>
