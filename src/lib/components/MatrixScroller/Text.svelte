@@ -2,12 +2,14 @@
 	import { fly } from 'svelte/transition';
 	import { userResponse } from '$lib/stores/userResponse.js';
 	import GroupLegend from '../dashboard/GroupLegend.svelte';
+	import Submit from './Submit.svelte';
 	import { getCSSVar } from '$lib/helpers/getCSSVar';
 
 	const { content } = $props();
 
 	const components = {
-		GroupLegend: GroupLegend
+		GroupLegend: GroupLegend,
+		Submit: Submit
 	};
 
 	const options = $derived([
@@ -104,6 +106,7 @@
 			left: 0;
 			right: 0;
 			text-align: center;
+			pointer-events: auto;
 			&.hide {
 				opacity: 0;
 			}

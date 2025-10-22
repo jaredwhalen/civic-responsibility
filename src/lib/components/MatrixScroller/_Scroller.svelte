@@ -108,8 +108,6 @@
 
 	onMount(() => {
 		sections = foreground.querySelectorAll(query);
-		count = sections.length;
-
 		update();
 
 		const scroller = { outer, update };
@@ -153,11 +151,20 @@
 			fixed = true;
 		}
 
-		for (let i = 0; i < sections.length; i++) {
-			const section = sections[i];
+		// Filter out hidden sections (display: none)
+		const visibleSections = Array.from(sections).filter(section => {
+			const style = window.getComputedStyle(section);
+			return style.display !== 'none';
+		});
+
+		// Update count to reflect only visible sections
+		count = visibleSections.length;
+
+		for (let i = 0; i < visibleSections.length; i++) {
+			const section = visibleSections[i];
 			const { top } = section.getBoundingClientRect();
 
-			const next = sections[i + 1];
+			const next = visibleSections[i + 1];
 			const bottom = next ? next.getBoundingClientRect().top : fg.bottom;
 
 			offset = (threshold_px - top) / (bottom - top);

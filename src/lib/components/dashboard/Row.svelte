@@ -42,14 +42,14 @@
 	let showText = $state(false);
 
 	function handleMouseDown(event) {
-		if (!guessMode) return;
+		if (!guessMode || $userResponse.submitted) return;
 		isDragging = true;
 		event.preventDefault();
 		svgEl = event.target.ownerSVGElement;
 	}
 
 	function handleTouchStart(event) {
-		if (!guessMode) return;
+		if (!guessMode || $userResponse.submitted) return;
 		isDragging = true;
 		event.preventDefault();
 		svgEl = event.target.ownerSVGElement;
@@ -343,8 +343,8 @@
 			opacity={interactiveMode ? 0.75 : 1}
 			onmousedown={handleMouseDown}
 			ontouchstart={handleTouchStart}
-			style={guessMode ? 'cursor: grab;' : ''}
-			class:interactive={guessMode}
+			style={guessMode && !$userResponse.submitted ? 'cursor: grab;' : ''}
+			class:interactive={guessMode && !$userResponse.submitted}
 			data-state={s.label}
 			data-value={s.value}
 			data-duty={duty_label}
@@ -384,7 +384,7 @@
 			{/if}
 		{/if}
 
-		{#if guessMode}
+		{#if guessMode && !$userResponse.submitted}
 			<circle
 				transition:fade|global={{ duration: 100 }}
 				cx={xScale(s.value)}

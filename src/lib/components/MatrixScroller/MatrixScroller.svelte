@@ -1,8 +1,9 @@
 <script>
 	import Scroller from '$lib/components/MatrixScroller/_Scroller.svelte';
 	import Background from '$lib/components/MatrixScroller/Background.svelte';
-
+	import { userResponse } from '$lib/stores/userResponse.js';
 	import Text from '$lib/components/MatrixScroller/Text.svelte';
+	import { onMount } from 'svelte';
 
 	let { content } = $props();
 
@@ -18,7 +19,15 @@
 
 	// Derived variables for each Scrolly component
 
-	const activeSlide = $derived(content.scrolly.slidesFixed[index]);
+	const activeSlide = $derived(content.scrolly.slidesFixed[$userResponse.submitted ? index : 0]);
+
+	$inspect(index);
+
+	$effect(() => {
+		if (!$userResponse.submitted) {
+			index = 0;
+		}
+	});
 </script>
 
 <Scroller
@@ -65,7 +74,12 @@
 			aria-label="Second content slides"
 		>
 			{#each content.scrolly.slidesFixed as slide, slideIndex}
-				<section class="slide"></section>
+				<section
+					class="matrix slide"
+					data-index={slideIndex}
+					class:first={slideIndex === 0}
+					class:hidden={!$userResponse.submitted && slideIndex > 0}
+				></section>
 			{/each}
 		</div>
 	{/snippet}
@@ -75,6 +89,13 @@
 	.slide {
 		height: 70svh;
 		position: relative;
+		&.first {
+			height: 100svh;
+		}
+
+		&.hidden {
+			display: none;
+		}
 	}
 
 	.progress-indicator {

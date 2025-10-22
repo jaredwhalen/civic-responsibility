@@ -2,7 +2,7 @@
 	import { base } from '$app/paths';
 	import { onMount } from 'svelte';
 	import Header from '$lib/components/Header.svelte';
-	import Footer from '$lib/components/Footer.svelte';
+
 	import '$lib/fonts/stylesheet.css';
 	import '$lib/styles/global.scss';
 	import copy from '$lib/data/copy.json';
@@ -70,9 +70,7 @@
 
 	<slot />
 
-	{#if $page.url.pathname != '/dashboard' && showFooter}
-		<Footer />
-	{/if}
+
 
 </main>
 

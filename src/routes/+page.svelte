@@ -8,7 +8,7 @@
 	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { isMobile, isTablet } from '$lib/stores/responsive.js';
-
+	import { userResponse } from '$lib/stores/userResponse.js';
 
 	import GSAPScroller from '$lib/components/GSAPScroller/GSAPScroller.svelte';
 	import MatrixScroller from '$lib/components/MatrixScroller/MatrixScroller.svelte';
@@ -37,15 +37,17 @@
 
 <GSAPScroller section="intro" />
 
-<MatrixScroller {content}/>
+<MatrixScroller {content} />
 
-<GSAPScroller section="outro" />
+{#if $userResponse.submitted}
+	<GSAPScroller section="outro" />
 
-<EmailSignupSection />
+	<EmailSignupSection />
 
-<CTA />
-
-
+	<CTA />
+	
+	<Footer />
+{/if}
 
 <style lang="scss">
 	@import '$lib/styles/mixins.scss';
