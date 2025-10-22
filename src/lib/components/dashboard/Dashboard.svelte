@@ -653,7 +653,9 @@
 					Only categories with more than N = 40 participants are included;
 				{/if}
 			{/if}
-			Margin of error = 1% (larger for subgroups)
+			{#if interactiveMode}
+				Margin of error = 1% (larger for subgroups)
+			{/if}
 		</div>
 	</div>
 </div>
