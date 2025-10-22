@@ -33,9 +33,9 @@
 
 		<text
 			x={dimensions.margins.left + (width - dimensions.margins.right - dimensions.margins.left) / 2}
-			y={axisHeight - (inIntro ? 5 : 15)}
+			y={axisHeight - (inIntro ? 20 : 15)}
 			text-anchor="middle"
-			class="axis-label">% selecting behavior as civic responsibility</text
+			class="axis-label">% selecting behavior</text
 		>
 	</svg>
 </div>
@@ -92,9 +92,10 @@
 		}
 	}
 	.axis-label {
-		font-size: 0.8rem;
-		fill: var(--color-gray-1000);
-		font-weight: 800;
+		font-family: $font-family-body;
+		font-size: 1rem;
+		fill: var(--color-gray-500);
 		transition: all 0.5s ease;
+		font-weight: 500;
 	}
 </style>
