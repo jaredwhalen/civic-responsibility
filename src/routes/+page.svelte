@@ -18,6 +18,39 @@
 	import Dashboard from '$lib/components/dashboard/Dashboard.svelte';
 	import Quiz from '$lib/components/quiz/Quiz.svelte';
 	const { meta, content } = copy;
+	
+
+	let showFooter = $state(false);
+
+	// Check if user has scrolled to bottom of page
+	function checkScrollToBottom() {
+		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+		const scrollHeight = document.documentElement.scrollHeight;
+		const clientHeight = window.innerHeight;
+
+		// Check if user is at bottom (with small tolerance)
+		const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+
+		if (isAtBottom && !showFooter && $userResponse.submitted) {
+			// Wait 1 second then show footer
+			setTimeout(() => {
+				showFooter = true;
+			}, 500);
+		}
+	}
+
+	onMount(() => {
+		// Check initial scroll position in case user is already at bottom
+		checkScrollToBottom();
+
+		// Add scroll listener
+		window.addEventListener('scroll', checkScrollToBottom);
+
+		// Cleanup
+		return () => {
+			window.removeEventListener('scroll', checkScrollToBottom);
+		};
+	});
 </script>
 
 <svelte:head>
@@ -45,8 +78,10 @@
 	<EmailSignupSection />
 
 	<CTA />
-	
-	<Footer />
+
+	{#if showFooter}
+		<Footer />
+	{/if}
 {/if}
 
 <style lang="scss">
