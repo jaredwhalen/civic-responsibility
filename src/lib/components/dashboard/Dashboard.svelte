@@ -405,6 +405,7 @@
 
 	let dashboardHeight = $state(null);
 	let controlsHeight = $state(null);
+	let legendHeight = $state(0);
 
 	let axisHeight = $derived($isMobile ? interactiveMode ? 60 : 80 : interactiveMode ? 80 : 100);
 
@@ -504,15 +505,6 @@
 		}
 	}
 
-	// 	$inspect(`
-
-	// dashboardHeight: ${dashboardHeight}
-	// controlsHeight: ${controlsHeight}
-	// rowHeight: ${rowHeight}
-	// adjustedDimensions.height: ${adjustedDimensions.height}
-	// renderedChartContainerHeight: ${renderedChartContainerHeight}
-	// needsScrolling: ${needsScrolling}
-	// 			`);
 </script>
 
 <div
@@ -549,8 +541,8 @@
 				}}
 			/>
 
-			{#if options.find((o) => o.value === activeView)?.series?.length > 1}
-				<div class="legend-wrapper">
+			{#if (options.find((o) => o.value === activeView)?.series?.length > 1 || activeView == 'state') && selectedStateView == 'map'}
+				<div class="legend-wrapper" bind:clientHeight={legendHeight}>
 					{#if activeView == 'state' && selectedStateView == 'map'}
 						<GradientLegend colorScale={mapColorScale} />
 					{:else}
@@ -569,7 +561,7 @@
 		</div>
 	{/if}
 
-	<div class="dashboard-content">
+	<div class="dashboard-content" style:--legend-height="{legendHeight}px">
 		{#if interactiveMode && activeView == 'state' && selectedStateView == 'map'}
 			<div class="map-wrapper">
 				<MapViz
@@ -794,6 +786,7 @@
 		@include mq('mobile', 'max') {
 			margin-left: 0;
 			width: 100%;
+			top: var(--legend-height, 100px);
 		}
 	}
 
