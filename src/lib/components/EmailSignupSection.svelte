@@ -5,9 +5,9 @@
 
 	// ===== CONFIG =====
 	// Paste your Apps Script Web App URL (ends with /exec)
-	const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz2EuBsubjLx3qb0ermPkcTTQUIHstdDmg2dUBcNctxZ1pOwV3Yp-X7UR4l9p6QAuUx/exec';
-	// Optional: if you added a shared key check in Apps Script, put it here:
-	const SHARED_KEY = ''; 
+	const WEB_APP_URL =
+		'https://script.google.com/macros/s/AKfycbxiJGG8bz08MzcPVAFqrC_9KANbfSYIi5ajUBDGHLU52v7AF9lpSIdiKG0jWKV2cNhp/exec';
+
 
 	// ===== Refs =====
 	let sectionElement;
@@ -19,8 +19,7 @@
 	// ===== State (Svelte 5 runes) =====
 	let progress = $state(0);
 	let submitting = $state(false);
-	let statusMsg = $state('');
-	let statusType = $state(/** 'ok' | 'error' | '' */ '');
+	let showSuccess = $state(false);
 
 	// Reactive calculations based on scroll progress
 	let contentScale = $derived(progress >= 10 ? 1 : 0.8);
@@ -59,9 +58,11 @@
 		}
 	});
 
-	function setStatus(type, msg) {
-		statusType = type;
-		statusMsg = msg;
+	function showSuccessMessage() {
+		showSuccess = true;
+		setTimeout(() => {
+			showSuccess = false;
+		}, 2000);
 	}
 
 	function validEmail(str) {
@@ -71,54 +72,43 @@
 
 	async function handleSubmit(event) {
 		event.preventDefault();
-		setStatus('', '');
 
 		const email = (emailInput?.value || '').trim();
 		const hp = (honeypotInput?.value || '').trim(); // should be empty
 
 		if (hp) {
 			// Bot likely filled the hidden field—silently succeed
-			setStatus('ok', 'Thanks — you’re in!');
+			showSuccessMessage();
 			event.target.reset();
 			return;
 		}
 
 		if (!email) {
-			setStatus('error', 'Please enter your email.');
-			emailInput?.focus();
 			return;
 		}
 
 		if (!validEmail(email)) {
-			setStatus('error', 'That email doesn’t look right. Try again?');
-			emailInput?.focus();
 			return;
 		}
 
 		try {
 			submitting = true;
 
-			// If using a shared key, append ?key=... to the URL
-			const url = SHARED_KEY ? `${WEB_APP_URL}?key=${encodeURIComponent(SHARED_KEY)}` : WEB_APP_URL;
-
-			const res = await fetch(url, {
+			const res = await fetch(WEB_APP_URL, {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email })
+				headers: { 'Content-Type': 'text/plain' },
+				body: email
 			});
 
 			// Apps Script typically always returns 200; check payload
 			const json = await res.json().catch(() => ({}));
 
 			if (json?.ok) {
-				setStatus('ok', 'Thanks — you’re in!');
+				showSuccessMessage();
 				event.target.reset();
-			} else {
-				const err = json?.error || 'Unexpected error';
-				setStatus('error', `Error: ${err}`);
 			}
 		} catch (err) {
-			setStatus('error', 'Network error. Please try again.');
+			// Silently handle errors for better UX
 		} finally {
 			submitting = false;
 		}
@@ -128,8 +118,13 @@
 <section class="email-signup-section" bind:this={sectionElement}>
 	<div class="email-signup-container" bind:this={contentElement}>
 		<h2>Learn more about our effort to rethink responsibility in America.</h2>
+		<p>
+			We are on a mission to build a country that recognizes each American’s right and
+			responsibility to improve their own lives and the lives of others. Enter your email below to
+			subscribe to our newsletter and receive monthly updates on our work.
+		</p>
 
-		<form onsubmit={handleSubmit} class="signup-form" aria-describedby="signup-status">
+		<form onsubmit={handleSubmit} class="signup-form">
 			<!-- Honeypot (hidden) -->
 			<input
 				type="text"
@@ -152,6 +147,12 @@
 				aria-label="Email address"
 			/>
 
+			{#if showSuccess}
+				<div class="toast" role="alert" aria-live="polite">
+					Success! You're subscribed.
+				</div>
+			{/if}
+
 			<button
 				type="submit"
 				bind:this={submitButton}
@@ -161,10 +162,6 @@
 			>
 				{submitting ? 'Submitting…' : 'Subscribe'}
 			</button>
-
-			<p id="signup-status" class={`status ${statusType}`} aria-live="polite">
-				{statusMsg}
-			</p>
 		</form>
 	</div>
 </section>
@@ -193,11 +190,7 @@
 			left: 0;
 			right: 0;
 			bottom: 0;
-			background: radial-gradient(
-				circle at 30% 20%,
-				rgba(255, 255, 255, 0.1) 0%,
-				transparent 50%
-			);
+			background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
 			pointer-events: none;
 		}
 
@@ -218,16 +211,25 @@
 				text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
 			}
 
-			.signup-form {
-				display: flex;
-				gap: 1rem;
-				width: 100%;
-				border-radius: 16px;
-				padding: 1.5rem;
-				box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-				transition: all 0.3s ease;
-				@include glass-effect(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.25), 15px);
-				align-items: center;
+			p {
+				font-size: 1.2rem;
+				line-height: 1.6;
+				margin: 0 0 3rem 0;
+
+				color: var(--color-theme-light);
+			}
+
+				.signup-form {
+					display: flex;
+					gap: 1rem;
+					width: 100%;
+					border-radius: 16px;
+					padding: 1.5rem;
+					box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+					transition: all 0.3s ease;
+					@include glass-effect(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.25), 15px);
+					align-items: center;
+					position: relative;
 
 				&:hover {
 					box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
@@ -265,6 +267,35 @@
 					}
 				}
 
+				.toast {
+					position: absolute;
+					bottom: 100%;
+					left: 50%;
+					transform: translateX(-50%);
+					background: rgba(255, 255, 255, 0.95);
+					color: var(--color-theme-blue);
+					padding: 0.75rem 1.5rem;
+					border-radius: 8px;
+					font-size: 0.9rem;
+					font-weight: 600;
+					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+					margin-bottom: 0.5rem;
+					white-space: nowrap;
+					animation: toastSlideIn 0.3s ease-out;
+					z-index: 10;
+
+					@keyframes toastSlideIn {
+						from {
+							opacity: 0;
+							transform: translateX(-50%) translateY(10px);
+						}
+						to {
+							opacity: 1;
+							transform: translateX(-50%) translateY(0);
+						}
+					}
+				}
+
 				.submit-button {
 					padding: 1rem 2rem;
 					border: none;
@@ -278,6 +309,7 @@
 					white-space: nowrap;
 					will-change: transform;
 					box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+					position: relative;
 
 					&:hover {
 						background: #ffffff;
@@ -297,15 +329,6 @@
 					}
 				}
 
-				.status {
-					margin-left: 0.5rem;
-					font-size: 0.95rem;
-					font-weight: 600;
-					white-space: nowrap;
-
-					&.ok { color: #eaffea; }
-					&.error { color: #ffeaea; }
-				}
 			}
 		}
 	}
@@ -332,13 +355,6 @@
 
 					.submit-button {
 						width: 100%;
-					}
-
-					.status {
-						margin-left: 0;
-						text-align: center;
-						width: 100%;
-						white-space: normal;
 					}
 				}
 			}
