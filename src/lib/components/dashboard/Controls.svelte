@@ -187,6 +187,13 @@
 	}
 </script>
 
+<!-- ===== INSTRUCTIONS SNIPPET ===== -->
+{#snippet instructions()}
+	<p class="dashboard-instructions">
+		Click dots to compare responses. Select filters to view data by different categories.
+	</p>
+{/snippet}
+
 <!-- ===== DROPDOWN SNIPPET ===== -->
 {#snippet dropdown()}
 	<div class="dropdown-container">
@@ -269,6 +276,8 @@
 				{/if}
 			</div>
 		</div>
+
+		{@render instructions()}
 	{/if}
 
 	<!-- Modal overlay (mobile only) -->
@@ -298,10 +307,11 @@
 
 				<!-- Scrollable content -->
 				<div class="modal-content">
-					<!-- Instructions -->
-					<div class="control-section">
-						<p class="dashboard-instructions">Select filters and click dots to compare responses.</p>
-					</div>
+					{#if !$isMobile}
+						<div class="control-section">
+							{@render instructions()}
+						</div>
+					{/if}
 
 					<!-- View data by section -->
 					<div class="control-section">
@@ -343,7 +353,9 @@
 						{#if !$isMobile}
 							<div class="control-section">
 								<div class="section-title">
-									<h3>Select {selectedStateView === 'chart' ? 'states' : 'a civic responsibility'}</h3>
+									<h3>
+										Select {selectedStateView === 'chart' ? 'states' : 'a civic responsibility'}
+									</h3>
 								</div>
 								{@render dropdown()}
 							</div>
@@ -365,8 +377,6 @@
 			.dashboard-controls {
 				display: flex;
 				flex-direction: column;
-				
-
 			}
 		}
 	}
@@ -422,14 +432,6 @@
 					color: #333;
 				}
 			}
-		}
-
-		.dashboard-instructions {
-			font-size: 1rem;
-			color: #666;
-			font-weight: 600;
-			margin: 0;
-			line-height: 1.4;
 		}
 	}
 
@@ -753,6 +755,21 @@
 					}
 				}
 			}
+		}
+	}
+
+	.dashboard-instructions {
+		font-size: 1rem;
+		color: #666;
+		font-weight: 600;
+		margin: 0;
+		line-height: 1.4;
+
+		@include mq('mobile', 'max') {
+			font-size: 0.8rem;
+			font-weight: 400;
+
+			margin-bottom: 1rem;
 		}
 	}
 </style>
