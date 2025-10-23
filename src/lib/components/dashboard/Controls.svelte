@@ -190,7 +190,8 @@
 <!-- ===== INSTRUCTIONS SNIPPET ===== -->
 {#snippet instructions()}
 	<p class="dashboard-instructions">
-		Click dots to compare responses. Select filters to view data by different categories.
+		Click {#if activeView == 'state' && selectedStateView === 'map'}the map{:else}the dots{/if} to compare
+		responses. Select filters to view data by different categories.
 	</p>
 {/snippet}
 
