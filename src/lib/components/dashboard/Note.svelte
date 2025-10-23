@@ -20,9 +20,9 @@
 <style lang="scss">
 	// N threshold note
 	.n-threshold-note {
-		margin-top: 1rem;
-		padding-top: 2rem;
-		border-top: 1px solid #e0e0e0;
+
+		padding-top: 1rem;
+		border-top: 1px solid var(--color-gray-200);
 		h3 {
 			font-size: 1rem;
 			font-weight: 600;
@@ -30,18 +30,16 @@
 		}
 
 		p {
-			font-size: 0.875rem;
+			
 			color: #666;
 			font-style: italic;
-
-			@include mq('mobile', 'max') {
-				padding: 0.25rem 1rem;
-			}
+			font-size: 0.8rem;
+			
 		}
 
 		&.bottom {
 			text-align: center;
-			padding: 0.75rem 1rem;
+			padding: 0rem 1rem;
 			position: sticky;
 			bottom: 0;
 			z-index: 1000;
@@ -49,6 +47,8 @@
 			margin-top: 0;
 			padding-top: 0;
 			border-top: none;
+			font-size: 0.75rem;
+			line-height: 1;
 
 			h3 {
 				display: none;

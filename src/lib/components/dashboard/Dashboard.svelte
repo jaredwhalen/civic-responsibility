@@ -388,7 +388,8 @@
 
 	// Base dimensions without rowHeight to avoid circular dependency
 	const baseDimensions = $derived({
-		width: interactiveMode && isPinned && !$isMobile ? width - Math.min(controlsWidth || 0, 300) : width,
+		width:
+			interactiveMode && isPinned && !$isMobile ? width - Math.min(controlsWidth || 0, 300) : width,
 		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
 			top: interactiveMode ? baseRowHeight : 60,
@@ -512,8 +513,6 @@
 	// renderedChartContainerHeight: ${renderedChartContainerHeight}
 	// needsScrolling: ${needsScrolling}
 	// 			`);
-
-
 </script>
 
 <div
@@ -550,21 +549,22 @@
 				}}
 			/>
 
-
-				{#if activeView == 'state' && selectedStateView == 'map'}
-					<GradientLegend colorScale={mapColorScale} />
-				{:else}
-					<GroupLegend
-						options={options.find((o) => o.value === activeView)}
-						{activeView}
-						interactive={true}
-						bind:clickedSeries
-					/>
-				{/if}
-		
-
+			{#if options.find((o) => o.value === activeView)?.series?.length > 1}
+				<div class="legend-wrapper">
+					{#if activeView == 'state' && selectedStateView == 'map'}
+						<GradientLegend colorScale={mapColorScale} />
+					{:else}
+						<GroupLegend
+							options={options.find((o) => o.value === activeView)}
+							{activeView}
+							interactive={true}
+							bind:clickedSeries
+						/>
+					{/if}
+				</div>
+			{/if}
 			{#if !$isMobile}
-				<Note {activeView}  />
+				<Note {activeView} />
 			{/if}
 		</div>
 	{/if}
@@ -718,7 +718,6 @@
 			}
 		}
 
-
 		// Controls wrapper
 		.controls-wrapper {
 			width: 100%;
@@ -845,5 +844,11 @@
 	// Local SVG styles
 	svg {
 		transition: height 0.5s ease;
+	}
+
+	.legend-wrapper {
+		padding-top: 1rem;
+		margin-top: 1rem;
+		border-top: 1px solid var(--color-gray-200);
 	}
 </style>
