@@ -329,7 +329,7 @@
 			Math.abs(xScale(series[0].value) - xScale(series[1].value)) < 75}
 
 		{@const color = getCircleColor(s)}
-		{@const textOffset = $isMobile ? -25 : -30}
+		{@const textOffset = -30}
 		{@const circleId = `${duty_label}-${s.label}`}
 
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -338,7 +338,9 @@
 		<circle
 			cx={xScale(s.value)}
 			cy="0"
-			r={inIntro ? 12 : $isMobile ? 7 : 6}
+			r={inIntro 
+				? (guessMode && !$userResponse.submitted ? ($isMobile ? 20 : 12) : 12)
+				: ($isMobile ? 7 : 6)}
 			fill={color}
 			opacity={interactiveMode ? 0.75 : 1}
 			onmousedown={handleMouseDown}
@@ -389,7 +391,7 @@
 				transition:fade|global={{ duration: 100 }}
 				cx={xScale(s.value)}
 				cy="0"
-				r={18}
+				r={$isMobile ? 22 : 18}
 				fill="none"
 				stroke="#000"
 				stroke-width="2"

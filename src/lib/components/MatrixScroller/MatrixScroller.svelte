@@ -60,7 +60,7 @@
 				{interactiveMode}
 			/>
 
-			<div class="progress-indicator" style:--slide-progress={offset}></div>
+			<div class="progress-indicator" class:hidden={!$userResponse.submitted} style:--slide-progress={offset}></div>
 		</div>
 
 		<Text content={activeSlide} />
@@ -90,7 +90,7 @@
 		height: 70svh;
 		position: relative;
 		&.first {
-			height: 100svh;
+			height: 100dvh;
 		}
 
 		&.hidden {
@@ -104,6 +104,10 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
+
+		&.hidden {
+			display: none;
+		}
 
 		&::after {
 			content: '';

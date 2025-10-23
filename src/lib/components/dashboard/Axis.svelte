@@ -35,6 +35,7 @@
 			x={dimensions.margins.left + (width - dimensions.margins.right - dimensions.margins.left) / 2}
 			y={axisHeight - (inIntro ? 20 : 15)}
 			text-anchor="middle"
+			class:intro={inIntro}
 			class="axis-label">% selecting behavior</text
 		>
 	</svg>
@@ -97,5 +98,13 @@
 		fill: var(--color-gray-500);
 		transition: all 0.5s ease;
 		font-weight: 500;
+
+		&.intro {
+			fill: var(--color-gray-400);
+		}
+
+		@include mq('mobile', 'max') {
+			font-size: 0.9rem;
+		}
 	}
 </style>
