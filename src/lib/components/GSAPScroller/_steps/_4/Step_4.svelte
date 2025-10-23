@@ -74,7 +74,7 @@
 </script>
 
 <div class="step-4" bind:this={stepElement}>
-	<div class="text-content" bind:this={questionElement} style:min-height="{maxHeight}px">
+	<div class="text-content" bind:this={questionElement} style:min-height="{$isMobile ? 'auto' : `${maxHeight}px`}">
 		<div class="text-body">
 			We asked 5,000 Americans from all 50 states: <b
 				>What are our civic responsibilities as Americans?</b
@@ -82,7 +82,7 @@
 		</div>
 	</div>
 
-	<div class="definition-content" bind:this={definitionElement} style:min-height="{maxHeight}px">
+	<div class="definition-content" bind:this={definitionElement} style:min-height="{$isMobile ? 'auto' : `${maxHeight}px`}">
 		<div class="dictionary-entry">
 			<div class="term">
 				<span class="term-text">civic responsibilities</span>
