@@ -40,7 +40,7 @@
 			}
 		}
 
-		text += ". What's your civic profile? Find out at";
+		text += ". What's yours? Find out at";
 
 		return text;
 	});
