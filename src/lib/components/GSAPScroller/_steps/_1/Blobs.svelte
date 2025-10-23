@@ -4,6 +4,7 @@
 	import { onMount, tick } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import * as d3 from 'd3';
+	import { getAnimationSettings, isLowEndDevice } from '$lib/helpers/mobileOptimization.js';
 
 	/**
 	 * @typedef {Object} Props
@@ -84,7 +85,16 @@
 		drawChart();
 	});
 
+	// Get animation settings for device optimization
+	const animationSettings = getAnimationSettings();
+	let lastOffset = -1;
+	let animationFrameId;
+	
 	const drawChart = () => {
+		// Skip animations if disabled or if offset hasn't changed significantly
+		if (!animationSettings.enabled || Math.abs(offset - lastOffset) < 0.01) return;
+		lastOffset = offset;
+		
 		const localOffset = (offset - start) / (end - start);
 		const clampedLocalOffset = Math.max(0, Math.min(1, localOffset));
 
@@ -106,21 +116,34 @@
 		const xScale = d3.scaleLinear().domain([-5, 5]).range([0, width]);
 		const yScale = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
 
+		// Use simpler curve on low-end devices
+		const curveType = animationSettings.complexity === 'low' ? d3.curveLinear : d3.curveBasis;
 		const area = (vals) =>
 			d3
 				.area()
 				.x((d, i) => xScale(xValues[i]))
 				.y0(height)
 				.y1((d) => yScale(d))
-				.curve(d3.curveBasis);
+				.curve(curveType);
 
-		d3.select(democratLine).transition().duration(50).ease(d3.easeLinear).attr('d', area(dem)(dem));
+		// Use requestAnimationFrame for smoother animations
+		if (animationFrameId) {
+			cancelAnimationFrame(animationFrameId);
+		}
+		
+		animationFrameId = requestAnimationFrame(() => {
+			d3.select(democratLine)
+				.transition()
+				.duration(animationSettings.d3Duration)
+				.ease(d3.easeLinear)
+				.attr('d', area(dem)(dem));
 
-		d3.select(republicanLine)
-			.transition()
-			.duration(50)
-			.ease(d3.easeLinear)
-			.attr('d', area(rep)(rep));
+			d3.select(republicanLine)
+				.transition()
+				.duration(animationSettings.d3Duration)
+				.ease(d3.easeLinear)
+				.attr('d', area(rep)(rep));
+		});
 	};
 
 	$effect(() => {
@@ -206,12 +229,14 @@
 		display: block;
 		width: 100%;
 		height: auto;
+		will-change: transform; // GPU acceleration
 
 		path {
 			stroke-width: 2px;
 			fill-opacity: 0.5;
 			mix-blend-mode: overlay;
 			mix-blend-mode: difference;
+			will-change: d; // GPU acceleration for path changes
 		}
 	}
 </style>

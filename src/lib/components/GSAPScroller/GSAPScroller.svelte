@@ -1,4 +1,7 @@
 <script>
+	import { onMount, onDestroy } from 'svelte';
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+	import { getAnimationSettings } from '$lib/helpers/mobileOptimization.js';
 	import Step_1 from './_steps/_1/Step_1.svelte';
 	import Step_2 from './_steps/_2/Step_2.svelte';
 	import Step_3 from './_steps/_3/Step_3.svelte';
@@ -9,9 +12,39 @@
 	import Step_13 from './_steps/_13/Step_13.svelte';
 
 	let { section } = $props();
+	let scrollerElement;
+
+	onMount(() => {
+		// Get animation settings for device optimization
+		const animationSettings = getAnimationSettings();
+		
+		// Configure ScrollTrigger for better mobile performance
+		ScrollTrigger.config({
+			// Reduce refresh frequency on mobile
+			refreshPriority: animationSettings.complexity === 'low' ? -1 : 0,
+			// Disable auto refresh on low-end devices
+			autoRefreshEvents: animationSettings.complexity === 'low' ? 'none' : 'visibilitychange,DOMContentLoaded,load'
+		});
+
+		// Batch refresh for better performance
+		ScrollTrigger.batch('*', {
+			onRefresh: () => {
+				// Only refresh if animations are enabled
+				if (animationSettings.enabled) {
+					ScrollTrigger.refresh();
+				}
+			}
+		});
+	});
+
+	onDestroy(() => {
+		// Clean up all ScrollTrigger instances
+		ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+		ScrollTrigger.clearScrollMemory();
+	});
 </script>
 
-<div class="scroller">
+<div class="scroller" bind:this={scrollerElement}>
 	{#if section == 'intro'}
 		<div class="dark-bg">
 			<Step_1 />

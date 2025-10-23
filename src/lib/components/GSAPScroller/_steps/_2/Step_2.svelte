@@ -161,6 +161,7 @@
 			max-width: 900px;
 			padding-bottom: 10rem;
 			overflow-x: clip;
+			will-change: transform, opacity; // GPU acceleration
 
 			@include mq('mobile', 'max') {
 				padding: 2rem 1rem;
@@ -192,6 +193,7 @@
 					white-space: nowrap;
 					position: relative;
 					overflow-x: visible; // Allow the word itself to animate
+					will-change: transform, opacity; // GPU acceleration
 
 					// Mobile responsive adjustments
 					@include mq('mobile', 'max') {

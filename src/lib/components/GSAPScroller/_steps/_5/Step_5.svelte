@@ -253,7 +253,7 @@
 				text-align: center;
 				z-index: 10;
 				max-width: 900px;
-				will-change: transform, opacity;
+				will-change: transform, opacity; // GPU acceleration
 			}
 
 			.text-accent {

@@ -48,17 +48,20 @@
 		}
 
 		if (backgroundElement) {
-			gsap.to(backgroundElement.querySelector('.color-overlay'), {
-				opacity: overlayOpacity,
-				duration: 0.1,
-				ease: 'none'
-			});
+			const colorOverlay = backgroundElement.querySelector('.color-overlay');
+			const backgroundImage = backgroundElement.querySelector('.background-image');
+			
+			if (colorOverlay) {
+				gsap.set(colorOverlay, {
+					opacity: overlayOpacity
+				});
+			}
 
-			gsap.to(backgroundElement.querySelector('.background-image'), {
-				scale: backgroundScale,
-				duration: 0.1,
-				ease: 'none'
-			});
+			if (backgroundImage) {
+				gsap.set(backgroundImage, {
+					scale: backgroundScale
+				});
+			}
 		}
 	});
 </script>
@@ -100,6 +103,7 @@
 				background-size: cover;
 				background-position: center;
 				background-repeat: no-repeat;
+				will-change: transform; // GPU acceleration
 			}
 
 			.color-overlay {
@@ -111,6 +115,7 @@
 				background: var(--color-theme-blue);
 				z-index: 2;
 				opacity: 1; // Initial opacity, will be animated by GSAP
+				will-change: opacity; // GPU acceleration
 				// mix-blend-mode: color;
 			}
 		}
@@ -127,6 +132,7 @@
 			z-index: 10;
 			text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
 			color: white;
+			will-change: transform, opacity; // GPU acceleration
 		}
 	}
 </style>

@@ -112,6 +112,7 @@
 			margin-bottom: 10rem;
 			color: var(--color-theme-light);
 			opacity: 0;
+			will-change: transform, opacity; // GPU acceleration
 
 			* {
 				font-size: 4.5rem;
@@ -159,6 +160,7 @@
 			z-index: 1; // Lower z-index to appear behind text
 			pointer-events: none; // Allow clicks to pass through to text
 			opacity: 0;
+			will-change: opacity; // GPU acceleration
 
 			@include mq('mobile', 'max') {
 				top: 0vh;

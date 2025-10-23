@@ -127,6 +127,7 @@
 			max-width: 700px;
 			display: flex;
 			justify-content: flex-end;
+			will-change: transform, opacity; // GPU acceleration
 			
 			// Mobile: Full width, center alignment
 			@include mq('mobile', 'max') {
@@ -155,6 +156,7 @@
 			max-width: 700px;
 			display: flex;
 			justify-content: flex-start;
+			will-change: transform, opacity; // GPU acceleration
 
 			// Mobile: Full width, center alignment
 			@include mq('mobile', 'max') {
