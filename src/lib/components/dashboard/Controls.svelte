@@ -217,7 +217,7 @@
 			</button>
 			<div class="view-summary">
 				<span class="view-summary-label"
-					>Viewing {selectedStateView === 'map' ? 'states' : 'data'} by:</span
+					>Viewing {activeView == 'state' && selectedStateView === 'map' ? 'states' : 'data'} by:</span
 				>
 				<span class="view-summary-value">{getCurrentViewSummary()}</span>
 			</div>
@@ -361,8 +361,6 @@
 						</div>
 					</div>
 				{/if}
-
-				
 			</div>
 		{/if}
 	</div>
