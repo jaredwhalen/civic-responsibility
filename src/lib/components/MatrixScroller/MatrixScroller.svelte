@@ -17,11 +17,7 @@
 
 	let interactiveMode = $state(false);
 
-	// Derived variables for each Scrolly component
-
 	const activeSlide = $derived(content.scrolly.slidesFixed[$userResponse.submitted ? index : 0]);
-
-	$inspect(index);
 
 	$effect(() => {
 		if (!$userResponse.submitted) {
