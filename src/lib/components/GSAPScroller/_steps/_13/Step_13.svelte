@@ -219,27 +219,30 @@
 					color: var(--color-theme-blue-light);
 					opacity: 0.3;
 					line-height: 1;
+					top: -20px;
 
 					@include mq('mobile', 'max') {
-						font-size: 6rem;
+						font-size: 10rem;
+						top: 0px;
+						// font-size: 6rem;
 					}
 				}
 
 				.quote-left {
-					top: -20px;
+				
 					left: -20px;
 
 					@include mq('mobile', 'max') {
-						left: -2.5rem;
+						left: 0px;
 					}
 				}
 
 				.quote-right {
-					top: -20px;
-					right: -20px;
+				
+					right: 0px;
 
 					@include mq('mobile', 'max') {
-						right: -2rem;
+						// right: -2rem;
 					}
 				}
 			}
