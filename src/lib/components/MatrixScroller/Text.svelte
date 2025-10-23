@@ -67,12 +67,12 @@
 
 {#key content}
 	<div
-		class="text-footer"
+		class="text"
 		class:hide={content.hideFooter}
 		in:fly={{ y: -50, duration: 400, delay: 200 }}
 		out:fly={{ y: 50, duration: 300 }}
 	>
-		<div class="text-footer__content text-block content">
+		<div class="text__content text-block content">
 			{@html content.text
 				.split('\r\n')
 				.map((p) => `<p>${processTemplate(p)}</p>`)
@@ -80,7 +80,7 @@
 		</div>
 
 		{#if ActiveComponent}
-			<div class="text-footer__component">
+			<div class="text__component">
 				<ActiveComponent
 					options={options.find((o) => o.value === content.component.series)}
 					variant={content?.component?.variant}
@@ -92,7 +92,7 @@
 
 <style lang="scss">
 	:global {
-		.text-footer {
+		.text {
 			width: 100%;
 			position: absolute;
 			top: 15%;
@@ -121,7 +121,7 @@
 
 			&__content {
 				width: 100%;
-
+				padding: 0 $spacing-lg;
 				font-size: 2rem;
 				line-height: 1.5;
 				font-weight: 400;
