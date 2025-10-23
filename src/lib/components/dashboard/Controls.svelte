@@ -88,13 +88,19 @@
 		// Prevent body scroll when modal is open on mobile
 		if ($isMobile && isModalOpen) {
 			document.body.style.overflow = 'hidden';
+			document.body.style.position = 'fixed';
+			document.body.style.width = '100%';
 		} else {
 			document.body.style.overflow = '';
+			document.body.style.position = '';
+			document.body.style.width = '';
 		}
 
 		// Cleanup
 		return () => {
 			document.body.style.overflow = '';
+			document.body.style.position = '';
+			document.body.style.width = '';
 		};
 	});
 
@@ -290,40 +296,24 @@
 					</div>
 				{/if}
 
-				<!-- Instructions -->
-				<div class="control-section">
-					<p class="dashboard-instructions">Select filters and click dots to compare responses.</p>
-				</div>
-
-				<!-- View data by section -->
-				<div class="control-section">
-					<div class="section-title">
-						<h3>View data by</h3>
+				<!-- Scrollable content -->
+				<div class="modal-content">
+					<!-- Instructions -->
+					<div class="control-section">
+						<p class="dashboard-instructions">Select filters and click dots to compare responses.</p>
 					</div>
-					<div class="option-buttons">
-						{#each options as option}
-							<button
-								bind:this={buttonRefs[option.value]}
-								class="option-button {selectedOption === option.value ? 'selected' : ''}"
-								onclick={() => handleSelect(option.value)}
-							>
-								{option.label}
-							</button>
-						{/each}
-					</div>
-				</div>
 
-				<!-- State view options (only when state is selected) -->
-				{#if activeView == 'state'}
+					<!-- View data by section -->
 					<div class="control-section">
 						<div class="section-title">
-							<h3>Display</h3>
+							<h3>View data by</h3>
 						</div>
 						<div class="option-buttons">
-							{#each stateViewOptions as option}
+							{#each options as option}
 								<button
-									onclick={() => (selectedStateView = option.value)}
-									class="option-button {selectedStateView === option.value ? 'selected' : ''}"
+									bind:this={buttonRefs[option.value]}
+									class="option-button {selectedOption === option.value ? 'selected' : ''}"
+									onclick={() => handleSelect(option.value)}
 								>
 									{option.label}
 								</button>
@@ -331,16 +321,35 @@
 						</div>
 					</div>
 
-					<!-- State/duty selection (desktop only) -->
-					{#if !$isMobile}
+					<!-- State view options (only when state is selected) -->
+					{#if activeView == 'state'}
 						<div class="control-section">
 							<div class="section-title">
-								<h3>Select {selectedStateView === 'chart' ? 'states' : 'a civic responsibility'}</h3>
+								<h3>Display</h3>
 							</div>
-							{@render dropdown()}
+							<div class="option-buttons">
+								{#each stateViewOptions as option}
+									<button
+										onclick={() => (selectedStateView = option.value)}
+										class="option-button {selectedStateView === option.value ? 'selected' : ''}"
+									>
+										{option.label}
+									</button>
+								{/each}
+							</div>
 						</div>
+
+						<!-- State/duty selection (desktop only) -->
+						{#if !$isMobile}
+							<div class="control-section">
+								<div class="section-title">
+									<h3>Select {selectedStateView === 'chart' ? 'states' : 'a civic responsibility'}</h3>
+								</div>
+								{@render dropdown()}
+							</div>
+						{/if}
 					{/if}
-				{/if}
+				</div>
 			</div>
 		{/if}
 	</div>
@@ -356,7 +365,7 @@
 			.dashboard-controls {
 				display: flex;
 				flex-direction: column;
-				gap: 1.5rem;
+				
 
 			}
 		}
@@ -370,6 +379,7 @@
 
 		&:not(:last-child) {
 			padding-bottom: 1.5rem;
+			margin-bottom: 1rem;
 			border-bottom: 1px solid var(--color-gray-200); // Standardized border between sections
 		}
 
@@ -658,10 +668,14 @@
 		.controls-container {
 			&.modal-open {
 				position: fixed;
+				top: calc(var(--header-height, 80px) + 1rem);
 				bottom: 0;
-				left: 0;
+				left: 1rem;
 				right: 0;
 				z-index: 1003;
+				display: flex;
+				flex-direction: column;
+				width: calc(100% - 2rem);
 			}
 
 			.dashboard-controls {
@@ -669,11 +683,12 @@
 				background-color: #fff;
 				border-radius: 1rem 1rem 0 0;
 				padding: 0;
-				height: calc(100vh - var(--header-height, 0px));
+				flex: 1;
 				overflow-y: auto;
 				box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
 				gap: 0;
 				width: 100%;
+				max-height: 100vh;
 
 				// Modal header
 				.modal-header {
@@ -681,11 +696,12 @@
 					justify-content: space-between;
 					align-items: center;
 					padding: 1.5rem 1rem 1rem;
-					border-bottom: 1px solid #e0e0e0;
+					border-bottom: 1px solid var(--color-gray-200);
 					position: sticky;
 					top: 0;
 					background-color: #fff;
 					z-index: 10;
+					flex-shrink: 0;
 
 					h2 {
 						font-size: 1.25rem;
@@ -714,9 +730,16 @@
 					}
 				}
 
+				// Scrollable content area
+				.modal-content {
+					flex: 1;
+					overflow-y: auto;
+					padding-bottom: 2rem; // Extra space at bottom for better UX
+				}
+
 				// Control sections on mobile
 				.control-section {
-					padding: 1rem;
+					margin: 1rem;
 					border-bottom: 1px solid var(--color-gray-200);
 
 					&:last-of-type {

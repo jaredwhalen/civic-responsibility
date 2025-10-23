@@ -42,7 +42,7 @@
 			padding: 0rem 1rem;
 			position: sticky;
 			bottom: 0;
-			z-index: 1000;
+			z-index: 500;
 			background-color: var(--bg-color);
 			margin-top: 0;
 			padding-top: 0;

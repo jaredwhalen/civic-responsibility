@@ -406,7 +406,7 @@
 	let dashboardHeight = $state(null);
 	let controlsHeight = $state(null);
 
-	let axisHeight = $derived($isMobile ? 80 : 100);
+	let axisHeight = $derived($isMobile ? 60 : 100);
 
 	let noteHeight = $state(0);
 
@@ -740,13 +740,13 @@
 				width: min(var(--controls-width), 300px);
 				max-width: 300px;
 				height: calc(100svh - var(--header-height, 80px));
-				z-index: 100;
+				z-index: 1000;
 				overflow-y: auto;
 				box-shadow: 2px 0 10px 0 rgba(0, 0, 0, 0.1);
 				display: flex;
 				flex-direction: column;
 				gap: 1rem;
-				overflow-y: scroll;
+				overflow-y: visible;
 
 				// Ensure Controls component takes available space
 				:global(.controls) {
@@ -759,6 +759,7 @@
 					position: sticky;
 					top: 0;
 					width: 100%;
+					gap: 0;
 					max-width: none;
 					height: auto;
 					box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
@@ -773,7 +774,7 @@
 			&.sticky {
 				position: sticky;
 				bottom: 0;
-				z-index: 1000;
+				z-index: 500;
 			}
 		}
 	}
@@ -850,5 +851,9 @@
 		padding-top: 1rem;
 		margin-top: 1rem;
 		border-top: 1px solid var(--color-gray-200);
+
+		@include mq('mobile', 'max') {
+			margin-top: 0;
+		}
 	}
 </style>
