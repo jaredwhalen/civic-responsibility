@@ -136,7 +136,7 @@
 		margin: 0 auto;
 		display: flex;
 		justify-content: center;
-		align-items: flex-start;
+		align-items: center;
 		overflow: hidden;
 		max-width: 100%;
 		max-height: 100%;

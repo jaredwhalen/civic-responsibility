@@ -17,6 +17,7 @@
 	import GradientLegend from './GradientLegend.svelte';
 	import MapViz from './Map.svelte';
 	import Axis from './Axis.svelte';
+	import Note from './Note.svelte';
 
 	// data imports
 	import mean from '$lib/data/csvs/mean_duties_weighted.csv';
@@ -387,13 +388,13 @@
 
 	// Base dimensions without rowHeight to avoid circular dependency
 	const baseDimensions = $derived({
-		width: interactiveMode && isPinned ? width - Math.min(controlsWidth || 0, 200) : width,
+		width: interactiveMode && isPinned && !$isMobile ? width - Math.min(controlsWidth || 0, 300) : width,
 		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
 			top: interactiveMode ? baseRowHeight : 60,
-			right: $isMobile ? 15 : interactiveMode ? 50 : 50,
+			right: $isMobile ? 15 : interactiveMode ? 50 : 150,
 			bottom: 0,
-			left: $isMobile ? 15 : guessMode ? 150 : 350
+			left: $isMobile ? 15 : guessMode ? 150 : interactiveMode ? 350 : 450
 		}
 	});
 
@@ -511,59 +512,62 @@
 	// renderedChartContainerHeight: ${renderedChartContainerHeight}
 	// needsScrolling: ${needsScrolling}
 	// 			`);
+
+
 </script>
 
-	<div
-		class="dashboard"
-		class:intro={!interactiveMode}
-		class:interactive={interactiveMode}
-		class:pinned={interactiveMode && isPinned}
-		style:--controls-width="{controlsWidth}px"
-		style:--note-height="{noteHeight}px"
-		bind:this={dashboardElement}
-		bind:clientWidth={width}
-		bind:clientHeight={dashboardHeight}
-	>
-		{#if interactiveMode && isPinned}
-			<div
-				bind:clientWidth={controlsWidth}
-				class="controls-wrapper pinned"
-				class:mobile={$isMobile}
-			>
-				<Controls
-					bind:activeView
-					bind:selectedStateView
-					bind:selectedStateMapViewOption
-					bind:selectedStateChartViewOptions
-					bind:interactiveMode
-					bind:isPinned
-					searchOptions={{
-						states: Array.from(new Set(filteredStateData.map((d) => d.state))).sort(),
-						duties: Array.from(new Set(transformedData.state.map((d) => d.duty_label))).sort()
-					}}
-					onExit={() => {
-						// Scroll to dashboard element when exiting pinned view
-						setTimeout(() => {
-							if (dashboardElement) {
-								dashboardElement.scrollIntoView({ behavior: 'instant', block: 'start' });
-							}
-						}, 100);
-					}}
-				/>
-				<div class="dashboard-legend">
-					{#if activeView == 'state' && selectedStateView == 'map'}
-						<GradientLegend colorScale={mapColorScale} />
-					{:else}
-						<GroupLegend
-							options={options.find((o) => o.value === activeView)}
-							{activeView}
-							interactive={true}
-							bind:clickedSeries
-						/>
-					{/if}
-				</div>
-			</div>
-		{/if}
+<div
+	class="dashboard"
+	class:intro={!interactiveMode}
+	class:interactive={interactiveMode}
+	class:pinned={interactiveMode && isPinned}
+	style:--controls-width="{controlsWidth}px"
+	style:--note-height="{noteHeight}px"
+	bind:this={dashboardElement}
+	bind:clientWidth={width}
+	bind:clientHeight={dashboardHeight}
+>
+	{#if interactiveMode && isPinned}
+		<div bind:clientWidth={controlsWidth} class="controls-wrapper pinned" class:mobile={$isMobile}>
+			<Controls
+				bind:activeView
+				bind:selectedStateView
+				bind:selectedStateMapViewOption
+				bind:selectedStateChartViewOptions
+				bind:interactiveMode
+				bind:isPinned
+				searchOptions={{
+					states: Array.from(new Set(filteredStateData.map((d) => d.state))).sort(),
+					duties: Array.from(new Set(transformedData.state.map((d) => d.duty_label))).sort()
+				}}
+				onExit={() => {
+					// Scroll to dashboard element when exiting pinned view
+					setTimeout(() => {
+						if (dashboardElement) {
+							dashboardElement.scrollIntoView({ behavior: 'instant', block: 'start' });
+						}
+					}, 100);
+				}}
+			/>
+
+
+				{#if activeView == 'state' && selectedStateView == 'map'}
+					<GradientLegend colorScale={mapColorScale} />
+				{:else}
+					<GroupLegend
+						options={options.find((o) => o.value === activeView)}
+						{activeView}
+						interactive={true}
+						bind:clickedSeries
+					/>
+				{/if}
+		
+
+			{#if !$isMobile}
+				<Note {activeView}  />
+			{/if}
+		</div>
+	{/if}
 
 	<div class="dashboard-content">
 		{#if interactiveMode && activeView == 'state' && selectedStateView == 'map'}
@@ -649,18 +653,9 @@
 			</div>
 		{/if}
 
-		<div class="n-threshold-note" class:sticky={interactiveMode} bind:clientHeight={noteHeight}>
-			{#if interactiveMode && (activeView === 'state' || activeView === 'race')}
-				{#if activeView === 'state'}
-					Only states with more than N = 40 participants are included;
-				{:else}
-					Only categories with more than N = 40 participants are included;
-				{/if}
-			{/if}
-			{#if interactiveMode}
-				Margin of error = 1% (larger for subgroups)
-			{/if}
-		</div>
+		{#if $isMobile}
+			<Note {activeView} bind:noteHeight position="bottom" />
+		{/if}
 	</div>
 </div>
 
@@ -705,7 +700,7 @@
 				display: flex;
 				flex-direction: column;
 				overflow: hidden;
-				margin-left: min(var(--controls-width), 200px);
+				margin-left: min(var(--controls-width), 300px);
 
 				@include mq('mobile', 'max') {
 					margin-left: 0;
@@ -723,12 +718,6 @@
 			}
 		}
 
-
-		// Dashboard legend
-		.dashboard-legend {
-			margin-top: 0.5rem;
-			flex-shrink: 0;
-		}
 
 		// Controls wrapper
 		.controls-wrapper {
@@ -749,14 +738,16 @@
 				position: fixed;
 				top: var(--header-height, 80px);
 				left: 0;
-				width: min(var(--controls-width), 200px);
-				max-width: 200px;
+				width: min(var(--controls-width), 300px);
+				max-width: 300px;
 				height: calc(100svh - var(--header-height, 80px));
 				z-index: 100;
 				overflow-y: auto;
 				box-shadow: 2px 0 10px 0 rgba(0, 0, 0, 0.1);
 				display: flex;
 				flex-direction: column;
+				gap: 1rem;
+				overflow-y: scroll;
 
 				// Ensure Controls component takes available space
 				:global(.controls) {
@@ -767,38 +758,18 @@
 
 				@include mq('mobile', 'max') {
 					position: sticky;
+					top: 0;
 					width: 100%;
 					max-width: none;
 					height: auto;
 					box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
 				}
 			}
-
 		}
 
 		// Axis wrapper
 		.axis-wrapper {
 			background-color: var(--bg-color);
-
-			&.sticky {
-				position: sticky;
-				bottom: 0;
-				z-index: 1000;
-			}
-		}
-
-		// N threshold note
-		.n-threshold-note {
-			background-color: var(--bg-color);
-			padding: 0.75rem 1rem;
-			text-align: center;
-			font-size: 0.875rem;
-			color: #666;
-			font-style: italic;
-
-			@include mq('mobile', 'max') {
-				padding: 0.25rem 1rem;
-			}
 
 			&.sticky {
 				position: sticky;
@@ -813,12 +784,17 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 100%;
+		margin-left: min(var(--controls-width), 300px);
+		width: calc(100% - var(--controls-width));
 		height: calc(100svh - var(--header-height, 80px) - var(--note-height));
 		background-color: var(--bg-color);
 		z-index: 10;
 		transition: all 0.5s ease;
 
+		@include mq('mobile', 'max') {
+			margin-left: 0;
+			width: 100%;
+		}
 	}
 
 	// Chart container
