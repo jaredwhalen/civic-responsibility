@@ -31,7 +31,7 @@
 		flex-shrink: 0; // Prevent lockup from squishing
 
 		@include mq('mobile', 'max') {
-			gap: $spacing-sm;
+			gap: 0px
 		}
 
 		a {

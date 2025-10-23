@@ -60,7 +60,7 @@
 		{#if !$page.url.pathname.includes('/dashboard')}
 			<a href={base + '/dashboard'} class="nav-button dashboard-button">
 				{#if $isMobile}
-					<span>Data</span>
+					<span>Dashboard</span>
 				{:else}
 					<ChartBar size={16} />
 					<span class="full-text">View the data dashboard</span>
