@@ -17,6 +17,7 @@
 	import GradientLegend from './GradientLegend.svelte';
 	import MapViz from './Map.svelte';
 	import Axis from './Axis.svelte';
+	import Note from './Note.svelte';
 
 	// data imports
 	import mean from '$lib/data/csvs/mean_duties_weighted.csv';
@@ -381,17 +382,19 @@
 
 	let width = $state(0);
 	const baseRowHeight = interactiveMode ? 35 : 45;
-	const minRowHeight = interactiveMode ? ($isMobile ? 45 : 15) : 40;
+
+	const minRowHeight = interactiveMode ? ($isMobile ? 45 : 25) : 40;
+	let controlsWidth = $state(null);
 
 	// Base dimensions without rowHeight to avoid circular dependency
 	const baseDimensions = $derived({
-		width,
+		width: interactiveMode && isPinned && !$isMobile ? width - Math.min(controlsWidth || 0, 300) : width,
 		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
 			top: interactiveMode ? baseRowHeight : 60,
 			right: $isMobile ? 15 : interactiveMode ? 50 : 150,
 			bottom: 0,
-			left: $isMobile ? 15 : guessMode ? 150 : 450
+			left: $isMobile ? 15 : guessMode ? 150 : interactiveMode ? 350 : 450
 		}
 	});
 
@@ -401,7 +404,9 @@
 
 	let dashboardHeight = $state(null);
 	let controlsHeight = $state(null);
+
 	let axisHeight = $derived($isMobile ? 80 : 100);
+
 	let noteHeight = $state(0);
 
 	// Reset noteHeight when note is not visible
@@ -413,9 +418,9 @@
 
 	// Calculate dynamic row height based on available space
 	const rowHeight = $derived.by(() => {
-		if (!dashboardHeight || !controlsHeight) return baseRowHeight;
+		if (!dashboardHeight) return baseRowHeight;
 
-		const availableHeight = dashboardHeight - axisHeight - controlsHeight - noteHeight;
+		const availableHeight = dashboardHeight - axisHeight - noteHeight;
 
 		const requiredHeight =
 			currentViewData.length * baseRowHeight +
@@ -454,7 +459,7 @@
 	// Calculate chart container height for pinned mode
 	const chartContainerHeight = $derived(
 		interactiveMode && isPinned
-			? `calc(100svh - ${controlsHeight || 200}px - ${selectedStateView == 'map' ? 0 : axisHeight}px - ${noteHeight}px)`
+			? `calc(100svh - ${selectedStateView == 'map' ? 0 : axisHeight}px - ${noteHeight}px)`
 			: adjustedDimensions.height
 	);
 
@@ -471,7 +476,7 @@
 	const xScale = $derived(
 		scaleLinear()
 			.domain([0, 100])
-			.range([baseDimensions.margins.left, width - baseDimensions.margins.right])
+			.range([baseDimensions.margins.left, baseDimensions.width - baseDimensions.margins.right])
 	);
 
 	const createCustomColorScale = (colors) => {
@@ -507,6 +512,8 @@
 	// renderedChartContainerHeight: ${renderedChartContainerHeight}
 	// needsScrolling: ${needsScrolling}
 	// 			`);
+
+
 </script>
 
 <div
@@ -514,18 +521,14 @@
 	class:intro={!interactiveMode}
 	class:interactive={interactiveMode}
 	class:pinned={interactiveMode && isPinned}
-	style:--controls-height="{controlsHeight}px"
+	style:--controls-width="{controlsWidth}px"
 	style:--note-height="{noteHeight}px"
 	bind:this={dashboardElement}
 	bind:clientWidth={width}
 	bind:clientHeight={dashboardHeight}
 >
 	{#if interactiveMode && isPinned}
-		<div
-			bind:clientHeight={controlsHeight}
-			class="controls-wrapper pinned"
-			class:mobile={$isMobile}
-		>
+		<div bind:clientWidth={controlsWidth} class="controls-wrapper pinned" class:mobile={$isMobile}>
 			<Controls
 				bind:activeView
 				bind:selectedStateView
@@ -546,7 +549,8 @@
 					}, 100);
 				}}
 			/>
-			<div class="dashboard-legend">
+
+
 				{#if activeView == 'state' && selectedStateView == 'map'}
 					<GradientLegend colorScale={mapColorScale} />
 				{:else}
@@ -557,7 +561,11 @@
 						bind:clickedSeries
 					/>
 				{/if}
-			</div>
+		
+
+			{#if !$isMobile}
+				<Note {activeView}  />
+			{/if}
 		</div>
 	{/if}
 
@@ -566,7 +574,7 @@
 			<div class="map-wrapper">
 				<MapViz
 					data={mapData}
-					{width}
+					width={baseDimensions.width}
 					duty={selectedStateMapViewOption}
 					colorScale={mapColorScale}
 				/>
@@ -581,7 +589,7 @@
 		>
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<svg
-				{width}
+				width={baseDimensions.width}
 				height={adjustedDimensions.height}
 				role="img"
 				aria-label="Data visualization chart"
@@ -635,7 +643,7 @@
 		{#if activeView != 'state' || selectedStateView != 'map'}
 			<div class="axis-wrapper" class:sticky={interactiveMode}>
 				<Axis
-					{width}
+					width={baseDimensions.width}
 					dimensions={adjustedDimensions}
 					{axisHeight}
 					{tickSize}
@@ -645,18 +653,9 @@
 			</div>
 		{/if}
 
-		<div class="n-threshold-note" class:sticky={interactiveMode} bind:clientHeight={noteHeight}>
-			{#if interactiveMode && (activeView === 'state' || activeView === 'race')}
-				{#if activeView === 'state'}
-					Only states with more than N = 40 participants are included;
-				{:else}
-					Only categories with more than N = 40 participants are included;
-				{/if}
-			{/if}
-			{#if interactiveMode}
-				Margin of error = 1% (larger for subgroups)
-			{/if}
-		</div>
+		{#if $isMobile}
+			<Note {activeView} bind:noteHeight position="bottom" />
+		{/if}
 	</div>
 </div>
 
@@ -689,23 +688,27 @@
 		&.pinned {
 			height: calc(100svh - var(--header-height, 80px));
 			margin-top: var(--header-height, 80px);
-			// position: fixed;
-			// top: 0;
-			// left: 0;
-			// width: 100vw;
-			// height: 100vh;
-			// z-index: 1000;
-			// border: 10px solid var(--color-theme-blue);
+			display: flex;
+			flex-direction: row;
+
+			@include mq('mobile', 'max') {
+				flex-direction: column;
+			}
 
 			.dashboard-content {
 				flex: 1;
 				display: flex;
 				flex-direction: column;
 				overflow: hidden;
+				margin-left: min(var(--controls-width), 300px);
+
+				@include mq('mobile', 'max') {
+					margin-left: 0;
+					margin-top: var(--controls-height, 0);
+				}
 
 				.chart-container {
 					flex: 1;
-					margin-top: var(--controls-height);
 					position: relative;
 
 					&.needs-scrolling {
@@ -715,15 +718,6 @@
 			}
 		}
 
-		// Dashboard content
-		.dashboard-content {
-			// Content styles here if needed
-		}
-
-		// Dashboard legend
-		.dashboard-legend {
-			margin-top: 0.5rem;
-		}
 
 		// Controls wrapper
 		.controls-wrapper {
@@ -743,31 +737,32 @@
 			&.pinned {
 				position: fixed;
 				top: var(--header-height, 80px);
+				left: 0;
+				width: min(var(--controls-width), 300px);
+				max-width: 300px;
+				height: calc(100svh - var(--header-height, 80px));
 				z-index: 100;
-			}
-
-			.unpin-button {
+				overflow-y: auto;
+				box-shadow: 2px 0 10px 0 rgba(0, 0, 0, 0.1);
 				display: flex;
-				align-items: center;
-				gap: 0.5rem;
-				background: none;
-				border: 2px solid var(--color-theme-blue);
-				color: var(--color-theme-blue);
-				padding: 0.5rem 1rem;
-				border-radius: 8px;
-				cursor: pointer;
-				font-size: 0.9rem;
-				font-weight: 500;
-				transition: all 0.2s ease;
+				flex-direction: column;
+				gap: 1rem;
+				overflow-y: scroll;
 
-				&:hover {
-					background-color: var(--color-theme-blue);
-					color: white;
+				// Ensure Controls component takes available space
+				:global(.controls) {
+					flex: 1;
+					display: flex;
+					flex-direction: column;
 				}
 
-				svg {
-					width: 16px;
-					height: 16px;
+				@include mq('mobile', 'max') {
+					position: sticky;
+					top: 0;
+					width: 100%;
+					max-width: none;
+					height: auto;
+					box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
 				}
 			}
 		}
@@ -782,26 +777,6 @@
 				z-index: 1000;
 			}
 		}
-
-		// N threshold note
-		.n-threshold-note {
-			background-color: var(--bg-color);
-			padding: 0.75rem 1rem;
-			text-align: center;
-			font-size: 0.875rem;
-			color: #666;
-			font-style: italic;
-
-			@include mq('mobile', 'max') {
-				padding: 0.25rem 1rem;
-			}
-
-			&.sticky {
-				position: sticky;
-				bottom: 0;
-				z-index: 1000;
-			}
-		}
 	}
 
 	// Map container
@@ -809,16 +784,16 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 100%;
-		height: calc(100svh - var(--header-height, 80px) - var(--controls-height) - var(--note-height));
-		margin-top: var(--controls-height);
+		margin-left: min(var(--controls-width), 300px);
+		width: calc(100% - var(--controls-width));
+		height: calc(100svh - var(--header-height, 80px) - var(--note-height));
 		background-color: var(--bg-color);
 		z-index: 10;
 		transition: all 0.5s ease;
 
-		&.visible {
-			opacity: 1;
-			pointer-events: auto;
+		@include mq('mobile', 'max') {
+			margin-left: 0;
+			width: 100%;
 		}
 	}
 

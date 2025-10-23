@@ -3,6 +3,7 @@
 </script>
 
 <div class="legend">
+	<h3>Legend</h3>
 	<div class="legend-title">% selecting behavior as civic responsibility</div>
 	<div class="gradient-bar">
 		<div
@@ -47,5 +48,11 @@
 			font-size: 12px;
 			color: #666;
 		}
+	}
+
+	h3 {
+		font-size: 1rem;
+		font-weight: 600;
+		margin: 0px 0px 5px;
 	}
 </style>

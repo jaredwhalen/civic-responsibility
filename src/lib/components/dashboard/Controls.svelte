@@ -330,7 +330,9 @@
 											<span class="dropdown-text-content">Select up to 3 states</span>
 										{/if}
 									{:else}
-										<span class="dropdown-text-content">{selectedStateMapViewOption || 'Select a duty'}</span>
+										<span class="dropdown-text-content"
+											>{selectedStateMapViewOption || 'Select a duty'}</span
+										>
 									{/if}
 								</span>
 							</button>
@@ -360,12 +362,7 @@
 					</div>
 				{/if}
 
-				<!-- Apply button (mobile only) -->
-				{#if $isMobile}
-					<div class="modal-footer">
-						<button class="apply-button" onclick={closeModal}>Apply Filters</button>
-					</div>
-				{/if}
+				
 			</div>
 		{/if}
 	</div>
@@ -447,7 +444,7 @@
 
 		// Modal mode on mobile
 		&.modal-open {
-			position: fixed;
+			// position: fixed;
 			bottom: 0;
 			left: 0;
 			right: 0;
@@ -543,10 +540,9 @@
 		}
 
 		.dashboard-controls-inner {
-			width: fit-content;
+			width: 100%;
 
 			@include mq('mobile', 'max') {
-				width: 100%;
 				padding: 1rem;
 				border-bottom: 1px solid #f0f0f0;
 
@@ -588,6 +584,7 @@
 					transition: all 0.2s ease;
 					font-family: sans-serif;
 					white-space: nowrap;
+					width: 100%;
 
 					&.selected {
 						background-color: $color-theme-yellow;
@@ -788,7 +785,6 @@
 						border-bottom-right-radius: 0.5rem;
 					}
 
-
 					&.selected {
 						// background-color: $color-beacon-yellow;
 						background-color: #eee;
@@ -805,5 +801,4 @@
 			}
 		}
 	}
-
 </style>
