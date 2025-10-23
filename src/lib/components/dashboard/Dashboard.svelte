@@ -406,7 +406,7 @@
 	let dashboardHeight = $state(null);
 	let controlsHeight = $state(null);
 
-	let axisHeight = $derived($isMobile ? 60 : 100);
+	let axisHeight = $derived($isMobile ? interactiveMode ? 60 : 80 : interactiveMode ? 80 : 100);
 
 	let noteHeight = $state(0);
 
