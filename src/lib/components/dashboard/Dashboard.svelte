@@ -653,7 +653,7 @@
 			</div>
 		{/if}
 
-		{#if $isMobile}
+		{#if $isMobile && interactiveMode}
 			<Note {activeView} bind:noteHeight position="bottom" />
 		{/if}
 	</div>
