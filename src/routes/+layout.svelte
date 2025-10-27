@@ -40,9 +40,9 @@
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content={pageTitle} />
 	<meta property="og:description" content={pageDescription} />
-	<meta property="og:url" content="https://civicresponsibility.org{$page.url.pathname}" />
+	<meta property="og:url" content="http://civicprofile.us{$page.url.pathname}" />
 	<meta property="og:site_name" content="Civic Responsibility" />
-	<meta property="og:image" content="https://civicresponsibility.org/og-image.jpg" />
+	<meta property="og:image" content="http://civicprofile.us/og-image.jpg" />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
 	<meta property="og:image:alt" content={meta.title} />
@@ -51,7 +51,7 @@
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={pageTitle} />
 	<meta name="twitter:description" content={pageDescription} />
-	<meta name="twitter:image" content="https://civicresponsibility.org/og-image.jpg" />
+	<meta name="twitter:image" content="http://civicprofile.us/og-image.jpg" />
 	<meta name="twitter:image:alt" content={meta.title} />
 	
 	<!-- Additional Meta Tags -->
@@ -59,7 +59,7 @@
 	<meta name="theme-color" content="#ffffff" />
 	
 	<!-- Canonical URL -->
-	<link rel="canonical" href="https://civicresponsibility.org{$page.url.pathname}" />
+	<link rel="canonical" href="http://civicprofile.us{$page.url.pathname}" />
 </svelte:head>
 
 <main
