@@ -409,7 +409,7 @@
 			gap: 0.5rem;
 
 			.option-button {
-				padding: 0.75rem 1rem;
+				padding: 0.5rem 0.75rem;
 				border: 1px solid #d0d0d0;
 				border-radius: 0.5rem;
 				background: #fff;
