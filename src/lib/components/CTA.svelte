@@ -120,11 +120,11 @@
 			</div>
 		</div>
 		
-		<div class="cta-footer">
+		<!-- <div class="cta-footer">
 			<button data-button="report" class="report-button">
 				Read the full report
 			</button>
-		</div>
+		</div> -->
 	</div>
 </div>
 
