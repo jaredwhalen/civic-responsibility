@@ -95,7 +95,7 @@
 		<!-- <iframe src="https://thebeaconproject.substack.com/embed" width="100%" height="150" scrolling="no"></iframe> -->
 
 		<div class="cta-title" bind:this={textElement}>
-			<h2>Explore further into the data...</h2>
+			<h2>Explore further...</h2>
 		</div>
 		
 		<div class="cta-columns">
