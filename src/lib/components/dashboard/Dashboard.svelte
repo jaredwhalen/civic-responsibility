@@ -407,7 +407,7 @@
 	let controlsHeight = $state(null);
 	let legendHeight = $state(0);
 
-	let axisHeight = $derived($isMobile ? interactiveMode ? 60 : 80 : interactiveMode ? 80 : 100);
+	let axisHeight = $derived($isMobile ? (interactiveMode ? 60 : 80) : interactiveMode ? 80 : 100);
 
 	let noteHeight = $state(0);
 
@@ -504,7 +504,6 @@
 			clickedCircles = new Set();
 		}
 	}
-
 </script>
 
 <div
@@ -543,9 +542,7 @@
 
 			{#if (options.find((o) => o.value === activeView)?.series?.length > 1 || activeView == 'state') && selectedStateView == 'map'}
 				<div class="legend-wrapper" bind:clientHeight={legendHeight}>
-					{#if activeView == 'state' && selectedStateView == 'map'}
-						<GradientLegend colorScale={mapColorScale} />
-					{:else}
+					{#if activeView !== 'state'}
 						<GroupLegend
 							options={options.find((o) => o.value === activeView)}
 							{activeView}
@@ -570,6 +567,7 @@
 					duty={selectedStateMapViewOption}
 					colorScale={mapColorScale}
 				/>
+				<GradientLegend colorScale={mapColorScale} />
 			</div>
 		{/if}
 		<div

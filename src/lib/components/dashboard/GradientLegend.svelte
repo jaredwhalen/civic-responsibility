@@ -3,12 +3,13 @@
 </script>
 
 <div class="legend">
-	<h3>Legend</h3>
 	<div class="legend-title">% selecting behavior as civic responsibility</div>
 	<div class="gradient-bar">
 		<div
 			class="gradient-fill"
-			style="background: linear-gradient(to right, {colorScale(0)}, {colorScale(25)}, {colorScale(50)}, {colorScale(75)}, {colorScale(100)});"
+			style="background: linear-gradient(to right, {colorScale(0)}, {colorScale(25)}, {colorScale(
+				50
+			)}, {colorScale(75)}, {colorScale(100)});"
 		></div>
 	</div>
 	<div class="legend-labels">
@@ -21,6 +22,15 @@
 	.legend {
 		width: 100%;
 		max-width: 250px;
+		position: absolute;
+		bottom: 2rem;
+		right: 2rem;
+
+		@include mq('mobile', 'max') {
+			left: 50%;
+			transform: translateX(-50%);
+			right: auto;
+		}
 
 		.legend-title {
 			font-size: 12px;
@@ -48,11 +58,5 @@
 			font-size: 12px;
 			color: #666;
 		}
-	}
-
-	h3 {
-		font-size: 1rem;
-		font-weight: 600;
-		margin: 0px 0px 5px;
 	}
 </style>
