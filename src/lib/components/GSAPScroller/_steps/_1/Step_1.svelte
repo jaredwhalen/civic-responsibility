@@ -20,6 +20,8 @@
 
 	onMount(() => {
 		gsap.registerPlugin(ScrollTrigger);
+		// Reduce iOS viewport/URL bar resize thrash
+		ScrollTrigger.config({ ignoreMobileResize: true });
 
 		// Set initial states
 		gsap.set(textElement, { opacity: 0, y: -50 });
@@ -94,8 +96,6 @@
 		position: relative;
 		align-items: center;
 		width: 100%;
-
-		
 
 		.text-content {
 			position: sticky;
