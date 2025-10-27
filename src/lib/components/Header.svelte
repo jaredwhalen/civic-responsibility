@@ -94,7 +94,7 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: $spacing-sm $spacing-lg;
-		z-index: 100000;
+		z-index: 1000;
 		pointer-events: none;
 		height: 80px;
 		&.bg {
