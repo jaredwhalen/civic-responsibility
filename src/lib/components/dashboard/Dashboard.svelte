@@ -132,6 +132,12 @@
 		}
 	});
 
+	const stateColors = [
+		getCSSVar('--color-theme-blue'),
+		getCSSVar('--color-theme-green'),
+		getCSSVar('--color-theme-yellow')
+	];
+
 	const options = $derived([
 		{
 			label: 'Gender',
@@ -178,11 +184,7 @@
 				selectedStateView === 'chart' && selectedStateChartViewOptions.length > 0
 					? selectedStateChartViewOptions.map((state, index) => ({
 							label: state,
-							color: [
-								getCSSVar('--color-theme-blue'),
-								getCSSVar('--color-theme-green'),
-								getCSSVar('--color-theme-yellow')
-							][index % 3]
+							color: stateColors[index % stateColors.length]
 						}))
 					: [] // Empty array when no states selected
 		}
@@ -611,6 +613,7 @@
 					bind:selectedValue={selectedStateMapViewOption}
 					viewMode={selectedStateView}
 					onSelect={handleDropdownSelect}
+					pillColors={stateColors}
 				/>
 			</div>
 		{/if}

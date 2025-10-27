@@ -10,7 +10,8 @@
 		viewMode = 'map', // 'chart' or 'map'
 		onSelect = () => {},
 		isOpen = $bindable(false),
-		maxSelections = 3
+		maxSelections = 3,
+		pillColors = []
 	} = $props();
 
 	// ===== LOCAL STATE =====
@@ -49,7 +50,9 @@
 
 	function isDisabled(value) {
 		return (
-			viewMode === 'chart' && selectedValues.length >= maxSelections && !selectedValues.includes(value)
+			viewMode === 'chart' &&
+			selectedValues.length >= maxSelections &&
+			!selectedValues.includes(value)
 		);
 	}
 
@@ -76,6 +79,8 @@
 		isDropdownOpen = false;
 		isOpen = false;
 	}
+
+	$inspect(selectedValues, options);
 </script>
 
 <div class="dropdown-container">
@@ -84,27 +89,29 @@
 		<span class="dropdown-text">
 			{#if viewMode === 'chart'}
 				<!-- State pills for chart view -->
-						{#if selectedValues.length > 0}
-							<div class="state-pills">
-								{#each selectedValues as state}
-									<div
-										class="state-pill"
-										onclick={(e) => removeState(state, e)}
-										onkeydown={(e) => {
-											if (e.key === 'Enter' || e.key === ' ') {
-												e.preventDefault();
-												removeState(state, e);
-											}
-										}}
-										role="button"
-										tabindex="0"
-										aria-label="Remove {state}"
-									>
-										<span class="state-name">{getStateAbbreviation(state)}</span>
-										<span class="remove-icon" aria-hidden="true">×</span>
-									</div>
-								{/each}
+				{#if selectedValues.length > 0}
+					<div class="state-pills">
+						{#each selectedValues as state, index}
+							<div
+								class="state-pill"
+								onclick={(e) => removeState(state, e)}
+								onkeydown={(e) => {
+									if (e.key === 'Enter' || e.key === ' ') {
+										e.preventDefault();
+										removeState(state, e);
+									}
+								}}
+								role="button"
+								tabindex="0"
+								aria-label="Remove {state}"
+								style:--pill-color="{pillColors[index % pillColors.length]}40"
+								style:--pill-border-color={pillColors[index % pillColors.length]}
+							>
+								<span class="state-name">{getStateAbbreviation(state)}</span>
+								<span class="remove-icon" aria-hidden="true">×</span>
 							</div>
+						{/each}
+					</div>
 				{:else}
 					<span class="dropdown-text-content">Select up to 3 states</span>
 				{/if}
@@ -163,6 +170,7 @@
 				transition: transform 0.2s ease;
 				flex-shrink: 0;
 				transform: rotate(270deg);
+				margin-right: 0.5rem;
 
 				&.is-open {
 					transform: rotate(360deg);
@@ -198,19 +206,17 @@
 				.state-pill {
 					display: flex;
 					align-items: center;
-					background-color: #e8e8e8;
+					background: var(--pill-color, #e8e8e8);
+					color: #fff;
 					border-radius: 0.25rem;
 					padding: 0.25rem 0.5rem;
-					border: 1px solid #d0d0d0;
+					border: 1px solid var(--pill-border-color, #d0d0d0);
 					transition: all 0.2s ease;
 					font-size: 0.75rem;
 					flex-shrink: 0;
 					cursor: pointer;
 
 					&:hover {
-						background-color: #d8d8d8;
-						border-color: #b0b0b0;
-
 						.remove-icon {
 							color: #333;
 						}
@@ -285,7 +291,7 @@
 				}
 
 				&:disabled {
-					opacity: 0.5;
+					opacity: 1;
 					cursor: not-allowed;
 					color: #ccc;
 				}
@@ -293,4 +299,3 @@
 		}
 	}
 </style>
-
