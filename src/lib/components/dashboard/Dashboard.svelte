@@ -383,7 +383,7 @@
 	let width = $state(0);
 	const baseRowHeight = interactiveMode ? 35 : 45;
 
-	const minRowHeight = interactiveMode ? ($isMobile ? 45 : 25) : 40;
+	const minRowHeight = interactiveMode ? ($isMobile ? 45 : 18) : 40;
 	let controlsWidth = $state(null);
 
 	// Base dimensions without rowHeight to avoid circular dependency
