@@ -6,6 +6,7 @@
 		clickedSeries = $bindable(),
 		interactive = false
 	} = $props();
+	
 </script>
 
 {#if options?.series && options.series.length > 1}

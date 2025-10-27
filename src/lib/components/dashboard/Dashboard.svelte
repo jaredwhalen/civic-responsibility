@@ -540,7 +540,7 @@
 				}}
 			/>
 
-			{#if (options.find((o) => o.value === activeView)?.series?.length > 1 || activeView == 'state') && selectedStateView == 'map'}
+			{#if (options.find((o) => o.value === activeView)?.series?.length > 1) & (activeView != 'state')}
 				<div class="legend-wrapper" bind:clientHeight={legendHeight}>
 					{#if activeView !== 'state'}
 						<GroupLegend
