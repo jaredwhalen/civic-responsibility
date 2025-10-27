@@ -55,7 +55,7 @@
 	<meta name="twitter:image:alt" content={meta.title} />
 	
 	<!-- Additional Meta Tags -->
-	<meta name="author" content="Beacon" />
+	<meta name="author" content="Beacon Project" />
 	<meta name="theme-color" content="#ffffff" />
 	
 	<!-- Canonical URL -->
@@ -64,7 +64,7 @@
 
 <main
 	role="main"
-	aria-label="Civic Responsibility Interactive Experience"
+	aria-label="Civic Responsibility in America"
 	style:--header-height="{headerHeight}px"
 >
 	<Header bind:headerHeight mode={$page.route.id === '/' ? 'main' : 'route'}/>
