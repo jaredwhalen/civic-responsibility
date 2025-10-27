@@ -18,9 +18,8 @@
 	import Dashboard from '$lib/components/dashboard/Dashboard.svelte';
 	import Quiz from '$lib/components/quiz/Quiz.svelte';
 	const { meta, content } = copy;
-	
 
-	let showFooter = $state(false);
+	let showEndItems = $state(false);
 
 	// Check if user has scrolled to bottom of page
 	function checkScrollToBottom() {
@@ -31,10 +30,10 @@
 		// Check if user is at bottom (with small tolerance)
 		const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
 
-		if (isAtBottom && !showFooter && $userResponse.submitted) {
+		if (isAtBottom && !showEndItems && $userResponse.submitted) {
 			// Wait 1 second then show footer
 			setTimeout(() => {
-				showFooter = true;
+				showEndItems = true;
 			}, 500);
 		}
 	}
@@ -75,11 +74,10 @@
 {#if $userResponse.submitted}
 	<GSAPScroller section="outro" />
 
-	<EmailSignupSection />
-
 	<CTA />
 
-	{#if showFooter}
+	{#if showEndItems}
+		<EmailSignupSection />
 		<Footer />
 	{/if}
 {/if}
