@@ -21,7 +21,7 @@
 		if (mode === 'route') {
 			// Check if we came from Explore buttons
 			const cameFromExplore = $page.url.search.includes('fromExplore=true');
-			
+
 			if (cameFromExplore) {
 				// Go to main page with trigger for +page.svelte
 				window.location.href = base + '/?fromExplore=true';
@@ -35,9 +35,7 @@
 	}
 
 	// When on main page and returning from a route (via fromExplore param)
-	let fromExplore = $derived(
-		mode === 'main' && $page.url.search.includes('fromExplore=true')
-	);
+	let fromExplore = $derived(mode === 'main' && $page.url.search.includes('fromExplore=true'));
 
 	function urlClean() {
 		const url = new URL(window.location.href);
@@ -59,11 +57,14 @@
 	});
 </script>
 
-<header class="main-header" aria-label="Site navigation" bind:clientHeight={headerHeight} class:bg>
+<header
+	class="main-header {mode}"
+	aria-label="Site navigation"
+	bind:clientHeight={headerHeight}
+	class:bg
+>
 	<div class="header-left">
-		{#if mode === 'main'}
-			<Lockup interactive={mode === 'main'} size={$isMobile ? 'medium' : 'large'} />
-		{/if}
+		<Lockup interactive={mode === 'main'} size={$isMobile ? 'medium' : 'large'} />
 	</div>
 
 	<div class="header-right">
@@ -72,13 +73,10 @@
 				<Home size={20} />
 				{backButtonText}
 			</button>
-			
+
 			{#if !$page.url.pathname.includes('/dashboard')}
 				{@const param = $page.url.search.includes('fromExplore=true') ? '?fromExplore=true' : ''}
-				<a
-					href={base + '/dashboard' + param}
-					class="nav-button dashboard-button"
-				>
+				<a href={base + '/dashboard' + param} class="nav-button dashboard-button">
 					{#if $isMobile}
 						<span>Dashboard</span>
 					{:else}
@@ -102,11 +100,7 @@
 			{/if}
 		{:else}
 			{#if !$page.url.pathname.includes('/dashboard')}
-				<a
-					href={base + '/dashboard'}
-					target="_blank"
-					class="nav-button dashboard-button"
-				>
+				<a href={base + '/dashboard'} target="_blank" class="nav-button dashboard-button">
 					{#if $isMobile}
 						<span>Dashboard</span>
 					{:else}
@@ -146,6 +140,11 @@
 		z-index: 1000;
 		pointer-events: none;
 		height: 80px;
+
+		&.route {
+			flex-direction: row-reverse;
+		}
+
 		&.bg {
 			background: var(--color-theme-blue);
 		}
