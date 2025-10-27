@@ -1,8 +1,8 @@
 <script>
 	import { fade, fly } from 'svelte/transition';
-	import stateAbbreviations from '$lib/data/stateAbbreviations.json';
 	import { ListFilter } from '@lucide/svelte';
 	import { isMobile } from '$lib/stores/responsive.js';
+	import Dropdown from './Dropdown.svelte';
 
 	// ===== PROPS =====
 	let {
@@ -19,7 +19,6 @@
 	// ===== STATE =====
 	let selectedOption = $state('mean');
 	let isModalOpen = $state(false);
-	let isDropdownOpen = $state(false);
 	let buttonRefs = $state({});
 
 	// ===== CONSTANTS =====
@@ -50,7 +49,6 @@
 			selectedOption = 'mean';
 			selectedStateMapViewOption = resultsOptions[0]?.value;
 			selectedStateChartViewOptions = [];
-			isDropdownOpen = false;
 
 			Object.values(buttonRefs).forEach((ref) => {
 				if (ref && ref === document.activeElement) {
@@ -64,7 +62,6 @@
 		// Reset selected state when view type changes
 		selectedStateMapViewOption = resultsOptions[0]?.value;
 		selectedStateChartViewOptions = [];
-		isDropdownOpen = false;
 	});
 
 	$effect(() => {
@@ -116,7 +113,7 @@
 		activeView = value;
 	}
 
-	function handleStateSelect(value) {
+	function handleDropdownSelect(value) {
 		if (selectedStateView === 'chart') {
 			// Handle multiple state selection for chart view
 			if (selectedStateChartViewOptions.includes(value)) {
@@ -132,17 +129,6 @@
 			// Single selection for map view
 			selectedStateMapViewOption = value;
 		}
-		isDropdownOpen = false;
-	}
-
-	function toggleDropdown() {
-		isDropdownOpen = !isDropdownOpen;
-	}
-
-	function handleClickOutside(event) {
-		if (!event.target.closest('.dropdown-container')) {
-			isDropdownOpen = false;
-		}
 	}
 
 	// ===== MOBILE HANDLERS =====
@@ -152,30 +138,9 @@
 
 	function closeModal() {
 		isModalOpen = false;
-		isDropdownOpen = false;
 	}
 
 	// ===== UTILITY FUNCTIONS =====
-	function removeState(stateToRemove) {
-		selectedStateChartViewOptions = selectedStateChartViewOptions.filter(
-			(state) => state !== stateToRemove
-		);
-	}
-
-	function getStateAbbreviation(stateName) {
-		return stateAbbreviations[stateName] || stateName;
-	}
-
-	function getChartDisplayText() {
-		if (selectedStateChartViewOptions.length === 0) {
-			return 'Select up to 3 states';
-		} else if (selectedStateChartViewOptions.length === 1) {
-			return selectedStateChartViewOptions[0];
-		} else {
-			return `${selectedStateChartViewOptions.length} states selected`;
-		}
-	}
-
 	function getCurrentViewSummary() {
 		const viewLabel = options.find((opt) => opt.value === selectedOption)?.label || 'U.S. average';
 
@@ -195,71 +160,6 @@
 	</p>
 {/snippet}
 
-<!-- ===== DROPDOWN SNIPPET ===== -->
-{#snippet dropdown()}
-	<div class="dropdown-container">
-		<button class="dropdown-button" onclick={toggleDropdown} aria-expanded={isDropdownOpen}>
-			<span class="dropdown-arrow" class:is-open={isDropdownOpen}>▼</span>
-			<span class="dropdown-text">
-				{#if selectedStateView === 'chart'}
-					<!-- State pills for chart view -->
-					{#if selectedStateChartViewOptions.length > 0}
-						<div class="state-pills">
-							{#each selectedStateChartViewOptions as state}
-								<div
-									class="state-pill"
-									onclick={(e) => {
-										e.stopPropagation();
-										removeState(state);
-									}}
-									onkeydown={(e) => {
-										if (e.key === 'Enter' || e.key === ' ') {
-											e.preventDefault();
-											removeState(state);
-										}
-									}}
-									role="button"
-									tabindex="0"
-									aria-label="Remove {state}"
-								>
-									<span class="state-name">{stateAbbreviations[state] || state}</span>
-									<span class="remove-icon" aria-hidden="true">×</span>
-								</div>
-							{/each}
-						</div>
-					{:else}
-						<span class="dropdown-text-content">Select up to 3 states</span>
-					{/if}
-				{:else}
-					<span class="dropdown-text-content">{selectedStateMapViewOption || 'Select a duty'}</span>
-				{/if}
-			</span>
-		</button>
-
-		{#if isDropdownOpen}
-			<div class="dropdown-menu" transition:fade={{ duration: 200 }}>
-				{#each resultsOptions as option}
-					<button
-						class="dropdown-item {selectedStateView === 'chart'
-							? selectedStateChartViewOptions.includes(option.value)
-								? 'selected'
-								: ''
-							: selectedStateMapViewOption === option.value
-								? 'selected'
-								: ''}"
-						onclick={() => handleStateSelect(option.value)}
-						disabled={selectedStateView === 'chart' &&
-							selectedStateChartViewOptions.length >= 3 &&
-							!selectedStateChartViewOptions.includes(option.value)}
-					>
-						{option.label}
-					</button>
-				{/each}
-			</div>
-		{/if}
-	</div>
-{/snippet}
-
 <!-- ===== MAIN TEMPLATE ===== -->
 <div class="controls-wrapper">
 	<!-- Mobile filter button and summary (always visible on mobile) -->
@@ -270,7 +170,13 @@
 			</button>
 			<div class="view-summary">
 				{#if activeView == 'state'}
-					{@render dropdown()}
+					<Dropdown
+						options={resultsOptions}
+						bind:selectedValues={selectedStateChartViewOptions}
+						bind:selectedValue={selectedStateMapViewOption}
+						viewMode={selectedStateView}
+						onSelect={handleDropdownSelect}
+					/>
 				{:else}
 					<span class="view-summary-label">Viewing data by:</span>
 					<span class="view-summary-value">{getCurrentViewSummary()}</span>
@@ -349,18 +255,6 @@
 								{/each}
 							</div>
 						</div>
-
-						<!-- State/duty selection (desktop only) -->
-						{#if !$isMobile}
-							<div class="control-section">
-								<div class="section-title">
-									<h3>
-										Select {selectedStateView === 'chart' ? 'states' : 'a civic responsibility'}
-									</h3>
-								</div>
-								{@render dropdown()}
-							</div>
-						{/if}
 					{/if}
 				</div>
 			</div>
@@ -409,7 +303,7 @@
 			gap: 0.5rem;
 
 			.option-button {
-				padding: 0.5rem 0.75rem;
+				padding: 0.75rem 1rem;
 				border: 1px solid #d0d0d0;
 				border-radius: 0.5rem;
 				background: #fff;
@@ -431,170 +325,6 @@
 					background-color: #f8f8f8;
 					border-color: #999;
 					color: #333;
-				}
-			}
-		}
-	}
-
-	// ===== DROPDOWN STYLES =====
-	.dropdown-container {
-		position: relative;
-		width: 100%;
-
-		.dropdown-button {
-			width: 100%;
-			padding: 0.75rem 1rem;
-			border: 1px solid #d0d0d0;
-			border-radius: 0.5rem;
-			background: #fff;
-			color: #666;
-			font-size: 0.9rem;
-			font-weight: 500;
-			cursor: pointer;
-			transition: all 0.2s ease;
-			font-family: sans-serif;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			text-align: left;
-			box-sizing: border-box;
-
-			&:hover {
-				background-color: #f8f8f8;
-				border-color: #999;
-			}
-
-			.dropdown-arrow {
-				color: #999;
-				font-size: 0.75rem;
-				transition: transform 0.2s ease;
-				flex-shrink: 0;
-				transform: rotate(270deg);
-
-				&.is-open {
-					transform: rotate(360deg);
-				}
-			}
-
-			.dropdown-text {
-				flex: 1;
-				margin-right: 0.5rem;
-				display: flex;
-				align-items: center;
-				gap: 0.25rem;
-				overflow: hidden;
-
-				.dropdown-text-content {
-					white-space: nowrap;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					flex: 1;
-					min-width: 0;
-				}
-			}
-
-			// State pills styling
-			.state-pills {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 0.25rem;
-				align-items: center;
-				flex: 1;
-				overflow: hidden;
-
-				.state-pill {
-					display: flex;
-					align-items: center;
-					background-color: #e8e8e8;
-					border-radius: 0.25rem;
-					padding: 0.25rem 0.5rem;
-					border: 1px solid #d0d0d0;
-					transition: all 0.2s ease;
-					font-size: 0.75rem;
-					flex-shrink: 0;
-					cursor: pointer;
-
-					&:hover {
-						background-color: #d8d8d8;
-						border-color: #b0b0b0;
-
-						.remove-icon {
-							color: #333;
-						}
-					}
-
-					.state-name {
-						font-weight: 500;
-						color: #333;
-						white-space: nowrap;
-					}
-
-					.remove-icon {
-						color: #666;
-						font-weight: bold;
-						font-size: 1rem;
-						margin-left: 0.25rem;
-						transition: color 0.2s ease;
-						flex-shrink: 0;
-					}
-				}
-			}
-		}
-
-		.dropdown-menu {
-			position: absolute;
-			top: 100%;
-			left: 0;
-			right: 0;
-			background-color: #fff;
-			border-radius: 0.5rem;
-			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-			margin-top: 0.25rem;
-			max-height: 200px;
-			overflow-y: auto;
-			z-index: 1000;
-
-			.dropdown-item {
-				width: 100%;
-				padding: 0.75rem 1rem;
-				border: none;
-				background: transparent;
-				color: #666;
-				font-size: 0.9rem;
-				font-weight: 500;
-				cursor: pointer;
-				transition: all 0.2s ease;
-				font-family: sans-serif;
-				text-align: left;
-				display: flex;
-				align-items: center;
-				white-space: normal;
-				line-height: 1.4;
-
-				&:hover:not(:disabled) {
-					background-color: $color-beacon-yellow;
-					color: #333;
-				}
-
-				&:first-child {
-					border-top-left-radius: 0.5rem;
-					border-top-right-radius: 0.5rem;
-				}
-
-				&:last-child {
-					border-bottom-left-radius: 0.5rem;
-					border-bottom-right-radius: 0.5rem;
-				}
-
-				&.selected {
-					background-color: #eee;
-					color: #888;
-				}
-
-				&:disabled {
-					opacity: 0.5;
-					cursor: not-allowed;
-					color: #ccc;
 				}
 			}
 		}

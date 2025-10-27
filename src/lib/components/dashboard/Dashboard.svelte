@@ -13,6 +13,7 @@
 
 	// components
 	import Controls from './Controls.svelte';
+	import Dropdown from './Dropdown.svelte';
 	import GroupLegend from './GroupLegend.svelte';
 	import GradientLegend from './GradientLegend.svelte';
 	import MapViz from './Map.svelte';
@@ -85,9 +86,9 @@
 			activeView = 'mean';
 			selectedStateView = 'map';
 			selectedStateChartViewOptions = [];
-			// Reset selectedStateMapViewOption to first state if available
-			if (states && states.length > 0) {
-				selectedStateMapViewOption = states[0].state;
+			// Reset selectedStateMapViewOption to first duty if available
+			if (transformedData.state && transformedData.state.length > 0) {
+				selectedStateMapViewOption = transformedData.state[0].duty_label;
 			}
 		}
 	});
@@ -105,8 +106,8 @@
 
 	// Set initial selectedStateMapViewOption when states data is available
 	$effect(() => {
-		if (states && states.length > 0) {
-			selectedStateMapViewOption = states[0].state;
+		if (transformedData.state && transformedData.state.length > 0 && selectedStateView === 'map') {
+			selectedStateMapViewOption = transformedData.state[0].duty_label;
 		}
 	});
 
@@ -380,6 +381,17 @@
 		return currentViewData;
 	});
 
+	// Dropdown options based on view mode
+	let dropdownOptions = $derived(
+		selectedStateView === 'chart'
+			? Array.from(new Set(filteredStateData.map((d) => d.state)))
+					.sort()
+					.map((state) => ({ label: state, value: state }))
+			: Array.from(new Set(transformedData.state.map((d) => d.duty_label)))
+					.sort()
+					.map((duty) => ({ label: duty, value: duty }))
+	);
+
 	let width = $state(0);
 	const baseRowHeight = interactiveMode ? 35 : 45;
 
@@ -404,12 +416,13 @@
 	const showAll = $derived(!currentDataMap[activeId]?.includeArr?.length);
 
 	let dashboardHeight = $state(null);
-	let controlsHeight = $state(null);
+
 	let legendHeight = $state(0);
 
 	let axisHeight = $derived($isMobile ? (interactiveMode ? 60 : 80) : interactiveMode ? 80 : 100);
 
 	let noteHeight = $state(0);
+	let dropdownHeight = $state(0);
 
 	// Reset noteHeight when note is not visible
 	$effect(() => {
@@ -418,11 +431,21 @@
 		}
 	});
 
+	// Reset dropdownHeight when not in state/map view
+	$effect(() => {
+		if (!(activeView === 'state' && interactiveMode && isPinned && !$isMobile)) {
+			dropdownHeight = 0;
+		}
+	});
+
 	// Calculate dynamic row height based on available space
 	const rowHeight = $derived.by(() => {
+		// Access dropdownOptions to ensure recalculation when view changes
+		let _options = dropdownOptions;
+
 		if (!dashboardHeight) return baseRowHeight;
 
-		const availableHeight = dashboardHeight - axisHeight - noteHeight;
+		const availableHeight = dashboardHeight - axisHeight - noteHeight - dropdownHeight;
 
 		const requiredHeight =
 			currentViewData.length * baseRowHeight +
@@ -461,7 +484,7 @@
 	// Calculate chart container height for pinned mode
 	const chartContainerHeight = $derived(
 		interactiveMode && isPinned
-			? `calc(100svh - ${selectedStateView == 'map' ? 0 : axisHeight}px - ${noteHeight}px)`
+			? `calc(100svh - ${selectedStateView == 'map' ? 0 : axisHeight}px - ${noteHeight}px - ${dropdownHeight}px)`
 			: adjustedDimensions.height
 	);
 
@@ -504,6 +527,23 @@
 			clickedCircles = new Set();
 		}
 	}
+
+	// Handle dropdown selection for state view
+	function handleDropdownSelect(value) {
+		if (selectedStateView === 'chart') {
+			// Handle multiple state selection for chart view
+			if (selectedStateChartViewOptions.includes(value)) {
+				selectedStateChartViewOptions = selectedStateChartViewOptions.filter(
+					(state) => state !== value
+				);
+			} else if (selectedStateChartViewOptions.length < 3) {
+				selectedStateChartViewOptions = [...selectedStateChartViewOptions, value];
+			}
+		} else {
+			// Single selection for map view
+			selectedStateMapViewOption = value;
+		}
+	}
 </script>
 
 <div
@@ -513,6 +553,7 @@
 	class:pinned={interactiveMode && isPinned}
 	style:--controls-width="{controlsWidth}px"
 	style:--note-height="{noteHeight}px"
+	style:--dropdown-height="{dropdownHeight}px"
 	bind:this={dashboardElement}
 	bind:clientWidth={width}
 	bind:clientHeight={dashboardHeight}
@@ -559,6 +600,20 @@
 	{/if}
 
 	<div class="dashboard-content" style:--legend-height="{legendHeight}px">
+		{#if interactiveMode && isPinned && activeView == 'state' && !$isMobile}
+			<div class="dropdown-wrapper" bind:clientHeight={dropdownHeight}>
+				<div class="dropdown-title">
+					Select {selectedStateView === 'chart' ? 'states' : 'a civic responsibility'}
+				</div>
+				<Dropdown
+					options={dropdownOptions}
+					bind:selectedValues={selectedStateChartViewOptions}
+					bind:selectedValue={selectedStateMapViewOption}
+					viewMode={selectedStateView}
+					onSelect={handleDropdownSelect}
+				/>
+			</div>
+		{/if}
 		{#if interactiveMode && activeView == 'state' && selectedStateView == 'map'}
 			<div class="map-wrapper">
 				<MapViz
@@ -767,6 +822,29 @@
 				bottom: 0;
 				z-index: 500;
 			}
+		}
+	}
+
+	// Dropdown wrapper
+	.dropdown-wrapper {
+		padding: 1rem;
+		// margin-left: min(var(--controls-width), 300px);
+		background-color: var(--bg-color);
+		z-index: 100;
+		max-width: 400px;
+		width: 100%;
+		margin: 0 auto;
+		text-align: center;
+
+		.dropdown-title {
+			font-size: 1.25rem;
+			font-weight: 600;
+			margin-bottom: 0.25rem;
+			text-align: center;
+		}
+
+		@include mq('mobile', 'max') {
+			margin-left: 0;
 		}
 	}
 
