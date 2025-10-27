@@ -139,7 +139,7 @@
 
 	// Color
 	function getCircleColor(s) {
-		const defaultColor = '#bbbbbb';
+		const defaultColor = '#bbbbbb90';
 		return guessMode
 			? getCSSVar('--color-theme-red')
 			: pollCorrectMode
@@ -152,7 +152,7 @@
 						: options
 							? options?.series?.find((d) => d.label.toLowerCase() === s.label.toLowerCase())
 									?.color || defaultColor
-							: getCSSVar('--color-theme-blue')
+							: getCSSVar('--color-gray-700')
 					: defaultColor;
 	}
 
