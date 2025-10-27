@@ -80,7 +80,6 @@
 		isOpen = false;
 	}
 
-	$inspect(selectedValues, options);
 </script>
 
 <div class="dropdown-container">

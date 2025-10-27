@@ -103,14 +103,12 @@
 
 	// ===== EVENT HANDLERS =====
 	function handleSelect(value) {
-		if (value == selectedOption) {
-			selectedOption = 'mean';
-			activeView = 'mean';
-			return;
-		}
-
 		selectedOption = value;
 		activeView = value;
+
+		if ($isMobile && activeView != 'state') {
+			closeModal();
+		}
 	}
 
 	function handleDropdownSelect(value) {
