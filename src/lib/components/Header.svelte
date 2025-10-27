@@ -20,7 +20,7 @@
 	function handleBackClick() {
 		if (mode === 'route') {
 			// Check if we came from Explore buttons
-			const cameFromExplore = $page.url.search.includes('fromExplore=true');
+			const cameFromExplore = browser && $page.url.search.includes('fromExplore=true');
 
 			if (cameFromExplore) {
 				// Go to main page with trigger for +page.svelte
@@ -35,7 +35,7 @@
 	}
 
 	// When on main page and returning from a route (via fromExplore param)
-	let fromExplore = $derived(mode === 'main' && $page.url.search.includes('fromExplore=true'));
+	let fromExplore = $derived(mode === 'main' && browser && $page.url.search.includes('fromExplore=true'));
 
 	function urlClean() {
 		const url = new URL(window.location.href);
@@ -45,7 +45,7 @@
 
 	// Clean up URL params immediately after navigation
 	afterNavigate(() => {
-		if ($page.url.search.includes('fromExplore=true')) {
+		if (browser && $page.url.search.includes('fromExplore=true')) {
 			urlClean();
 		}
 	});
@@ -67,7 +67,7 @@
 		<Lockup interactive={mode === 'main'} size={$isMobile ? 'medium' : 'large'} />
 	</div>
 
-	<div class="header-right">
+		<div class="header-right">
 		{#if mode === 'route'}
 			<button class="nav-button back-button" onclick={handleBackClick}>
 				<Home size={20} />
@@ -75,7 +75,7 @@
 			</button>
 
 			{#if !$page.url.pathname.includes('/dashboard')}
-				{@const param = $page.url.search.includes('fromExplore=true') ? '?fromExplore=true' : ''}
+				{@const param = browser && $page.url.search.includes('fromExplore=true') ? '?fromExplore=true' : ''}
 				<a href={base + '/dashboard' + param} class="nav-button dashboard-button">
 					{#if $isMobile}
 						<span>Dashboard</span>
@@ -87,7 +87,7 @@
 				</a>
 			{/if}
 			{#if !$page.url.pathname.includes('/quiz')}
-				{@const param = $page.url.search.includes('fromExplore=true') ? '?fromExplore=true' : ''}
+				{@const param = browser && $page.url.search.includes('fromExplore=true') ? '?fromExplore=true' : ''}
 				<a href={base + '/quiz' + param} class="nav-button quiz-button">
 					{#if $isMobile}
 						<span>Quiz</span>
