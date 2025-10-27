@@ -1,85 +1,132 @@
 <script>
 	import { base } from '$app/paths';
+	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
-	import { beforeNavigate } from '$app/navigation';
+	import { afterNavigate } from '$app/navigation';
 	import { Home, ChartBar, UserPen } from '@lucide/svelte';
 	import Lockup from './Lockup.svelte';
 	import { isMobile } from '$lib/stores/responsive.js';
 
-	let { headerHeight = $bindable() } = $props();
+	let { headerHeight = $bindable(), mode = 'main' } = $props();
 
 	let bg = $derived(
 		$page.url.pathname.includes('/dashboard') || $page.url.pathname.includes('/quiz')
 	);
-	let previousPath = $state('');
-	let isRoutePage = $derived(
-		$page.url.pathname.includes('/dashboard') || $page.url.pathname.includes('/quiz')
-	);
-
-	// Track the previous path to determine navigation behavior
-	beforeNavigate((navigation) => {
-		if (navigation.from) {
-			previousPath = navigation.from.url.pathname;
-		}
-	});
-
-	// Determine if we came directly from root
-	let cameDirectlyFromRoot = $derived.by(() => {
-		if (!isRoutePage) return false;
-		// Check if previous path was root (/ or /base)
-		return previousPath === '/' || previousPath === base || previousPath === base + '/';
-	});
 
 	// Derive button text based on navigation state
-	let backButtonText = $derived(
-		$isMobile ? '' : cameDirectlyFromRoot ? 'Return to main page' : 'Main page'
-	);
+	let backButtonText = $derived($isMobile ? '' : 'Main page');
 
 	function handleBackClick() {
-		if (cameDirectlyFromRoot && browser) {
-			// Use browser back to maintain scroll position when coming directly from root
-			window.history.back();
+		if (mode === 'route') {
+			// Check if we came from Explore buttons
+			const cameFromExplore = $page.url.search.includes('fromExplore=true');
+			
+			if (cameFromExplore) {
+				// Go to main page with trigger for +page.svelte
+				window.location.href = base + '/?fromExplore=true';
+			} else {
+				// Simple scroll to top on main page
+				window.location.href = base + '/';
+			}
 		} else {
-			// Navigate to root page for all other cases (came from another route, external, etc)
 			window.location.href = base + '/';
 		}
 	}
+
+	// When on main page and returning from a route (via fromExplore param)
+	let fromExplore = $derived(
+		mode === 'main' && $page.url.search.includes('fromExplore=true')
+	);
+
+	function urlClean() {
+		const url = new URL(window.location.href);
+		url.searchParams.delete('fromExplore');
+		window.history.replaceState({}, '', url.pathname + url.search + url.hash);
+	}
+
+	// Clean up URL params immediately after navigation
+	afterNavigate(() => {
+		if ($page.url.search.includes('fromExplore=true')) {
+			urlClean();
+		}
+	});
+
+	onMount(() => {
+		if (fromExplore) {
+			urlClean();
+		}
+	});
 </script>
 
 <header class="main-header" aria-label="Site navigation" bind:clientHeight={headerHeight} class:bg>
 	<div class="header-left">
-		<Lockup interactive={!isRoutePage} size={$isMobile ? 'medium' : 'large'} />
+		{#if mode === 'main'}
+			<Lockup interactive={mode === 'main'} size={$isMobile ? 'medium' : 'large'} />
+		{/if}
 	</div>
 
 	<div class="header-right">
-		{#if isRoutePage}
-			<a href={base + '/'} class="nav-button back-button" onclick={handleBackClick}>
+		{#if mode === 'route'}
+			<button class="nav-button back-button" onclick={handleBackClick}>
 				<Home size={20} />
 				{backButtonText}
-			</a>
-		{/if}
-		{#if !$page.url.pathname.includes('/dashboard')}
-			<a href={base + '/dashboard'} class="nav-button dashboard-button">
-				{#if $isMobile}
-					<span>Dashboard</span>
-				{:else}
-					<ChartBar size={16} />
-					<span class="full-text">View the data dashboard</span>
-					<span class="short-text">Explore data</span>
-				{/if}
-			</a>
-		{/if}
-		{#if !$page.url.pathname.includes('/quiz')}
-			<a href={base + '/quiz'} class="nav-button quiz-button">
-				{#if $isMobile}
-					<span>Quiz</span>
-				{:else}
-					<UserPen size={16} />
-					<span class="full-text">What's your Civic Profile? Take our interactive quiz.</span>
-					<span class="short-text">Take quiz</span>
-				{/if}
-			</a>
+			</button>
+			
+			{#if !$page.url.pathname.includes('/dashboard')}
+				{@const param = $page.url.search.includes('fromExplore=true') ? '?fromExplore=true' : ''}
+				<a
+					href={base + '/dashboard' + param}
+					class="nav-button dashboard-button"
+				>
+					{#if $isMobile}
+						<span>Dashboard</span>
+					{:else}
+						<ChartBar size={16} />
+						<span class="full-text">View the data dashboard</span>
+						<span class="short-text">Explore data</span>
+					{/if}
+				</a>
+			{/if}
+			{#if !$page.url.pathname.includes('/quiz')}
+				{@const param = $page.url.search.includes('fromExplore=true') ? '?fromExplore=true' : ''}
+				<a href={base + '/quiz' + param} class="nav-button quiz-button">
+					{#if $isMobile}
+						<span>Quiz</span>
+					{:else}
+						<UserPen size={16} />
+						<span class="full-text">What's your Civic Profile? Take our interactive quiz.</span>
+						<span class="short-text">Take quiz</span>
+					{/if}
+				</a>
+			{/if}
+		{:else}
+			{#if !$page.url.pathname.includes('/dashboard')}
+				<a
+					href={base + '/dashboard'}
+					target="_blank"
+					class="nav-button dashboard-button"
+				>
+					{#if $isMobile}
+						<span>Dashboard</span>
+					{:else}
+						<ChartBar size={16} />
+						<span class="full-text">View the data dashboard</span>
+						<span class="short-text">Explore data</span>
+					{/if}
+				</a>
+			{/if}
+			{#if !$page.url.pathname.includes('/quiz')}
+				<a href={base + '/quiz'} target="_blank" class="nav-button quiz-button">
+					{#if $isMobile}
+						<span>Quiz</span>
+					{:else}
+						<UserPen size={16} />
+						<span class="full-text">What's your Civic Profile? Take our interactive quiz.</span>
+						<span class="short-text">Take quiz</span>
+					{/if}
+				</a>
+			{/if}
 		{/if}
 	</div>
 </header>

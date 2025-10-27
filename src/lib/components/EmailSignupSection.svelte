@@ -115,7 +115,7 @@
 	}
 </script>
 
-<section class="email-signup-section" bind:this={sectionElement}>
+<section id="email-signup" class="email-signup-section" bind:this={sectionElement}>
 	<div class="email-signup-container" bind:this={contentElement}>
 		<h2>Learn more about our effort to rethink responsibility in America.</h2>
 		<p>

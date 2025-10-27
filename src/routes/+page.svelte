@@ -1,5 +1,6 @@
 <script>
 	import { base } from '$app/paths';
+	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import Hero from '$lib/components/Hero.svelte';
 	import Footer from '$lib/components/Footer.svelte';
@@ -13,7 +14,7 @@
 	import GSAPScroller from '$lib/components/GSAPScroller/GSAPScroller.svelte';
 	import MatrixScroller from '$lib/components/MatrixScroller/MatrixScroller.svelte';
 
-	import CTA from '$lib/components/CTA.svelte';
+	import Explore from '$lib/components/Explore.svelte';
 	import EmailSignupSection from '$lib/components/EmailSignupSection.svelte';
 	import Dashboard from '$lib/components/dashboard/Dashboard.svelte';
 	import Quiz from '$lib/components/quiz/Quiz.svelte';
@@ -39,6 +40,22 @@
 	}
 
 	onMount(() => {
+
+		const fromExplore = $page.url.href.includes('?fromExplore=true');
+
+	if (fromExplore) {
+		$userResponse.submitted = true;
+		showEndItems = true;
+
+		setTimeout(() => {
+			document.getElementById('explore').scrollIntoView();
+			// Remove fromExplore parameter from URL
+			const url = new URL(window.location.href);
+			url.searchParams.delete('fromExplore');
+			window.history.replaceState({}, '', url.pathname + url.search + url.hash);
+		}, 0);
+	}
+
 		// Check initial scroll position in case user is already at bottom
 		checkScrollToBottom();
 
@@ -74,7 +91,7 @@
 {#if $userResponse.submitted}
 	<GSAPScroller section="outro" />
 
-	<CTA />
+	<Explore />
 
 	{#if showEndItems}
 		<EmailSignupSection />
@@ -166,3 +183,4 @@
 		}
 	}
 </style>
+

@@ -11,6 +11,7 @@
 	import { page } from '$app/stores';
 
 	const { meta } = copy;
+
 </script>
 
 <svelte:head>
@@ -27,7 +28,7 @@
 	aria-label="Civic Responsibility Interactive Experience"
 	style:--header-height="{headerHeight}px"
 >
-	<Header bind:headerHeight />
+	<Header bind:headerHeight mode={$page.route.id === '/' ? 'main' : 'route'}/>
 
 	<slot />
 </main>

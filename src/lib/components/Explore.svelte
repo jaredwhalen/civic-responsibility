@@ -6,7 +6,7 @@
 	import Dashboard from './dashboard/Dashboard.svelte';
 
 	let { interactiveMode = $bindable(), showQuiz = $bindable() } = $props();
-	let ctaElement;
+	let exploreElement;
 	let textElement;
 	let exploreButton;
 	let quizButton;
@@ -30,7 +30,7 @@
 
 		// Create scroll trigger for this section
 		const trigger = ScrollTrigger.create({
-			trigger: ctaElement,
+			trigger: exploreElement,
 			start: 'top 80%',
 			end: 'bottom 20%',
 			onUpdate: (self) => {
@@ -85,42 +85,42 @@
 
 </script>
 
-<div class="cta-section" bind:this={ctaElement}>
-	<div class="cta-background">
+<div id="explore" class="explore-section" bind:this={exploreElement}>
+	<div class="explore-background">
 		<Dashboard activeId="9999-dashboard" interactiveMode={true} disableTippy={true} />
 	</div>
-	<div class="cta-overlay"></div>
-	<div class="cta-content">
+	<div class="explore-overlay"></div>
+	<div class="explore-content">
 
 		<!-- <iframe src="https://thebeaconproject.substack.com/embed" width="100%" height="150" scrolling="no"></iframe> -->
 
-		<div class="cta-title" bind:this={textElement}>
+		<div class="explore-title" bind:this={textElement}>
 			<h2>Explore further...</h2>
 		</div>
 		
-		<div class="cta-columns">
-			<div class="cta-column dashboard-column">
+		<div class="explore-columns">
+			<div class="explore-column dashboard-column">
 				<div class="column-content">
 					<h3>Data Dashboard</h3>
-					<p>Learn how Americans’ beliefs differ by political affiliation, gender, location, and more.</p>
-					<button data-button="explore" bind:this={exploreButton} onclick={() => window.location.href = '/dashboard'}>
+					<p>Learn how Americans' beliefs differ by political affiliation, gender, location, and more.</p>
+					<button data-button="explore" bind:this={exploreButton} onclick={() => window.open('/dashboard?fromExplore=true', '_blank')}>
 						Explore the data
 					</button>
 				</div>
 			</div>
 			
-			<div class="cta-column quiz-column">
+			<div class="explore-column quiz-column">
 				<div class="column-content">
 					<h3>Interactive Quiz</h3>
-					<p>How do your beliefs compare to other Americans’</p>
-					<button data-button="quiz" bind:this={quizButton} onclick={() => window.location.href = '/quiz'}>
+					<p>How do your beliefs compare to other Americans'</p>
+					<button data-button="quiz" bind:this={quizButton} onclick={() => window.open('/quiz?fromExplore=true', '_blank')}>
 						Start the quiz
 					</button>
 				</div>
 			</div>
 		</div>
 		
-		<!-- <div class="cta-footer">
+		<!-- <div class="explore-footer">
 			<button data-button="report" class="report-button">
 				Read the full report
 			</button>
@@ -131,7 +131,7 @@
 <style lang="scss">
 	@import '../styles/variables.scss';
 
-	.cta-section {
+	.explore-section {
 		width: 100%;
 		padding: 15vh 4rem;
 		// min-height: 100vh;
@@ -141,7 +141,7 @@
 		isolation: isolate;
 	}
 
-	.cta-background {
+	.explore-background {
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -155,7 +155,7 @@
 		}
 	}
 
-	.cta-overlay {
+	.explore-overlay {
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -183,7 +183,7 @@
 		}
 	}
 
-	.cta-content {
+	.explore-content {
 		max-width: 1200px;
 		width: 100%;
 		margin: 0 auto;
@@ -195,7 +195,7 @@
 		z-index: 10;
 	}
 
-	.cta-title {
+	.explore-title {
 		text-align: center;
 		color: var(--color-theme-light);
 		will-change: transform, opacity;
@@ -209,7 +209,7 @@
 		}
 	}
 
-	.cta-columns {
+	.explore-columns {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 3rem;
@@ -217,7 +217,7 @@
 		max-width: 1000px;
 	}
 
-	.cta-column {
+	.explore-column {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -258,7 +258,7 @@
 		}
 	}
 
-	.cta-footer {
+	.explore-footer {
 		display: flex;
 		justify-content: center;
 		width: 100%;
@@ -322,29 +322,29 @@
 
 	// Responsive design
 	@media (max-width: 768px) {
-		.cta-section {
+		.explore-section {
 			padding: 10vh 2rem;
 			min-height: auto;
 		}
 
-		.cta-background {
+		.explore-background {
 			position: absolute;
 		}
 
-		.cta-overlay {
+		.explore-overlay {
 			position: absolute;
 		}
 
-		.cta-columns {
+		.explore-columns {
 			grid-template-columns: 1fr;
 			gap: 2rem;
 		}
 
-		.cta-title h2 {
+		.explore-title h2 {
 			font-size: 2rem;
 		}
 
-		.cta-column {
+		.explore-column {
 			padding: 2rem;
 
 			.column-content h3 {
