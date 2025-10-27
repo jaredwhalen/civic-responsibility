@@ -132,14 +132,13 @@
 <style lang="scss">
 	.map-container {
 		width:100%;
+		max-width: 1200px;
 		height: 100%;
 		margin: 0 auto;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		overflow: hidden;
-		max-width: 100%;
-		max-height: 100%;
 	}
 
 	svg {
