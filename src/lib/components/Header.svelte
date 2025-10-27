@@ -32,7 +32,9 @@
 	});
 
 	// Derive button text based on navigation state
-	let backButtonText = $derived($isMobile ? '' : cameDirectlyFromRoot ? 'Return to main page' : 'Main page');
+	let backButtonText = $derived(
+		$isMobile ? '' : cameDirectlyFromRoot ? 'Return to main page' : 'Main page'
+	);
 
 	function handleBackClick() {
 		if (cameDirectlyFromRoot && browser) {
@@ -47,7 +49,7 @@
 
 <header class="main-header" aria-label="Site navigation" bind:clientHeight={headerHeight} class:bg>
 	<div class="header-left">
-		<Lockup size={$isMobile ? 'medium' : 'large'} />
+		<Lockup interactive={!isRoutePage} size={$isMobile ? 'medium' : 'large'} />
 	</div>
 
 	<div class="header-right">
@@ -84,7 +86,7 @@
 
 <style lang="scss">
 	@import '../styles/mixins.scss';
-	
+
 	.main-header {
 		position: absolute;
 		top: 0;
@@ -148,7 +150,7 @@
 				box-sizing: border-box;
 				border: none;
 				height: 35px;
-				
+
 				// Mobile responsive adjustments
 				@include mq('mobile', 'max') {
 					padding: 0.4rem 0.8rem;
