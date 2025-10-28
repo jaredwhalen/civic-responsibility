@@ -158,6 +158,7 @@
 
 	// Create tippy instances (sticky + registered by circleId)
 	function createTippyInstances() {
+	
 		// Clean up any tippy on our row's elements
 		const existingCircles = document.querySelectorAll(
 			`[data-row-index="${index}"][data-tippy-content]`
@@ -313,7 +314,7 @@
 			x2={gapLineCoords.x2}
 			y2="0"
 			stroke={getCSSVar('--color-gray-200')}
-			stroke-width={circleRadius * 2}
+			stroke-width={circleRadius*2}
 		/>
 	{/if}
 
@@ -337,24 +338,14 @@
 		<circle
 			cx={xScale(s.value)}
 			cy="0"
-			r={inIntro
-				? guessMode && !$userResponse.submitted
-					? $isMobile
-						? 20
-						: 12
-					: 12
-				: $isMobile
-					? 7
-					: 6}
+			r={inIntro 
+				? (guessMode && !$userResponse.submitted ? ($isMobile ? 20 : 12) : 12)
+				: ($isMobile ? 7 : 6)}
 			fill={color}
 			opacity={interactiveMode ? 0.75 : 1}
 			onmousedown={handleMouseDown}
 			ontouchstart={handleTouchStart}
-			style={guessMode && !$userResponse.submitted
-				? 'cursor: grab; pointer-events: auto;'
-				: interactiveMode
-					? 'pointer-events: auto;'
-					: 'pointer-events: none;'}
+			style={guessMode && !$userResponse.submitted ? 'cursor: grab;' : ''}
 			class:interactive={guessMode && !$userResponse.submitted}
 			data-state={s.label}
 			data-value={s.value}
