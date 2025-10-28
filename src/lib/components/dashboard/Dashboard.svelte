@@ -403,7 +403,7 @@
 	// Base dimensions without rowHeight to avoid circular dependency
 	const baseDimensions = $derived({
 		width:
-			interactiveMode && isPinned && !$isMobile ? width - Math.min(controlsWidth || 0, 300) : width,
+			Math.max(0, interactiveMode && isPinned && !$isMobile ? width - Math.min(controlsWidth || 0, 300) : width),
 		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
 			top: interactiveMode ? baseRowHeight : 60,
@@ -503,7 +503,10 @@
 	const xScale = $derived(
 		scaleLinear()
 			.domain([0, 100])
-			.range([baseDimensions.margins.left, baseDimensions.width - baseDimensions.margins.right])
+			.range([
+				baseDimensions.margins.left,
+				Math.max(baseDimensions.margins.left + 1, baseDimensions.width - baseDimensions.margins.right)
+			])
 	);
 
 	const createCustomColorScale = (colors) => {

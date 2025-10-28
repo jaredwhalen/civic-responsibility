@@ -129,8 +129,8 @@
 		if (showGapLine && series.length > 1) {
 			const sortedSeries = [...series].sort((a, b) => a.value - b.value);
 			gapLineCoords = {
-				x1: xScale(sortedSeries[0].value),
-				x2: xScale(sortedSeries[sortedSeries.length - 1].value)
+				x1: Math.max(0, xScale(sortedSeries[0].value)),
+				x2: Math.max(0, xScale(sortedSeries[sortedSeries.length - 1].value))
 			};
 		} else {
 			gapLineCoords = null;
