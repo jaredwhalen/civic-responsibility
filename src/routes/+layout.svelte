@@ -11,7 +11,7 @@
 	import { page } from '$app/stores';
 
 	const { meta } = copy;
-	
+
 	// Determine page-specific title based on route
 	let pageTitle = $derived.by(() => {
 		const route = $page.route.id;
@@ -22,10 +22,8 @@
 		}
 		return meta.title;
 	});
-	
 
-	let pageDescription = meta.description
-
+	let pageDescription = meta.description;
 </script>
 
 <svelte:head>
@@ -35,7 +33,7 @@
 		name="description"
 		content={pageDescription || 'Interactive civic responsibility exploration'}
 	/>
-	
+
 	<!-- Open Graph / Facebook -->
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content={pageTitle} />
@@ -46,20 +44,31 @@
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
 	<meta property="og:image:alt" content={meta.title} />
-	
+
 	<!-- Twitter -->
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={pageTitle} />
 	<meta name="twitter:description" content={pageDescription} />
 	<meta name="twitter:image" content="http://civicprofile.us/og-image.jpg" />
 	<meta name="twitter:image:alt" content={meta.title} />
-	
+
 	<!-- Additional Meta Tags -->
 	<meta name="author" content="Beacon Project" />
 	<meta name="theme-color" content="#ffffff" />
-	
+
 	<!-- Canonical URL -->
 	<link rel="canonical" href="http://civicprofile.us{$page.url.pathname}" />
+
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-SPS5VG2ZGN"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-SPS5VG2ZGN');
+	</script>
+
+
 </svelte:head>
 
 <main
@@ -67,7 +76,7 @@
 	aria-label="Civic Responsibility in America"
 	style:--header-height="{headerHeight}px"
 >
-	<Header bind:headerHeight mode={$page.route.id === '/' ? 'main' : 'route'}/>
+	<Header bind:headerHeight mode={$page.route.id === '/' ? 'main' : 'route'} />
 
 	<slot />
 </main>
