@@ -72,7 +72,7 @@
 			Our country is growing more<br /><span
 				class="text-accent"
 				style="letter-spacing: {letterSpacing}em; --gradient-opacity: {artProgress}">polarized</span
-			>.
+			>
 		</div>
 	</div>
 
