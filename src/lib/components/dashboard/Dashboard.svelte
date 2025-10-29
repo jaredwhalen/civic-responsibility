@@ -72,6 +72,7 @@
 	let hoveredSeries = $state(null);
 	let clickedSeries = $state(new Set());
 	let clickedCircles = $state(new Set());
+	let clickedPaths = $state(new Set());
 
 	$effect(() => {
 		if (activeId != '9999-dashboard') {
@@ -109,6 +110,15 @@
 		if (transformedData.state && transformedData.state.length > 0 && selectedStateView === 'map') {
 			selectedStateMapViewOption = transformedData.state[0].duty_label;
 		}
+	});
+
+	// Reset clicked sets when activeView or selectedStateView changes
+	$effect(() => {
+		activeView;
+		selectedStateView;
+		clickedSeries = new Set();
+		clickedCircles = new Set();
+		clickedPaths = new Set();
 	});
 
 	// Prevent body scrolling when dashboard is pinned
@@ -522,10 +532,11 @@
 
 	// Function to reset clicked series and circles
 	function resetSelections(e) {
-		// Reset clicked series if interacting outside circles
-		if (interactiveMode && !e.target.closest('circle')) {
+		// Reset clicked series if interacting outside circles and paths
+		if (interactiveMode && !e.target.closest('circle') && !e.target.closest('path')) {
 			clickedSeries = new Set();
 			clickedCircles = new Set();
+			clickedPaths = new Set();
 		}
 	}
 
@@ -535,6 +546,7 @@
 		if (interactiveMode && e.key === 'Escape') {
 			clickedSeries = new Set();
 			clickedCircles = new Set();
+			clickedPaths = new Set();
 		}
 	}
 
@@ -626,12 +638,18 @@
 			</div>
 		{/if}
 		{#if interactiveMode && activeView == 'state' && selectedStateView == 'map'}
-			<div class="map-wrapper">
+			<div
+				class="map-wrapper"
+				onclick={resetSelections}
+				ontouchend={resetSelections}
+				onkeydown={handleEscapeKey}
+			>
 				<MapViz
 					data={mapData}
 					width={baseDimensions.width}
 					duty={selectedStateMapViewOption}
 					colorScale={mapColorScale}
+					bind:clickedPaths
 				/>
 				<GradientLegend colorScale={mapColorScale} />
 			</div>
