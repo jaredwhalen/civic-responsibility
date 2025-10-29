@@ -398,7 +398,7 @@
 	const baseRowHeight = interactiveMode ? 35 : 45;
 
 	const minRowHeight = interactiveMode ? ($isMobile ? 45 : 18) : 40;
-	let controlsWidth = $state(null);
+	let controlsWidth = 300;
 
 	// Base dimensions without rowHeight to avoid circular dependency
 	const baseDimensions = $derived({
@@ -564,7 +564,7 @@
 	bind:clientHeight={dashboardHeight}
 >
 	{#if interactiveMode && isPinned}
-		<div bind:clientWidth={controlsWidth} class="controls-wrapper pinned" class:mobile={$isMobile}>
+		<div class="controls-wrapper pinned" class:mobile={$isMobile}>
 			<Controls
 				bind:activeView
 				bind:selectedStateView
