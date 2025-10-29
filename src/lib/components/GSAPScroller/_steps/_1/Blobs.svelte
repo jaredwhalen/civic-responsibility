@@ -117,14 +117,13 @@
 		const yScale = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
 
 		// Use simpler curve on low-end devices
-		const curveType = d3.curveBasis;
 		const area = (vals) =>
 			d3
 				.area()
 				.x((d, i) => xScale(xValues[i]))
 				.y0(height)
 				.y1((d) => yScale(d))
-				.curve(curveType);
+				.curve(d3.curveBasis);
 
 		// Use requestAnimationFrame for smoother animations
 		if (animationFrameId) {
