@@ -1,7 +1,8 @@
 <script>
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
+	import { goto, afterNavigate } from '$app/navigation';
+	import { browser } from '$app/environment';
 	import Hero from '$lib/components/Hero.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 
@@ -21,9 +22,15 @@
 	const { meta, content } = copy;
 
 	let showEndItems = $state(false);
+	let scrollListenerAdded = $state(false);
+
+	// Derive if we're on the home page - reactive like Header does
+	let isHomePage = $derived($page.route.id === '/');
 
 	// Check if user has scrolled to bottom of page
 	function checkScrollToBottom() {
+		if (!browser) return;
+
 		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 		const scrollHeight = document.documentElement.scrollHeight;
 		const clientHeight = window.innerHeight;
@@ -39,33 +46,89 @@
 		}
 	}
 
-	onMount(() => {
+	function initializePage() {
+		if (!browser) return;
 
 		const fromExplore = $page.url.href.includes('?fromExplore=true');
 
-	if (fromExplore) {
-		$userResponse.submitted = true;
-		showEndItems = true;
+		if (fromExplore) {
+			$userResponse.submitted = true;
+			showEndItems = true;
 
-		setTimeout(() => {
-			document.getElementById('explore').scrollIntoView();
-			// Remove fromExplore parameter from URL
-			const url = new URL(window.location.href);
-			url.searchParams.delete('fromExplore');
-			window.history.replaceState({}, '', url.pathname + url.search + url.hash);
-		}, 0);
-	}
+			setTimeout(() => {
+				const exploreElement = document.getElementById('explore');
+				if (exploreElement) {
+					exploreElement.scrollIntoView();
+				}
+				// Remove fromExplore parameter from URL
+				const url = new URL(window.location.href);
+				url.searchParams.delete('fromExplore');
+				window.history.replaceState({}, '', url.pathname + url.search + url.hash);
+			}, 0);
+		}
 
 		// Check initial scroll position in case user is already at bottom
-		checkScrollToBottom();
+		setTimeout(() => {
+			checkScrollToBottom();
+		}, 100);
+	}
 
-		// Add scroll listener
+	function setupScrollListener() {
+		if (!browser || scrollListenerAdded) return;
+
 		window.addEventListener('scroll', checkScrollToBottom);
+		scrollListenerAdded = true;
+	}
+
+	function removeScrollListener() {
+		if (!browser || !scrollListenerAdded) return;
+
+		window.removeEventListener('scroll', checkScrollToBottom);
+		scrollListenerAdded = false;
+	}
+
+	onMount(() => {
+		initializePage();
+		setupScrollListener();
 
 		// Cleanup
 		return () => {
-			window.removeEventListener('scroll', checkScrollToBottom);
+			removeScrollListener();
 		};
+	});
+
+	// React to route changes reactively - similar to how Header does it
+	$effect(() => {
+		if (!browser) return;
+
+		const routeId = $page.route.id;
+		const pathname = $page.url.pathname;
+
+		if (routeId === '/') {
+			// Re-initialize when coming back to home page
+			setTimeout(() => {
+				initializePage();
+				setupScrollListener();
+			}, 0);
+		} else {
+			// Remove listener when navigating away from home
+			removeScrollListener();
+		}
+	});
+
+	// Handle navigation (including browser back button) - keep for immediate updates
+	afterNavigate(({ to }) => {
+		if (!browser) return;
+		// Only initialize if navigating to the home page
+		if (to?.route.id === '/') {
+			setTimeout(() => {
+				initializePage();
+				setupScrollListener();
+			}, 10);
+		} else {
+			// Remove listener when navigating away
+			removeScrollListener();
+		}
 	});
 </script>
 
@@ -183,4 +246,3 @@
 		}
 	}
 </style>
-

@@ -100,7 +100,7 @@
 			{/if}
 		{:else}
 			{#if !$page.url.pathname.includes('/dashboard')}
-				<a href={base + '/dashboard'} target="_blank" class="nav-button dashboard-button">
+				<a href={base + '/dashboard'} class="nav-button dashboard-button">
 					{#if $isMobile}
 						<span>Dashboard</span>
 					{:else}
@@ -111,7 +111,7 @@
 				</a>
 			{/if}
 			{#if !$page.url.pathname.includes('/quiz')}
-				<a href={base + '/quiz'} target="_blank" class="nav-button quiz-button">
+				<a href={base + '/quiz'} class="nav-button quiz-button">
 					{#if $isMobile}
 						<span>Quiz</span>
 					{:else}
@@ -137,7 +137,7 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: $spacing-sm $spacing-lg;
-		z-index: 1000;
+		z-index: 2000;
 		pointer-events: none;
 		height: 80px;
 

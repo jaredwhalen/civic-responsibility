@@ -4,6 +4,8 @@
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import smoothScroll from '$lib/helpers/smoothScroll.js';
 	import Dashboard from './dashboard/Dashboard.svelte';
+	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 
 	let { interactiveMode = $bindable(), showQuiz = $bindable() } = $props();
 	let exploreElement;
@@ -103,7 +105,7 @@
 				<div class="column-content">
 					<h3>Data Dashboard</h3>
 					<p>Learn how Americans' beliefs differ by political affiliation, gender, location, and more.</p>
-					<button data-button="explore" bind:this={exploreButton} onclick={() => window.open('/dashboard?fromExplore=true', '_blank')}>
+					<button data-button="explore" bind:this={exploreButton} onclick={() => goto(base + '/dashboard?fromExplore=true')}>
 						Explore the data
 					</button>
 				</div>
@@ -113,7 +115,7 @@
 				<div class="column-content">
 					<h3>Interactive Quiz</h3>
 					<p>How do your beliefs compare to other Americans'</p>
-					<button data-button="quiz" bind:this={quizButton} onclick={() => window.open('/quiz?fromExplore=true', '_blank')}>
+					<button data-button="quiz" bind:this={quizButton} onclick={() => goto(base + '/quiz?fromExplore=true')}>
 						Start the quiz
 					</button>
 				</div>

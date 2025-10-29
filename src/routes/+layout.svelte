@@ -1,6 +1,9 @@
 <script>
 	import { base } from '$app/paths';
 	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
+	import { beforeNavigate, afterNavigate } from '$app/navigation';
+	import { fade } from 'svelte/transition';
 	import Header from '$lib/components/Header.svelte';
 
 	import '$lib/fonts/stylesheet.css';
@@ -8,9 +11,65 @@
 	import copy from '$lib/data/copy.json';
 	let headerHeight = $state(0);
 
-	import { page } from '$app/stores';
+	import { page, navigating } from '$app/stores';
 
 	const { meta } = copy;
+
+	// Track navigation state for loading overlay
+	let showOverlay = $state(false);
+	let navigationTimeout;
+	let minDisplayTime = 500; // Minimum time to show overlay (ms)
+	let navigationStartTime = 0;
+
+	// Use SvelteKit's navigating store combined with manual tracking
+	$effect(() => {
+		if (!browser) return;
+
+		const nav = $navigating;
+
+		if (nav) {
+			// Navigation started
+			if (!showOverlay) {
+				showOverlay = true;
+				navigationStartTime = Date.now();
+			}
+
+			// Clear any existing timeout
+			if (navigationTimeout) {
+				clearTimeout(navigationTimeout);
+			}
+
+			// Set a fallback timeout
+			navigationTimeout = setTimeout(() => {
+				showOverlay = false;
+				navigationStartTime = 0;
+			}, 5000);
+		} else if (showOverlay && navigationStartTime > 0) {
+			// Navigation completed - ensure minimum display time
+			if (navigationTimeout) {
+				clearTimeout(navigationTimeout);
+				navigationTimeout = null;
+			}
+
+			const elapsed = Date.now() - navigationStartTime;
+			const remainingTime = Math.max(0, minDisplayTime - elapsed);
+
+			setTimeout(() => {
+				showOverlay = false;
+				navigationStartTime = 0;
+			}, remainingTime);
+		}
+	});
+
+	// Listen to beforeNavigate for immediate response
+	beforeNavigate(({ to, from }) => {
+		if (!browser) return;
+
+		if (to && from && to.url.pathname !== from.url.pathname) {
+			showOverlay = true;
+			navigationStartTime = Date.now();
+		}
+	});
 
 	// Determine page-specific title based on route
 	let pageTitle = $derived.by(() => {
@@ -62,13 +121,13 @@
 	<!-- Google tag (gtag.js) -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-SPS5VG2ZGN"></script>
 	<script>
-	window.dataLayer = window.dataLayer || [];
-	function gtag(){dataLayer.push(arguments);}
-	gtag('js', new Date());
-	gtag('config', 'G-SPS5VG2ZGN');
+		window.dataLayer = window.dataLayer || [];
+		function gtag() {
+			dataLayer.push(arguments);
+		}
+		gtag('js', new Date());
+		gtag('config', 'G-SPS5VG2ZGN');
 	</script>
-
-
 </svelte:head>
 
 <main
@@ -79,6 +138,12 @@
 	<Header bind:headerHeight mode={$page.route.id === '/' ? 'main' : 'route'} />
 
 	<slot />
+
+	{#if showOverlay}
+		<div class="navigation-overlay" role="status" aria-label="Loading" out:fade={{ duration: 200 }}>
+			<div class="spinner"></div>
+		</div>
+	{/if}
 </main>
 
 <style lang="scss">
@@ -157,6 +222,42 @@
 
 		svelte-scroller-background-container.interactive {
 			pointer-events: all;
+		}
+	}
+
+	.navigation-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: var(--color-theme-light);
+		background: #ffffff;
+		z-index: 1000;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		opacity: 1;
+		transition: opacity 0.2s ease;
+		pointer-events: all;
+		will-change: opacity;
+
+		.spinner {
+			width: 50px;
+			height: 50px;
+			border: 4px solid #f3f3f3;
+			border-top: 4px solid var(--color-theme-blue);
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+		}
+	}
+
+	@keyframes spin {
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
 		}
 	}
 </style>
