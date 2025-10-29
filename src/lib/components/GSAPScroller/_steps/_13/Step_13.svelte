@@ -311,6 +311,11 @@
 			font-family: $font-family-sans;
 			text-align: right;
 			margin-top: -3rem;
+
+			@media (max-height: 900px) {
+				margin-top: -2rem;
+			}
+
 			@include mq('mobile', 'max') {
 				margin-top: -2rem;
 			}
