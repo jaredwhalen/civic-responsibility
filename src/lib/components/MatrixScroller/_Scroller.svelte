@@ -101,7 +101,7 @@
 		position: ${fixed ? 'fixed' : 'absolute'};
 		top: 0;
 		transform: translate(0, ${offset_top}px);
-		z-index: ${inverted ? 3 : 1};
+		z-index: ${inverted ? 30 : 10};
 	`;
 
 	$: widthStyle = fixed ? `width:${width}px;` : '';
