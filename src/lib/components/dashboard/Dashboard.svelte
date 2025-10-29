@@ -783,7 +783,6 @@
 
 				@include mq('mobile', 'max') {
 					margin-left: 0;
-					margin-top: var(--controls-height, 0);
 				}
 
 				.chart-container {
