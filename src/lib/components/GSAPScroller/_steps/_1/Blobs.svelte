@@ -117,7 +117,7 @@
 		const yScale = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
 
 		// Use simpler curve on low-end devices
-		const curveType = animationSettings.complexity === 'low' ? d3.curveLinear : d3.curveBasis;
+		const curveType = d3.curveBasis;
 		const area = (vals) =>
 			d3
 				.area()
