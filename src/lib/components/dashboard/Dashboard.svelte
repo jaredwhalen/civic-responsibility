@@ -402,8 +402,10 @@
 
 	// Base dimensions without rowHeight to avoid circular dependency
 	const baseDimensions = $derived({
-		width:
-			Math.max(0, interactiveMode && isPinned && !$isMobile ? width - Math.min(controlsWidth || 0, 300) : width),
+		width: Math.max(
+			0,
+			interactiveMode && isPinned && !$isMobile ? width - Math.min(controlsWidth || 0, 300) : width
+		),
 		height: currentViewData.length * baseRowHeight + baseRowHeight * 2,
 		margins: {
 			top: interactiveMode ? baseRowHeight : 60,
@@ -505,7 +507,10 @@
 			.domain([0, 100])
 			.range([
 				baseDimensions.margins.left,
-				Math.max(baseDimensions.margins.left + 1, baseDimensions.width - baseDimensions.margins.right)
+				Math.max(
+					baseDimensions.margins.left + 1,
+					baseDimensions.width - baseDimensions.margins.right
+				)
 			])
 	);
 
@@ -716,6 +721,7 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
+
 		position: relative;
 		width: 100%;
 		height: 100svh;
@@ -725,6 +731,10 @@
 		font-family: sans-serif;
 
 		@include mq('small-mobile', 'max') {
+			justify-content: flex-end;
+		}
+
+		@media (max-height: 900px) {
 			justify-content: flex-end;
 		}
 
