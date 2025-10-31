@@ -11,7 +11,7 @@
 	// Reactive calculations based on scroll progress
 	let textOpacity = $derived(progress >= 20 ? 1 : 0); // Text appears at 20% scroll
 	let textY = $derived(progress >= 20 ? 0 : 30); // Text starts below and moves up
-	let textParallax = $derived(progress * 10); // Subtle parallax effect for text
+	let textParallax = $derived(progress * 8); // Subtle parallax effect for text
 	let overlayOpacity = $derived(0.25 + (progress / 90) * 0.6); // Fade from 0.25 to 1.0 over 0-90% scroll
 	let backgroundScale = $derived(1 + (progress / 100) * 0.2); // Background scales from 1 to 1.2 over full scroll
 
