@@ -153,6 +153,7 @@
 		@include mq('mobile', 'max') {
 			height: 60px;
 			padding: $spacing-xs $spacing-md;
+			z-index: 10000;
 		}
 
 		@include mq('small-mobile', 'max') {

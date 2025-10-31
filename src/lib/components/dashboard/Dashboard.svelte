@@ -483,7 +483,7 @@
 	// Calculate margins with rowHeight
 	const adjustedMargins = $derived({
 		...baseDimensions.margins,
-		top: interactiveMode ? rowHeight : 60,
+		top: interactiveMode ? rowHeight + ($isMobile ? 10 : 0) : 60,
 		bottom: 0
 	});
 
@@ -818,7 +818,7 @@
 				width: min(var(--controls-width), 300px);
 				max-width: 300px;
 				height: calc(100svh - var(--header-height, 80px));
-				z-index: 1000;
+				z-index: 10000;
 				overflow-y: auto;
 				box-shadow: 2px 0 10px 0 rgba(0, 0, 0, 0.1);
 				display: flex;
@@ -878,6 +878,7 @@
 
 		@include mq('mobile', 'max') {
 			margin-left: 0;
+
 		}
 	}
 
