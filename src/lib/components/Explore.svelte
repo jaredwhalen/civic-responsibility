@@ -83,8 +83,6 @@
 			});
 		}
 	});
-
-
 </script>
 
 <div id="explore" class="explore-section" bind:this={exploreElement}>
@@ -93,35 +91,45 @@
 	</div>
 	<div class="explore-overlay"></div>
 	<div class="explore-content">
-
 		<!-- <iframe src="https://thebeaconproject.substack.com/embed" width="100%" height="150" scrolling="no"></iframe> -->
 
 		<div class="explore-title" bind:this={textElement}>
 			<h2>Explore further...</h2>
 		</div>
-		
+
 		<div class="explore-columns">
 			<div class="explore-column dashboard-column">
 				<div class="column-content">
 					<h3>Data Dashboard</h3>
-					<p>Learn how Americans' beliefs differ by political affiliation, gender, location, and more.</p>
-					<button data-button="explore" bind:this={exploreButton} onclick={() => goto(base + '/dashboard?fromExplore=true')}>
+					<p>
+						Learn how Americans' beliefs differ by political affiliation, gender, location, and
+						more.
+					</p>
+					<button
+						data-button="explore"
+						bind:this={exploreButton}
+						onclick={() => goto(base + '/dashboard?fromExplore=true')}
+					>
 						Explore the data
 					</button>
 				</div>
 			</div>
-			
+
 			<div class="explore-column quiz-column">
 				<div class="column-content">
 					<h3>Interactive Quiz</h3>
 					<p>How do your beliefs compare to other Americans'?</p>
-					<button data-button="quiz" bind:this={quizButton} onclick={() => goto(base + '/quiz?fromExplore=true')}>
+					<button
+						data-button="quiz"
+						bind:this={quizButton}
+						onclick={() => goto(base + '/quiz?fromExplore=true')}
+					>
 						Start the quiz
 					</button>
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- <div class="explore-footer">
 			<button data-button="report" class="report-button">
 				Read the full report
@@ -141,6 +149,7 @@
 		align-items: center;
 		position: relative;
 		isolation: isolate;
+
 	}
 
 	.explore-background {
@@ -151,7 +160,7 @@
 		bottom: 0;
 		z-index: -2;
 		pointer-events: none;
-		
+
 		:global(*) {
 			pointer-events: none !important;
 		}
@@ -164,7 +173,7 @@
 		right: 0;
 		bottom: 0;
 		z-index: -1;
-		
+
 		&::before {
 			content: '';
 			position: absolute;
@@ -323,9 +332,9 @@
 	}
 
 	// Responsive design
-	@media (max-width: 768px) {
+	@include mq('mobile', 'max') {
 		.explore-section {
-			padding: 10vh 2rem;
+			padding: 10vh 1rem;
 			min-height: auto;
 		}
 

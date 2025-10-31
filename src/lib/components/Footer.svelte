@@ -176,7 +176,7 @@
 		}
 	}
 
-	@media (max-width: 768px) {
+	@include mq('mobile', 'max') {
 		.footer-beacon-section {
 			max-width: 100%;
 			padding: 0 1rem;
@@ -184,7 +184,7 @@
 		}
 
 		.beacon-text {
-			font-size: 1.4rem;
+			font-size: .4rem;
 		}
 
 		.learn-more-button {

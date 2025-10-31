@@ -8,7 +8,6 @@
 	const WEB_APP_URL =
 		'https://script.google.com/macros/s/AKfycbxiJGG8bz08MzcPVAFqrC_9KANbfSYIi5ajUBDGHLU52v7AF9lpSIdiKG0jWKV2cNhp/exec';
 
-
 	// ===== Refs =====
 	let sectionElement;
 	let contentElement;
@@ -148,9 +147,7 @@
 			/>
 
 			{#if showSuccess}
-				<div class="toast" role="alert" aria-live="polite">
-					Success! You're subscribed.
-				</div>
+				<div class="toast" role="alert" aria-live="polite">Success! You're subscribed.</div>
 			{/if}
 
 			<button
@@ -209,6 +206,12 @@
 				line-height: 1.3;
 				color: var(--color-theme-light);
 				text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+
+				@include mq('mobile', 'max') {
+					font-size: 2rem;
+					line-height: 1.2;
+					margin-bottom: 1rem !important;
+				}
 			}
 
 			p {
@@ -219,17 +222,17 @@
 				color: var(--color-theme-light);
 			}
 
-				.signup-form {
-					display: flex;
-					gap: 1rem;
-					width: 100%;
-					border-radius: 16px;
-					padding: 1.5rem;
-					box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-					transition: all 0.3s ease;
-					@include glass-effect(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.25), 15px);
-					align-items: center;
-					position: relative;
+			.signup-form {
+				display: flex;
+				gap: 1rem;
+				width: 100%;
+				border-radius: 16px;
+				padding: 1.5rem;
+				box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+				transition: all 0.3s ease;
+				@include glass-effect(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.25), 15px);
+				align-items: center;
+				position: relative;
 
 				&:hover {
 					box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
@@ -328,22 +331,26 @@
 						transform: translateY(0);
 					}
 				}
-
 			}
 		}
 	}
 
 	// Responsive design
-	@media (max-width: 768px) {
+	@include mq('mobile', 'max') {
 		.email-signup-section {
-			padding: 6rem 1.5rem;
+			padding: 5rem 1.5rem;
 
 			.email-signup-container {
 				h2 {
 					font-size: 2rem;
-					margin-bottom: 2.5rem;
+					margin-bottom: 1.5rem;
+					line-height: 1.2;
 				}
 
+				p {
+					font-size: inherit;
+					line-height: inherit;
+				}
 				.signup-form {
 					flex-direction: column;
 					gap: 1rem;
