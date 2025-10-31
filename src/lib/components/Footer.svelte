@@ -49,7 +49,7 @@
 	.footer-root {
 		background: linear-gradient(135deg, var(--color-theme-blue), #111);
 		color: #fff;
-		padding: 3rem 3rem 1rem;
+		padding: 1rem 3rem 1rem;
 		position: relative;
 		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
 		font-family: $font-family-primary;
@@ -57,7 +57,7 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		gap: 2rem;
+		gap: 1rem;
 		z-index: 1000;
 
 		@include mq('mobile', 'max') {
@@ -108,7 +108,7 @@
 	}
 
 	.beacon-text {
-		font-size: 2.5rem;
+		font-size: 1.4rem;
 		font-weight: 300;
 		line-height: 1.2;
 		color: #fff;
@@ -118,7 +118,7 @@
 		.beacon-project {
 			font-family: 'Aboreto', serif;
 			font-weight: 400;
-			font-size: 4rem;
+			font-size: 3rem;
 			display: block;
 			margin-top: 0.5rem;
 			color: #e3c14c;
@@ -128,7 +128,7 @@
 
 	.learn-more-button {
 		@include glass-effect(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
-		padding: 1rem 2.5rem;
+		padding: 0.5rem 1rem;
 		border-radius: 12px;
 		border: none;
 		cursor: pointer;
@@ -154,7 +154,7 @@
 		text-align: center;
 		font-size: 0.9rem;
 		opacity: 0.8;
-		margin-top: 1rem;
+		margin-top: 0.5rem;
 		padding-top: 1rem;
 		border-top: 1px solid rgba(255, 255, 255, 0.1);
 		width: 100%;

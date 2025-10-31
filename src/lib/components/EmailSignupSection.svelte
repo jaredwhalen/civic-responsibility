@@ -173,7 +173,7 @@
 	.email-signup-section {
 		z-index: 1;
 		width: 100%;
-		padding: 8rem 2rem;
+		padding: 5rem 2rem;
 		background: linear-gradient(
 			135deg,
 			var(--color-theme-blue) 0%,
