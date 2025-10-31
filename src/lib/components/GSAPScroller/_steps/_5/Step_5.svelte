@@ -4,6 +4,7 @@
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import { getCSSVar } from '$lib/helpers/getCSSVar';
 	import Comments from './Comments.svelte';
+	import { isMobile } from '$lib/stores/responsive.js';
 
 	// Data for both sections
 	const expectedAnswers = [
@@ -78,8 +79,8 @@
 			}
 		},
 		{
-			text: 'Protecting the environment',
-			name: 'protecting-the-environment.png',
+			text: 'Being grateful for your opportunities',
+			name: 'being-grateful-for-your-opportunities.png',
 			position: {
 				top: '20%',
 				left: '70%',
@@ -115,11 +116,11 @@
 			}
 		},
 		{
-			text: 'Being grateful for your opportunities',
-			name: 'being-grateful-for-your-opportunities.png',
+			text: 'Protecting the environment',
+			name: 'protecting-the-environment.png',
 				position: {
 				top: '85%',
-				left: '65%',
+				left: $isMobile ? '65%' : '75%',
 				scale: 1,
 				direction: 'right'
 			}

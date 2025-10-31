@@ -2,15 +2,8 @@
 	import { onMount } from 'svelte';
 	import { gsap } from 'gsap';
 	import { getCSSVar } from '$lib/helpers/getCSSVar';
-	import Quote from './Quote.svelte';
-	import Bubble from './Bubble.svelte';
 
-	let {
-		commentData,
-		progress = 0,
-		startProgress = 0,
-		endProgress = 1
-	} = $props();
+	let { commentData, progress = 0, startProgress = 0, endProgress = 1 } = $props();
 	let commentElements = [];
 
 	// Calculate individual comment progress based on overall progress
@@ -43,7 +36,7 @@
 			if (element) {
 				const comment = commentData[index];
 				const targetScale = comment.position.scale || 1.0;
-				
+
 				// Stagger the animation based on index
 				const individualProgress = Math.max(0, Math.min(1, (currentProgress - index * 0.1) / 0.3));
 
@@ -74,10 +67,6 @@
         left: {comment.position.left};
       "
 	>
-		<!-- <Quote color={comment.position.color || getCSSVar('--color-theme-light')} {direction}>
-			{comment.text}
-		</Quote> -->
-
 		<img src={`/assets/comments/${comment.name}`} alt={comment.text} />
 	</div>
 {/each}
