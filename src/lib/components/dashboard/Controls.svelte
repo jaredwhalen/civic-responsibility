@@ -13,7 +13,8 @@
 		searchOptions,
 		interactiveMode = $bindable(),
 		isPinned = $bindable(),
-		onExit = () => {}
+		onExit = () => {},
+		stateColors = []
 	} = $props();
 
 	// ===== STATE =====
@@ -174,6 +175,7 @@
 						bind:selectedValue={selectedStateMapViewOption}
 						viewMode={selectedStateView}
 						onSelect={handleDropdownSelect}
+						pillColors={stateColors}
 					/>
 				{:else}
 					<span class="view-summary-label">Viewing data by:</span>

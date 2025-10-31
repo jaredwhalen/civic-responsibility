@@ -601,6 +601,7 @@
 						}
 					}, 100);
 				}}
+				{stateColors}
 			/>
 
 			{#if (options.find((o) => o.value === activeView)?.series?.length > 1) & (activeView != 'state')}
