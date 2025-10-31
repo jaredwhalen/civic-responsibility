@@ -184,7 +184,7 @@
 		}
 
 		.beacon-text {
-			font-size: .4rem;
+			font-size: 1rem;
 		}
 
 		.learn-more-button {
