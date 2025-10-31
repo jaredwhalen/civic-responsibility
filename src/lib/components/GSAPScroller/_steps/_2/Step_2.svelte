@@ -34,7 +34,9 @@
 		gsap.registerPlugin(ScrollTrigger);
 
 		// Set initial states
-		gsap.set(textElement, { opacity: 0, y: -30 });
+
+		gsap.set(textElement, { opacity: 0, y: $isMobile ? 0 : -30 });
+
 		gsap.set(dividedElement, {
 			x: 300,
 			opacity: 0
@@ -111,7 +113,7 @@
 					<span class="text-accent">disillusioned</span> with our politics, and
 				</div>
 				<div class="d-word" bind:this={distrustfulElement} class:visible={distrustfulUnderline}>
-					 <span class="text-accent">distrustful</span> of each other.
+					<span class="text-accent">distrustful</span> of each other.
 				</div>
 			</div>
 		{:else}
@@ -143,7 +145,6 @@
 		justify-content: center;
 		width: 100%;
 		color: var(--color-theme-light);
-		// overflow-x: hidden; // Prevent horizontal overflow from GSAP animations
 		z-index: 2;
 
 		@include mq('mobile', 'max') {
@@ -165,12 +166,13 @@
 
 			@include mq('mobile', 'max') {
 				padding: 2rem 1rem;
-			}
 
+				position: relative;
+				top: 25vh;
+			}
 
 			.text-body {
 				margin: 0 0 1rem 0;
-				
 			}
 
 			.d-words {
@@ -180,8 +182,7 @@
 				gap: 1rem;
 				width: 100%;
 				text-align: left;
-				
-			
+
 				// Mobile responsive adjustments
 				@include mq('mobile', 'max') {
 					// align-items: center;
@@ -202,7 +203,6 @@
 					}
 
 					.text-accent {
-						
 						&::after {
 							content: '';
 							position: absolute;

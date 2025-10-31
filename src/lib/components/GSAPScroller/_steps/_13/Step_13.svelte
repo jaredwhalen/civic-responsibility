@@ -183,6 +183,11 @@
 		gap: 4rem;
 		margin-top: -1px;
 
+		@include mq('mobile', 'max') {
+			height: auto;
+			min-height: 100vh;
+		}
+
 		.sticky-container {
 			position: sticky;
 			top: 15vh;
@@ -192,6 +197,12 @@
 			flex-direction: column;
 			align-items: center;
 			gap: 2rem;
+
+			@include mq('mobile', 'max') {
+				position: relative;
+				top: 0vh;
+				margin-top: 15vh;
+			}
 		}
 
 		.text-content {
@@ -229,7 +240,6 @@
 				}
 
 				.quote-left {
-				
 					left: -20px;
 
 					@include mq('mobile', 'max') {
@@ -238,7 +248,6 @@
 				}
 
 				.quote-right {
-				
 					right: 0px;
 
 					@include mq('mobile', 'max') {

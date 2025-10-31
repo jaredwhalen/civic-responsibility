@@ -61,7 +61,7 @@
 			position: {
 				top: '100%',
 				left: '70%',
-				scale: .8,
+				scale: 0.8,
 				direction: 'right'
 			}
 		}
@@ -72,9 +72,9 @@
 			text: 'Tolerating differences',
 			name: 'tolerating-differences.png',
 			position: {
-				top: '15%',
+				top: $isMobile ? '5%' : '15%',
 				left: '10%',
-				scale: .7,
+				scale: 0.7,
 				direction: 'right'
 			}
 		},
@@ -83,8 +83,8 @@
 			name: 'being-grateful-for-your-opportunities.png',
 			position: {
 				top: '20%',
-				left: '70%',
-				scale: .8
+				left: $isMobile ? '65%' : '70%',
+				scale: 1
 			}
 		},
 		{
@@ -93,7 +93,7 @@
 			position: {
 				top: '40%',
 				left: '50%',
-				scale: .7,
+				scale: 0.7,
 				direction: 'right'
 			}
 		},
@@ -103,7 +103,7 @@
 			position: {
 				top: '60%',
 				left: '10%',
-				scale: .9
+				scale: 0.9
 			}
 		},
 		{
@@ -112,16 +112,16 @@
 			position: {
 				top: '95%',
 				left: '10%',
-				scale: .8
+				scale: 0.8
 			}
 		},
 		{
 			text: 'Protecting the environment',
 			name: 'protecting-the-environment.png',
-				position: {
+			position: {
 				top: '85%',
 				left: $isMobile ? '65%' : '75%',
-				scale: 1,
+				scale: 0.8,
 				direction: 'right'
 			}
 		}
@@ -141,7 +141,7 @@
 	let comments1Progress = $derived(progress >= 15 ? Math.min(1, (progress - 15) / 25) : 0);
 
 	// Second section: "Others surprised us" (50-100% of total progress)
-	let text2Opacity = $derived(progress >= 55 ? 1 : 0);
+	let text2Opacity = $derived($isMobile ? progress >= 45 ? 1 : 0 : progress >= 55 ? 1 : 0);
 	let text2Y = $derived(progress >= 55 ? 0 : -30);
 	let comments2Progress = $derived(progress >= 60 ? Math.min(1, (progress - 60) / 20) : 0);
 
@@ -149,8 +149,8 @@
 		gsap.registerPlugin(ScrollTrigger);
 
 		// Set initial states
-		gsap.set(textElement1, { opacity: 0, y: -30 });
-		gsap.set(textElement2, { opacity: 0, y: -30 });
+		gsap.set(textElement1, { opacity: 0, y: $isMobile ? 0 : -30 });
+		gsap.set(textElement2, { opacity: 0, y: $isMobile ? 0 : -30 });
 
 		// Create scroll trigger for this section
 		const trigger = ScrollTrigger.create({
@@ -173,7 +173,7 @@
 		if (textElement1) {
 			gsap.to(textElement1, {
 				opacity: text1Opacity,
-				y: text1Y,
+				y: $isMobile ? 0 : text1Y,
 				duration: 0.2,
 				ease: 'none'
 			});
@@ -183,7 +183,7 @@
 		if (textElement2) {
 			gsap.to(textElement2, {
 				opacity: text2Opacity,
-				y: text2Y,
+				y: $isMobile ? 0 : text2Y,
 				duration: 0.2,
 				ease: 'none'
 			});
@@ -243,6 +243,10 @@
 			justify-content: center;
 			width: 100%;
 
+			@include mq('mobile', 'max') {
+				height: 75vh;
+			}
+
 			color: var(--color-theme-light);
 
 			.text-content {
@@ -255,6 +259,20 @@
 				z-index: 10;
 				max-width: 900px;
 				will-change: transform, opacity; // GPU acceleration
+
+				@include mq('mobile', 'max') {
+					padding: 2rem 1rem;
+
+					position: relative;
+					top: 0vh;
+					transform: none !important;
+				}
+
+				.text-body {
+					@include mq('mobile', 'max') {
+						font-size: 2rem;
+					}
+				}
 			}
 
 			.text-accent {
@@ -277,5 +295,11 @@
 
 	.space {
 		height: 25vh;
+	}
+
+	.section.surprising {
+		@include mq('mobile', 'max') {
+			margin-top: 150px;
+		}
 	}
 </style>

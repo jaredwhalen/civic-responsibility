@@ -97,6 +97,10 @@
 		align-items: center;
 		width: 100%;
 
+		@include mq('mobile', 'max') {
+			height: calc(150vh - 500px);
+		}
+
 		.text-content {
 			position: sticky;
 			top: 50vh;
@@ -113,6 +117,12 @@
 			color: var(--color-theme-light);
 			opacity: 0;
 			will-change: transform, opacity; // GPU acceleration
+
+			@include mq('mobile', 'max') {
+				position: relative;
+				top: 20vh;
+				transform: none;
+			}
 
 			* {
 				font-size: 4.5rem;
