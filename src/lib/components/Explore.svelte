@@ -114,7 +114,7 @@
 			<div class="explore-column quiz-column">
 				<div class="column-content">
 					<h3>Interactive Quiz</h3>
-					<p>How do your beliefs compare to other Americans'</p>
+					<p>How do your beliefs compare to other Americans'?</p>
 					<button data-button="quiz" bind:this={quizButton} onclick={() => goto(base + '/quiz?fromExplore=true')}>
 						Start the quiz
 					</button>
