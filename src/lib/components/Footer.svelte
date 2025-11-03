@@ -59,6 +59,7 @@
 		justify-content: center;
 		gap: 1rem;
 		z-index: 1000;
+		margin-top: -1px;
 
 		@include mq('mobile', 'max') {
 			padding: 1rem;
