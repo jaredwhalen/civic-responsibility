@@ -3,6 +3,9 @@
 	import { gsap } from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+	// ===== Props =====
+	let { animated = true } = $props();
+
 	// ===== CONFIG =====
 	// Paste your Apps Script Web App URL (ends with /exec)
 	const WEB_APP_URL =
@@ -20,34 +23,39 @@
 	let submitting = $state(false);
 	let showSuccess = $state(false);
 
-	// Reactive calculations based on scroll progress
-	let contentScale = $derived(progress >= 10 ? 1 : 0.8);
-	let contentOpacity = $derived(progress >= 10 ? 1 : 0);
+	// Reactive calculations based on scroll progress (only used when animated)
+	let contentScale = $derived(animated ? (progress >= 10 ? 1 : 0.8) : 1);
+	let contentOpacity = $derived(animated ? (progress >= 10 ? 1 : 0) : 1);
 
 	onMount(() => {
-		gsap.registerPlugin(ScrollTrigger);
+		if (animated) {
+			gsap.registerPlugin(ScrollTrigger);
 
-		// Set initial states for content
-		gsap.set(contentElement, { scale: 0.8, opacity: 0 });
+			// Set initial states for content
+			gsap.set(contentElement, { scale: 0.8, opacity: 0 });
 
-		// Create scroll trigger for this section
-		const trigger = ScrollTrigger.create({
-			trigger: sectionElement,
-			start: 'top 80%',
-			end: 'bottom 20%',
-			onUpdate: (self) => {
-				progress = self.progress * 100;
-			}
-		});
+			// Create scroll trigger for this section
+			const trigger = ScrollTrigger.create({
+				trigger: sectionElement,
+				start: 'top 80%',
+				end: 'bottom 20%',
+				onUpdate: (self) => {
+					progress = self.progress * 100;
+				}
+			});
 
-		return () => {
-			trigger.kill();
-		};
+			return () => {
+				trigger.kill();
+			};
+		} else {
+			// If not animated, make content visible immediately
+			gsap.set(contentElement, { scale: 1, opacity: 1 });
+		}
 	});
 
-	// Watch for progress changes and update animations
+	// Watch for progress changes and update animations (only when animated)
 	$effect(() => {
-		if (contentElement) {
+		if (animated && contentElement) {
 			gsap.to(contentElement, {
 				scale: contentScale,
 				opacity: contentOpacity,

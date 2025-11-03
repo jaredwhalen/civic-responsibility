@@ -5,5 +5,5 @@
 </script>
 
 <Quiz />
-<EmailSignupSection />
+<EmailSignupSection animated={false} />
 <Footer />
